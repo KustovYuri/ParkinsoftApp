@@ -38,14 +38,15 @@ import com.farma.parkinsoftapp.presentation.login.login_screen.models.PhoneNumbe
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginScreenViewModel = hiltViewModel<LoginScreenViewModel>()
+    viewModel: LoginScreenViewModel = hiltViewModel<LoginScreenViewModel>(),
+    onNavigateToSms: (String) -> Unit
 ) {
     val phoneNumberFieldState = remember { viewModel.numberFieldState }
     val validationIsSuccess = viewModel.validationIsSuccess.collectAsStateWithLifecycle()
 
     LaunchedEffect(validationIsSuccess.value) {
         if (validationIsSuccess.value) {
-            Log.d("LoginScreen", "NextScreen")
+            onNavigateToSms(phoneNumberFieldState.value.number)
         }
     }
 

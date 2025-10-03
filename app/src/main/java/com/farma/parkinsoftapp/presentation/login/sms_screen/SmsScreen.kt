@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -42,7 +41,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun SmsScreen(
     modifier: Modifier = Modifier,
-    phoneNumber: String = "+7 902 488-73-66"
+    phoneNumber: String,
+    backNavigation: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -52,7 +52,7 @@ fun SmsScreen(
 
     ) {
         Spacer(Modifier.height(34.dp))
-        TopBar()
+        TopBar(backNavigation = backNavigation)
         Spacer(Modifier.height(83.dp))
         Text(
             modifier = Modifier.padding(start = 20.dp),
@@ -75,13 +75,13 @@ fun SmsScreen(
 }
 
 @Composable
-private fun TopBar() {
+private fun TopBar(backNavigation: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(Modifier.width(6.dp))
         IconButton(
-            onClick = {}
+            onClick = backNavigation
         ) {
             Icon(
                 painter = painterResource(R.drawable.arrow_left),
