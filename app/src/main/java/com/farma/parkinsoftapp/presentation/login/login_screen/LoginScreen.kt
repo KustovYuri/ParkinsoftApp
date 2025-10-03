@@ -1,17 +1,18 @@
-package com.farma.parkinsoftapp.presentation.login
+package com.farma.parkinsoftapp.presentation.login.login_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
@@ -32,16 +33,17 @@ import com.farma.parkinsoftapp.R
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.height(44.dp))
+        Spacer(Modifier.height(64.dp))
         Image(
             modifier = Modifier.size(140.dp, 100.dp),
             painter = painterResource(R.drawable.logo),
@@ -57,6 +59,7 @@ fun LoginScreen(
         PhoneNumberTextField()
         Spacer(Modifier.height(50.dp))
         NextButton()
+        Spacer(Modifier.height(50.dp))
     }
 }
 
