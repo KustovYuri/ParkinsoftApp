@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.login.login_screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,12 +30,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.presentation.login.login_screen.models.PhoneNumberState
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: LoginScreenViewModel = hiltViewModel<LoginScreenViewModel>()
 ) {
+    val phoneNumberFieldState = remember { viewModel.numberFieldState }
+    val validationIsSuccess = viewModel.validationIsSuccess.collectAsStateWithLifecycle()
+
+    LaunchedEffect(validationIsSuccess.value) {
+        if (validationIsSuccess.value) {
+            Log.d("LoginScreen", "NextScreen")
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -56,20 +70,30 @@ fun LoginScreen(
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(50.dp))
-        PhoneNumberTextField()
+        PhoneNumberTextField(
+            phoneNumberState = phoneNumberFieldState.value,
+            setPhoneNumber = { newText: String -> viewModel.setPhoneNumber(newText) }
+        )
         Spacer(Modifier.height(50.dp))
-        NextButton()
+        NextButton(
+            isActive = phoneNumberFieldState.value.number != "",
+            click = { viewModel.login() }
+        )
         Spacer(Modifier.height(50.dp))
     }
 }
 
 @Composable
-private fun NextButton() {
+private fun NextButton(
+    isActive: Boolean,
+    click: () -> Unit,
+) {
     TextButton(
+        enabled = isActive,
         modifier = Modifier
             .fillMaxWidth()
-            .height(52.dp),
-        onClick = {},
+            .height(56.dp),
+        onClick = click,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF178399),
@@ -87,9 +111,10 @@ private fun NextButton() {
 }
 
 @Composable
-private fun PhoneNumberTextField() {
-    val textValue = remember { mutableStateOf("") }
-
+private fun PhoneNumberTextField(
+    phoneNumberState: PhoneNumberState,
+    setPhoneNumber: (String) -> Unit
+) {
     Column {
         Text(
             text = "Номер телефона",
@@ -100,7 +125,7 @@ private fun PhoneNumberTextField() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = textValue.value,
+            value = phoneNumberState.number,
             placeholder = {
                 Text(
                     text = "+7",
@@ -109,8 +134,9 @@ private fun PhoneNumberTextField() {
                     color = Color(0xFF62767A)
                 )
             },
+            isError = phoneNumberState.error != null,
             onValueChange = {
-                textValue.value = it
+                setPhoneNumber(it)
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone
@@ -124,5 +150,14 @@ private fun PhoneNumberTextField() {
                 focusedTextColor = Color(0xFF002A33)
             ),
         )
+        if (phoneNumberState.error != null) {
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = phoneNumberState.error,
+                fontSize = 12.sp,
+                fontWeight = FontWeight(400),
+                color = Color.Red
+            )
+        }
     }
 }

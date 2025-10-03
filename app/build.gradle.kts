@@ -60,6 +60,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.android.hilt)
+    implementation(libs.androidx.hilt.navigation)
     ksp(libs.android.hilt.compiler)
 
     implementation(libs.android.retrofit)
