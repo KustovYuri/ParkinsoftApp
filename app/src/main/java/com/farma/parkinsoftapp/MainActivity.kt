@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ParkinsoftAppTheme {
-                LoginScreen()
+                SmsScreen()
             }
         }
     }
