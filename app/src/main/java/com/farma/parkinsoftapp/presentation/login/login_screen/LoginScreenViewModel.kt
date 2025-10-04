@@ -44,4 +44,8 @@ class LoginScreenViewModel @Inject constructor(
     fun setPhoneNumber(newPhoneNumber: String) {
         _numberFieldState.value = _numberFieldState.value.copy(newPhoneNumber)
     }
+
+    fun cleanValidationIsSuccessState() {
+        _validationIsSuccess.value = false
+    }
 }

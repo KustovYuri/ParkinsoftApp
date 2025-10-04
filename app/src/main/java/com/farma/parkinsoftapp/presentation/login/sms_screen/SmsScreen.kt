@@ -25,9 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,13 +35,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun SmsScreen(
     modifier: Modifier = Modifier,
     phoneNumber: String,
-    backNavigation: () -> Unit
+    backNavigation: () -> Unit,
+    forwardNavigation: () -> Unit,
+    viewModel: SmsScreenViewModel = hiltViewModel<SmsScreenViewModel>()
 ) {
+    val smsScreenState by remember { viewModel.smsScreenState }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,8 +72,11 @@ fun SmsScreen(
         )
         Spacer(Modifier.height(8.dp))
         SmsCodeInput(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
-        ){}
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+            code = smsScreenState.smsCode,
+            updateCode = { viewModel.updateCodeState(it) },
+            onCodeEntered = forwardNavigation
+        )
     }
 }
 
@@ -102,18 +108,18 @@ private fun SmsCodeInput(
     modifier: Modifier = Modifier,
     codeLength: Int = 6,
     dividerPosition: Int = 3,
-    onCodeEntered: (String) -> Unit
+    code: String,
+    updateCode: (String) -> Unit,
+    onCodeEntered: () -> Unit
 ) {
-    var code by remember { mutableStateOf("") }
-
     BasicTextField(
         modifier = modifier,
         value = code,
         onValueChange = {
             if (it.length <= codeLength && it.all { ch -> ch.isDigit() }) {
-                code = it
+                updateCode(it)
                 if (it.length == codeLength) {
-                    onCodeEntered(it)
+                    onCodeEntered()
                 }
             }
         },

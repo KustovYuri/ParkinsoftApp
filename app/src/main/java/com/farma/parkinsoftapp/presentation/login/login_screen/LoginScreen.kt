@@ -46,6 +46,7 @@ fun LoginScreen(
 
     LaunchedEffect(validationIsSuccess.value) {
         if (validationIsSuccess.value) {
+            viewModel.cleanValidationIsSuccessState()
             onNavigateToSms(phoneNumberFieldState.value.number)
         }
     }

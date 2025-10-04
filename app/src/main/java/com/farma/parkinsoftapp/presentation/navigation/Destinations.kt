@@ -7,3 +7,6 @@ object LoginRoute
 
 @Serializable
 data class SmsRoute(val phoneNumber: String)
+
+@Serializable
+object PatientAllTestsRoute

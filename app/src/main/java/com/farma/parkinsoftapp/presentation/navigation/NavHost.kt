@@ -8,11 +8,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.presentation.login.login_screen.LoginScreen
 import com.farma.parkinsoftapp.presentation.login.sms_screen.SmsScreen
+import com.farma.parkinsoftapp.presentation.patient.all_tests.PatientAllTestsScreen
 
 
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = LoginRoute) {
+    NavHost(navController = navController, startDestination = PatientAllTestsRoute) {
         composable<LoginRoute> {
             LoginScreen(
                 onNavigateToSms = { phoneNumber: String ->
@@ -25,9 +26,15 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             SmsScreen(
                 phoneNumber = args.phoneNumber,
                 backNavigation = {
-                    navController.navigate(LoginRoute)
+                    navController.popBackStack()
+                },
+                forwardNavigation = {
+                    navController.navigate(PatientAllTestsRoute)
                 }
             )
+        }
+        composable<PatientAllTestsRoute> {
+            PatientAllTestsScreen()
         }
     }
 }
