@@ -1,5 +1,7 @@
 package com.farma.parkinsoftapp.presentation.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -9,11 +11,13 @@ import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.presentation.login.login_screen.LoginScreen
 import com.farma.parkinsoftapp.presentation.login.sms_screen.SmsScreen
 import com.farma.parkinsoftapp.presentation.patient.all_tests.PatientAllTestsScreen
+import com.farma.parkinsoftapp.presentation.patient.test.PatientTestScreen
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = PatientAllTestsRoute) {
+    NavHost(navController = navController, startDestination = LoginRoute) {
         composable<LoginRoute> {
             LoginScreen(
                 onNavigateToSms = { phoneNumber: String ->
@@ -34,7 +38,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             )
         }
         composable<PatientAllTestsRoute> {
-            PatientAllTestsScreen()
+            PatientAllTestsScreen(
+                navigateToTest = {
+                    navController.navigate(PatientTestRoute)
+                }
+            )
+        }
+        composable<PatientTestRoute> {
+            PatientTestScreen()
         }
     }
 }

@@ -51,10 +51,10 @@ import java.time.LocalDate
 @Composable
 fun PatientAllTestsScreen(
     viewModel: PatientAllTestsScreenViewModel = hiltViewModel<PatientAllTestsScreenViewModel>(),
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    navigateToTest: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     var previousDaysIsOver by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -75,7 +75,7 @@ fun PatientAllTestsScreen(
                     }
                     items(listTestsPreview) { test ->
                         TestItem(test) {
-                            Toast.makeText(context, test.title, Toast.LENGTH_SHORT).show()
+                            navigateToTest()
                         }
                         Spacer(modifier = Modifier.height(24.dp))
                     }
@@ -95,7 +95,7 @@ fun PatientAllTestsScreen(
                     }
                     items(listTestsPreview) { test ->
                         TestItem(test) {
-                            Toast.makeText(context, test.title, Toast.LENGTH_SHORT).show()
+                            navigateToTest()
                         }
                         Spacer(modifier = Modifier.height(24.dp))
                     }
