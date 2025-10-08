@@ -64,6 +64,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation)
     ksp(libs.android.hilt.compiler)
 
+    implementation(libs.android.datapicker.core)
+    implementation(libs.android.datapicker.calendar)
+
     implementation(libs.android.retrofit)
     implementation(libs.android.retrofit.gson)
 }
