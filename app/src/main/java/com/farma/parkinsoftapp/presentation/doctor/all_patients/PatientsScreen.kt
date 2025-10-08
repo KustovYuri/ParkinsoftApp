@@ -12,11 +12,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
@@ -27,35 +30,53 @@ fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewMode
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+
     Scaffold(
+        containerColor = Color(0xFFFFFFFF),
         topBar = {
             TopAppBar(
-                title = { Text("Мои пациенты") },
+                title = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Мои пациенты",
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        Toast.makeText(context, "Переход в профиль", Toast.LENGTH_SHORT).show()
-                    }) {
+                    IconButton(onClick = {}) {
                         Icon(
                             painterResource(R.drawable.user),
-                            contentDescription = "Профиль"
+                            contentDescription = "Профиль",
+                            tint = Color(0xFF002A33)
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* TODO сортировка */ }) {
-                        Icon(painter = painterResource(R.drawable.user), contentDescription = "Сортировка")
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_down_up),
+                            contentDescription = "Сортировка",
+                            tint = Color(0xFF002A33)
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFFFFFFFF)
+                )
             )
         },
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.size(64.dp),
+                shape = CircleShape,
                 onClick = {
                     Toast.makeText(context, "Добавить пациента", Toast.LENGTH_SHORT).show()
                 },
                 containerColor = Color(0xFF00838F)
             ) {
-                Icon(painter = painterResource(R.drawable.x), contentDescription = "Добавить пациента", tint = Color.White)
+                Icon(painter = painterResource(R.drawable.icon__2_), contentDescription = "Добавить пациента", tint = Color.White)
             }
         }
     ) { padding ->
@@ -68,19 +89,41 @@ fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewMode
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = viewModel::onSearchQueryChange,
-                placeholder = { Text("Искать пациента") },
+                placeholder = {
+                    Text(
+                        "Искать пациента",
+                        color = Color(0xFF62767A)
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.search),
+                        contentDescription = "Поиск пациента",
+                        tint = Color(0xFF62767A)
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFFEDF1F2),
+                    unfocusedContainerColor = Color(0xFFEDF1F2),
+                    unfocusedIndicatorColor = Color(0xFFEDF1F2),
+                    focusedIndicatorColor = Color(0xFF62767A),
+                    focusedTextColor = Color(0xFF002A33)
+                )
             )
 
             // Переключатель вкладок
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(8.dp))
+                    .background(
+                        color = Color(0xFFEDF1F2),
+                        shape = RoundedCornerShape(8.dp)
+                    )
                     .padding(4.dp)
             ) {
                 TabButton(
@@ -114,8 +157,8 @@ fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewMode
 
 @Composable
 private fun TabButton(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier) {
-    val background = if (selected) Color(0xFF00838F) else Color.White
-    val contentColor = if (selected) Color.White else Color.Black
+    val background = if (selected) Color(0xFF178399) else Color(0xFFEDF1F2)
+    val contentColor = if (selected) Color(0xFFFFFFFF) else Color(0xFF002A33)
 
     Box(
         modifier = modifier
@@ -124,7 +167,12 @@ private fun TabButton(text: String, selected: Boolean, onClick: () -> Unit, modi
             .padding(vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = text, color = contentColor, fontWeight = FontWeight.Medium)
+        Text(
+            text = text,
+            color = contentColor,
+            fontWeight = FontWeight.Medium,
+            fontSize = 17.sp
+        )
     }
 }
 
@@ -146,7 +194,7 @@ private fun PatientItem(patient: Patient) {
             modifier = Modifier
                 .size(48.dp)
                 .background(
-                    color = if (patient.lastName.first().isUpperCase()) Color(0xFFFFCDD2) else Color(0xFFBBDEFB),
+                    color = if (patient.sex) Color(0xFFE1E7FA) else Color(0xFFFAE1E9),
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -155,28 +203,50 @@ private fun PatientItem(patient: Patient) {
                 text = patient.initials,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = Color.Black
+                color = Color(0xFF002A33)
             )
         }
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text("${patient.age} года · ${patient.disease}", fontSize = 14.sp, color = Color.Gray)
-            Text(patient.fullName, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Row {
+                Text(
+                    "${patient.age} года",
+                    fontSize = 15.sp,
+                    color = Color(0xFF002A33)
+                )
+                Text(
+                    " · ",
+                    fontSize = 15.sp,
+                    color = Color(0xFF62767A)
+                )
+                Text(
+                    patient.disease,
+                    fontSize = 13.sp,
+                    color = Color(0xFF62767A)
+                )
+            }
+            Text(
+                patient.fullName,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF002A33)
+            )
         }
 
         if (patient.unreadTests > 0) {
             Box(
                 modifier = Modifier
-                    .background(Color(0xFF00838F), shape = CircleShape)
-                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF00838F)),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = patient.unreadTests.toString(),
                     color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    fontSize = 13.sp
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))

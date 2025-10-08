@@ -15,7 +15,8 @@ data class Patient(
     val age: Int,
     val disease: String,
     val onTreatment: Boolean,
-    val unreadTests: Int
+    val unreadTests: Int,
+    val sex: Boolean
 ) {
     val initials: String
         get() = "${lastName.first()}${firstName.first()}".uppercase()
@@ -36,13 +37,13 @@ enum class PatientsTab { OnTreatment, Discharged }
 class PatientsViewModel @Inject constructor() : ViewModel() {
 
     private val mockPatients = listOf(
-        Patient(1, "Мария", "Жукова", "Христина", 63, "Заболевание", true, 10),
-        Patient(2, "Михаил", "Миронов", "Андреевич", 63, "Заболевание", true, 10),
-        Patient(3, "Жанна", "Жукова", "Христина", 63, "Заболевание", true, 0),
-        Patient(4, "Михаил", "Миронов", "Андреевич", 63, "Заболевание", false, 0),
-        Patient(5, "Мария", "Миронова", "Александровна", 63, "Заболевание", false, 5),
-        Patient(6, "Максим", "Миронов", "Сергеевич", 63, "Заболевание", true, 0),
-        Patient(7, "Жанна", "Жукова", "Христина", 63, "Заболевание", false, 0),
+        Patient(1, "Мария", "Жукова", "Христина", 63, "Заболевание", true, 10, false),
+        Patient(2, "Михаил", "Миронов", "Андреевич", 63, "Заболевание", true, 10, true),
+        Patient(3, "Жанна", "Жукова", "Христина", 63, "Заболевание", true, 0, false),
+        Patient(4, "Михаил", "Миронов", "Андреевич", 63, "Заболевание", false, 0, true),
+        Patient(5, "Мария", "Миронова", "Александровна", 63, "Заболевание", false, 5, false),
+        Patient(6, "Максим", "Миронов", "Сергеевич", 63, "Заболевание", true, 0, true),
+        Patient(7, "Жанна", "Жукова", "Христина", 63, "Заболевание", false, 0, false),
     )
 
     private val _uiState = MutableStateFlow(
