@@ -13,16 +13,13 @@ data class Question(
     val answers: List<String>
 )
 
-sealed interface SurveyUiState {
-    data class Content(
-        val currentQuestionIndex: Int,
-        val totalQuestions: Int,
-        val question: Question,
-        val selectedAnswer: String?,
-        val isLastQuestion: Boolean
-    ) : SurveyUiState
-}
-
+data class Content(
+    val currentQuestionIndex: Int,
+    val totalQuestions: Int,
+    val question: Question,
+    val selectedAnswer: String?,
+    val isLastQuestion: Boolean
+)
 @HiltViewModel
 class PatientTestViewModel @Inject constructor() : ViewModel() {
 
@@ -58,7 +55,7 @@ class PatientTestViewModel @Inject constructor() : ViewModel() {
     private val selectedAnswers = mutableMapOf<Int, String?>()
 
     private val _uiState = MutableStateFlow(
-        SurveyUiState.Content(
+        Content(
             currentQuestionIndex = 0,
             totalQuestions = questions.size,
             question = questions[0],
@@ -66,7 +63,7 @@ class PatientTestViewModel @Inject constructor() : ViewModel() {
             isLastQuestion = false
         )
     )
-    val uiState: StateFlow<SurveyUiState> = _uiState
+    val uiState: StateFlow<Content> = _uiState
 
     fun selectAnswer(answer: String) {
         val state = _uiState.value

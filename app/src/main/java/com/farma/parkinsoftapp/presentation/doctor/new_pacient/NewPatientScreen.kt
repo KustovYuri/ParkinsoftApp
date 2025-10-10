@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,19 +50,7 @@ fun NewPatientScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Новый пациент") },
-                navigationIcon = {
-                    IconButton(onClick = onClose) {
-                        Icon(painterResource(R.drawable.x), contentDescription = "Закрыть")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFFFFFFF)
-                )
-            )
-        },
+        topBar = { TopScreenBar(onClose) },
         containerColor = Color(0xFFFFFFFF)
     ) { padding ->
         Column(
@@ -133,6 +122,29 @@ fun NewPatientScreen(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopScreenBar(onClose: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Новый пациент",
+                fontSize = 17.sp,
+                color = Color(0xFF002A33),
+                fontWeight = FontWeight.Medium
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onClose) {
+                Icon(painterResource(R.drawable.x), contentDescription = "Закрыть")
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFFFFFFFF)
+        )
+    )
 }
 
 @Composable

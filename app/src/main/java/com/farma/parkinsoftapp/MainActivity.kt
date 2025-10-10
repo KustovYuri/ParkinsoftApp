@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
 import com.farma.parkinsoftapp.presentation.doctor.all_patients.PatientsScreen
 import com.farma.parkinsoftapp.presentation.doctor.new_pacient.NewPatientScreen
+import com.farma.parkinsoftapp.presentation.doctor.new_patient_tests.NewPatientsTestScreen
 import com.farma.parkinsoftapp.presentation.navigation.AppNavHost
 import com.farma.parkinsoftapp.presentation.patient.test.PatientTestScreen
 import com.farma.parkinsoftapp.ui.theme.ParkinsoftAppTheme
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ParkinsoftAppTheme {
-                NewPatientScreen()
+                NewPatientsTestScreen()
             }
         }
     }

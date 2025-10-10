@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.patient.test
 
+import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,8 +26,7 @@ import com.farma.parkinsoftapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PatientTestScreen(viewModel: PatientTestViewModel = hiltViewModel<PatientTestViewModel>()) {
-    val uiState by viewModel.uiState.collectAsState()
-    val state = uiState as SurveyUiState.Content
+    val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     val progress by animateFloatAsState(
@@ -35,78 +35,8 @@ fun PatientTestScreen(viewModel: PatientTestViewModel = hiltViewModel<PatientTes
     )
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Дневник тестовой стимуляции",
-                        fontSize = 17.sp,
-                        color = Color(0xFF002A33)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        Toast.makeText(context, "Выход из теста", Toast.LENGTH_SHORT).show()
-                    }) {
-                        Icon(painterResource(R.drawable.x), contentDescription = "Закрыть")
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 35.dp),
-            ) {
-                if (state.currentQuestionIndex > 0) {
-                    OutlinedButton(
-                        modifier = Modifier
-                            .width(90.dp)
-                            .height(50.dp),
-                        onClick = { viewModel.previousQuestion() },
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(width = 1.dp, color = Color(0xFF178399)),
-                    ) {
-                        Text(
-                            text = "Назад",
-                            color = Color(0xFF178399)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                }
-
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    onClick = {
-                        if (state.isLastQuestion) {
-                            val answers = viewModel.getAllAnswers()
-                            Toast.makeText(
-                                context,
-                                "Тест завершён: ${answers.values.filterNotNull().size} ответов",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            viewModel.nextQuestion()
-                        }
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                    enabled = state.selectedAnswer != null,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF178399),
-                        contentColor = Color(0xFFFFFFFF),
-                        disabledContainerColor = Color(0xFFE1F2F5),
-                        disabledContentColor = Color(0xFFB2BFC2)
-                    )
-                ) {
-                    Text(
-                        if (state.isLastQuestion) "Завершить" else "Далее",
-                    )
-                }
-            }
-        }
+        topBar = { TopScreenBar(context) },
+        bottomBar = { BottomBar(state, viewModel, context) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -162,4 +92,85 @@ fun PatientTestScreen(viewModel: PatientTestViewModel = hiltViewModel<PatientTes
             }
         }
     }
+}
+
+@Composable
+private fun BottomBar(
+    state: Content,
+    viewModel: PatientTestViewModel,
+    context: Context
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 35.dp),
+    ) {
+        if (state.currentQuestionIndex > 0) {
+            OutlinedButton(
+                modifier = Modifier
+                    .width(90.dp)
+                    .height(50.dp),
+                onClick = { viewModel.previousQuestion() },
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(width = 1.dp, color = Color(0xFF178399)),
+            ) {
+                Text(
+                    text = "Назад",
+                    color = Color(0xFF178399)
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            onClick = {
+                if (state.isLastQuestion) {
+                    val answers = viewModel.getAllAnswers()
+                    Toast.makeText(
+                        context,
+                        "Тест завершён: ${answers.values.filterNotNull().size} ответов",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    viewModel.nextQuestion()
+                }
+            },
+            shape = RoundedCornerShape(12.dp),
+            enabled = state.selectedAnswer != null,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF178399),
+                contentColor = Color(0xFFFFFFFF),
+                disabledContainerColor = Color(0xFFE1F2F5),
+                disabledContentColor = Color(0xFFB2BFC2)
+            )
+        ) {
+            Text(
+                if (state.isLastQuestion) "Завершить" else "Далее",
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopScreenBar(context: Context) {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Дневник тестовой стимуляции",
+                fontSize = 17.sp,
+                color = Color(0xFF002A33)
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                Toast.makeText(context, "Выход из теста", Toast.LENGTH_SHORT).show()
+            }) {
+                Icon(painterResource(R.drawable.x), contentDescription = "Закрыть")
+            }
+        }
+    )
 }
