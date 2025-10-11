@@ -25,8 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,18 +35,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
-import kotlin.collections.plus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPatientsTestScreen(
+    viewModel: NewPatientsTestViewModel = hiltViewModel<NewPatientsTestViewModel>(),
     onClose: () -> Unit = {}
 ) {
-    val controlTest = listOf("HADS", "DN4", "Освестри", "SF-36", "LANSS", "PainDetect")
-    val dailyTest = listOf("Дневник тестовой стимуляции", "Дневник общего самочуствия")
-    val selectedControlItems = remember { mutableStateOf(setOf<String>()) }
-    val selectedDailyItems = remember { mutableStateOf(setOf<String>()) }
+    val controlTests = viewModel.controlTests
+    val dailyTests = viewModel.dailyTests
+    val selectedControlItems by remember { viewModel.selectedControlItems }
+    val selectedDailyItems by remember { viewModel.selectedDailyItems }
 
     Scaffold(
         topBar = { TopScreenBar(onClose) },
@@ -72,7 +72,9 @@ fun NewPatientsTestScreen(
                 fontSize = 17.sp,
             )
             Spacer(Modifier.height(24.dp))
-            ControlTestsChips(controlTest, selectedControlItems)
+            ControlTestsChips(controlTests, selectedControlItems) {item: String, isSelected: Boolean ->
+                viewModel.setSelectedControlItem(item, isSelected)
+            }
             Spacer(Modifier.height(32.dp))
             Text(
                 text = "Ежедневные опросники",
@@ -85,7 +87,9 @@ fun NewPatientsTestScreen(
                 fontSize = 17.sp,
             )
             Spacer(Modifier.height(24.dp))
-            DailyTestsChips(dailyTest, selectedDailyItems)
+            DailyTestsChips(dailyTests, selectedDailyItems) {item: String, isSelected: Boolean ->
+                viewModel.setSelectedDailyItem(item, isSelected)
+            }
             Spacer(Modifier.weight(1f))
             NextButton(
                 isActive = true,
@@ -100,10 +104,11 @@ fun NewPatientsTestScreen(
 @Composable
 private fun DailyTestsChips(
     dailyTest: List<String>,
-    selectedDailyItems: MutableState<Set<String>>
+    selectedDailyItems: Set<String>,
+    itemClick: (String, Boolean)-> Unit
 ) {
     dailyTest.forEach { dailyTest ->
-        val isSelected = selectedDailyItems.value.contains(dailyTest)
+        val isSelected = selectedDailyItems.contains(dailyTest)
 
         Box(
             modifier = Modifier
@@ -112,12 +117,7 @@ private fun DailyTestsChips(
                 .background(
                     color = if (isSelected) Color(0xFFA9E0EB) else Color(0xFFEDF1F2),
                 )
-                .clickable {
-                    selectedDailyItems.value = if (isSelected)
-                        selectedDailyItems.value - dailyTest
-                    else
-                        selectedDailyItems.value + dailyTest
-                }
+                .clickable { itemClick(dailyTest, isSelected) }
                 .padding(vertical = 12.dp, horizontal = 16.dp)
         ) {
             Text(text = dailyTest, fontSize = 16.sp)
@@ -127,15 +127,16 @@ private fun DailyTestsChips(
 
 @Composable
 private fun ControlTestsChips(
-    options: List<String>,
-    selectedControlTests: MutableState<Set<String>>
+    controlItems: List<String>,
+    selectedControlItems: Set<String>,
+    itemClick: (String, Boolean)-> Unit
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        options.forEach { controlTest ->
-            val isSelected = selectedControlTests.value.contains(controlTest)
+        controlItems.forEach { controlTest ->
+            val isSelected = selectedControlItems.contains(controlTest)
 
             Text(
                 text = controlTest,
@@ -147,12 +148,7 @@ private fun ControlTestsChips(
                     .background(
                         if (isSelected) Color(0xFFA9E0EB) else Color(0xFFEDF1F2),
                     )
-                    .clickable {
-                        selectedControlTests.value = if (isSelected)
-                            selectedControlTests.value - controlTest
-                        else
-                            selectedControlTests.value + controlTest
-                    }
+                    .clickable { itemClick(controlTest, isSelected) }
                     .padding(horizontal = 20.dp, vertical = 10.dp)
             )
         }
