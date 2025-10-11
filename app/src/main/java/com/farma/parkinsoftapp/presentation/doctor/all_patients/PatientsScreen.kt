@@ -19,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
@@ -222,7 +221,7 @@ private fun PatientItem(patient: Patient) {
                     color = Color(0xFF62767A)
                 )
                 Text(
-                    patient.disease,
+                    patient.diagnosis,
                     fontSize = 13.sp,
                     color = Color(0xFF62767A)
                 )

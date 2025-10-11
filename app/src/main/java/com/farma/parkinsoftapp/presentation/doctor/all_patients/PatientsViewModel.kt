@@ -11,9 +11,9 @@ data class Patient(
     val id: Int,
     val firstName: String,
     val lastName: String,
-    val patronymic: String,
+    val middleName: String,
     val age: Int,
-    val disease: String,
+    val diagnosis: String,
     val onTreatment: Boolean,
     val unreadTests: Int,
     val sex: Boolean
@@ -21,7 +21,7 @@ data class Patient(
     val initials: String
         get() = "${lastName.first()}${firstName.first()}".uppercase()
     val fullName: String
-        get() = "$lastName ${firstName.first()}. ${patronymic.first()}."
+        get() = "$lastName ${firstName.first()}. ${middleName.first()}."
 }
 
 data class PatientsUiState(
