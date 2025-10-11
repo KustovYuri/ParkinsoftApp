@@ -33,38 +33,7 @@ fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewMode
     Scaffold(
         containerColor = Color(0xFFFFFFFF),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "Мои пациенты",
-                        textAlign = TextAlign.Center,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            painterResource(R.drawable.user),
-                            contentDescription = "Профиль",
-                            tint = Color(0xFF002A33)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO сортировка */ }) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_down_up),
-                            contentDescription = "Сортировка",
-                            tint = Color(0xFF002A33)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFFFFFFF)
-                )
-            )
+            TopScreenBar()
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -152,6 +121,43 @@ fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewMode
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopScreenBar() {
+    TopAppBar(
+        title = {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Мои пациенты",
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = {}) {
+                Icon(
+                    painterResource(R.drawable.user),
+                    contentDescription = "Профиль",
+                    tint = Color(0xFF002A33)
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* TODO сортировка */ }) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_down_up),
+                    contentDescription = "Сортировка",
+                    tint = Color(0xFF002A33)
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFFFFFFFF)
+        )
+    )
 }
 
 @Composable
