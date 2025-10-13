@@ -69,4 +69,6 @@ dependencies {
 
     implementation(libs.android.retrofit)
     implementation(libs.android.retrofit.gson)
+    implementation(libs.android.retrofit.code.gson)
+    implementation(libs.android.retrofit.logging.interceptor)
 }
