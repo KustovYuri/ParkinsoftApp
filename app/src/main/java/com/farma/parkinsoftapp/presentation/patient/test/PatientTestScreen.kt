@@ -1,6 +1,5 @@
 package com.farma.parkinsoftapp.presentation.patient.test
 
-import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.widget.Toast
@@ -25,9 +23,12 @@ import com.farma.parkinsoftapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PatientTestScreen(viewModel: PatientTestViewModel = hiltViewModel<PatientTestViewModel>()) {
+fun PatientTestScreen(
+    viewModel: PatientTestViewModel = hiltViewModel<PatientTestViewModel>(),
+    closeTest: () -> Boolean,
+    finishTest: () -> Unit
+) {
     val state by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     val progress by animateFloatAsState(
         targetValue = (state.currentQuestionIndex + 1).toFloat() / state.totalQuestions,
@@ -35,8 +36,8 @@ fun PatientTestScreen(viewModel: PatientTestViewModel = hiltViewModel<PatientTes
     )
 
     Scaffold(
-        topBar = { TopScreenBar(context) },
-        bottomBar = { BottomBar(state, viewModel, context) }
+        topBar = { TopScreenBar(closeTest) },
+        bottomBar = { BottomBar(state, viewModel, finishTest) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -98,7 +99,7 @@ fun PatientTestScreen(viewModel: PatientTestViewModel = hiltViewModel<PatientTes
 private fun BottomBar(
     state: Content,
     viewModel: PatientTestViewModel,
-    context: Context
+    finishTest: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -128,12 +129,7 @@ private fun BottomBar(
                 .height(50.dp),
             onClick = {
                 if (state.isLastQuestion) {
-                    val answers = viewModel.getAllAnswers()
-                    Toast.makeText(
-                        context,
-                        "Тест завершён: ${answers.values.filterNotNull().size} ответов",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    finishTest()
                 } else {
                     viewModel.nextQuestion()
                 }
@@ -156,7 +152,7 @@ private fun BottomBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopScreenBar(context: Context) {
+private fun TopScreenBar(closeTest: () -> Boolean) {
     TopAppBar(
         title = {
             Text(
@@ -167,7 +163,7 @@ private fun TopScreenBar(context: Context) {
         },
         navigationIcon = {
             IconButton(onClick = {
-                Toast.makeText(context, "Выход из теста", Toast.LENGTH_SHORT).show()
+                closeTest()
             }) {
                 Icon(painterResource(R.drawable.x), contentDescription = "Закрыть")
             }

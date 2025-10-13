@@ -25,10 +25,12 @@ import com.farma.parkinsoftapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewModel>()) {
+fun AllPatientsScreen(
+    viewModel: AllPatientsViewModel = hiltViewModel<AllPatientsViewModel>(),
+    navigateToAddNewPatientScreen: () -> Unit,
+    navigateToPatient: () -> Unit,
+) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
 
     Scaffold(
         containerColor = Color(0xFFFFFFFF),
@@ -36,16 +38,7 @@ fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewMode
             TopScreenBar()
         },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.size(64.dp),
-                shape = CircleShape,
-                onClick = {
-                    Toast.makeText(context, "Добавить пациента", Toast.LENGTH_SHORT).show()
-                },
-                containerColor = Color(0xFF00838F)
-            ) {
-                Icon(painter = painterResource(R.drawable.icon__2_), contentDescription = "Добавить пациента", tint = Color.White)
-            }
+            AddNewPatientFloatingButton(navigateToAddNewPatientScreen)
         }
     ) { padding ->
         Column(
@@ -116,10 +109,31 @@ fun PatientsScreen(viewModel: PatientsViewModel = hiltViewModel<PatientsViewMode
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(uiState.filteredPatients) { patient ->
-                    PatientItem(patient = patient)
+                    PatientItem(
+                        patient = patient,
+                        click = navigateToPatient
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun AddNewPatientFloatingButton(navigateToAddNewPatientScreen: () -> Unit) {
+    FloatingActionButton(
+        modifier = Modifier.size(64.dp),
+        shape = CircleShape,
+        onClick = {
+            navigateToAddNewPatientScreen()
+        },
+        containerColor = Color(0xFF00838F)
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.icon__2_),
+            contentDescription = "Добавить пациента",
+            tint = Color.White
+        )
     }
 }
 
@@ -182,14 +196,13 @@ private fun TabButton(text: String, selected: Boolean, onClick: () -> Unit, modi
 }
 
 @Composable
-private fun PatientItem(patient: Patient) {
-    val context = LocalContext.current
+private fun PatientItem(patient: Patient, click: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White, shape = RoundedCornerShape(12.dp))
             .clickable {
-                Toast.makeText(context, "Открыт пациент: ${patient.fullName}", Toast.LENGTH_SHORT).show()
+                click()
             }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically

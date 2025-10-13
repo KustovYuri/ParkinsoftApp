@@ -45,12 +45,15 @@ private enum class TestsTabs{
 }
 
 @Composable
-fun PatientInfoScreen() {
+fun PatientInfoScreen(
+    backNavigation: () -> Unit,
+    navigateToTestInfo: () -> Unit
+) {
     var selectedTab by remember { mutableStateOf(TestsTabs.DAILY) }
     var selectedTestChip by remember { mutableStateOf("Дневник тестовой стимуляции") }
 
     Scaffold(
-        topBar = { TopScreenBar { } }
+        topBar = { TopScreenBar { backNavigation() } }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -95,7 +98,9 @@ fun PatientInfoScreen() {
                     )
                     Spacer(Modifier.height(28.dp))
                     (1..15).forEach { _ ->
-                        TestItem()
+                        TestItem(
+                            click = navigateToTestInfo
+                        )
                     }
                 }
                 TestsTabs.CONTROL -> {
@@ -108,7 +113,9 @@ fun PatientInfoScreen() {
                     )
                     Spacer(Modifier.height(28.dp))
                     (1..15).forEach { _ ->
-                        TestItem()
+                        TestItem(
+                            click = navigateToTestInfo
+                        )
                     }
                 }
             }
@@ -118,11 +125,14 @@ fun PatientInfoScreen() {
 }
 
 @Composable
-private fun TestItem() {
+private fun TestItem(click: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .clickable {
+                click()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(

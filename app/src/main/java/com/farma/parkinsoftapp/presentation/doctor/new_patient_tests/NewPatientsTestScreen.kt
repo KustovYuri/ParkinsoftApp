@@ -42,7 +42,8 @@ import com.farma.parkinsoftapp.R
 @Composable
 fun NewPatientsTestScreen(
     viewModel: NewPatientsTestViewModel = hiltViewModel<NewPatientsTestViewModel>(),
-    onClose: () -> Unit = {}
+    backNavigation: () -> Unit,
+    nextScreenNavigation: () -> Unit
 ) {
     val controlTests = viewModel.controlTests
     val dailyTests = viewModel.dailyTests
@@ -50,7 +51,7 @@ fun NewPatientsTestScreen(
     val selectedDailyItems by remember { viewModel.selectedDailyItems }
 
     Scaffold(
-        topBar = { TopScreenBar(onClose) },
+        topBar = { TopScreenBar(backNavigation) },
         containerColor = Color(0xFFFFFFFF)
     ) { padding ->
         Column(
@@ -93,7 +94,9 @@ fun NewPatientsTestScreen(
             Spacer(Modifier.weight(1f))
             NextButton(
                 isActive = true,
-                click = {}
+                click = {
+                    nextScreenNavigation()
+                }
             )
             Spacer(Modifier.height(35.dp))
         }

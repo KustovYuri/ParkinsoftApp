@@ -3,7 +3,6 @@ package com.farma.parkinsoftapp.presentation.doctor.new_pacient
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -30,8 +29,9 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPatientScreen(
-    onClose: () -> Unit = {},
-    viewModel: NewPatientViewModel = hiltViewModel<NewPatientViewModel>()
+    viewModel: NewPatientViewModel = hiltViewModel<NewPatientViewModel>(),
+    closeScreen: () -> Unit,
+    nextScreenNavigation: () -> Unit
 ) {
     val context = LocalContext.current
     val spacerHeightModifier = Modifier.height(24.dp)
@@ -42,15 +42,12 @@ fun NewPatientScreen(
     LaunchedEffect(validationIsSuccess.value) {
         if (validationIsSuccess.value) {
             viewModel.cleanValidationIsSuccessState()
-            Toast.makeText(
-                context,
-                "Валидация прошла успешно",
-                Toast.LENGTH_SHORT).show()
+            nextScreenNavigation()
         }
     }
 
     Scaffold(
-        topBar = { TopScreenBar(onClose) },
+        topBar = { TopScreenBar(closeScreen) },
         containerColor = Color(0xFFFFFFFF)
     ) { padding ->
         Column(

@@ -34,7 +34,7 @@ data class PatientsUiState(
 enum class PatientsTab { OnTreatment, Discharged }
 
 @HiltViewModel
-class PatientsViewModel @Inject constructor() : ViewModel() {
+class AllPatientsViewModel @Inject constructor() : ViewModel() {
 
     private val mockPatients = listOf(
         Patient(1, "Мария", "Жукова", "Христина", 63, "Заболевание", true, 10, false),

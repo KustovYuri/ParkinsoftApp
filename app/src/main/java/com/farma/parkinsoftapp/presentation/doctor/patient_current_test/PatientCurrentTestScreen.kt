@@ -1,7 +1,6 @@
 package com.farma.parkinsoftapp.presentation.doctor.patient_current_test
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,7 +38,7 @@ data class TestAnswer(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PatientCurrentTestScreen() {
+fun PatientCurrentTestScreen(backNavigation: () -> Boolean) {
     val testAnswers = listOf(
         TestAnswer(
             testQuestion = "Самообслуживание\n(умывание, одевание и т.д.)",
@@ -91,7 +88,7 @@ fun PatientCurrentTestScreen() {
     )
 
     Scaffold(
-        topBar = { TopScreenBar() }
+        topBar = { TopScreenBar(backNavigation = backNavigation) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -177,7 +174,7 @@ private fun TestDate() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopScreenBar() {
+private fun TopScreenBar(backNavigation: () -> Boolean) {
     TopAppBar(
         title = {
             Text(
@@ -187,7 +184,7 @@ private fun TopScreenBar() {
             )
         },
         navigationIcon = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = { backNavigation() }) {
                 Icon(
                     painterResource(R.drawable.arrow_left),
                     contentDescription = "Назад",
