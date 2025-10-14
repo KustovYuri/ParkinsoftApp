@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.patient.PatientTest
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +38,7 @@ fun PatientTestScreen(
     )
 
     Scaffold(
-        topBar = { TopScreenBar(closeTest) },
+        topBar = { TopScreenBar(closeTest, viewModel.testType) },
         bottomBar = { BottomBar(state, viewModel, finishTest, testId) },
         containerColor = Color.White
     ) { padding ->
@@ -158,12 +159,15 @@ private fun BottomBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopScreenBar(closeTest: () -> Boolean) {
+private fun TopScreenBar(closeTest: () -> Boolean, testType: TestType) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
         title = {
             Text(
-                text = "Дневник тестовой стимуляции",
+                text = when(testType){
+                    TestType.TEST_SIMULATION -> "Дневник тестовой стимуляции"
+                    TestType.STATE_OF_HEALTH -> "Дневник общего самочувствия"
+                },
                 fontSize = 17.sp,
                 color = Color(0xFF002A33)
             )

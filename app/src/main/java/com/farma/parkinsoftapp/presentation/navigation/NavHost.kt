@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.presentation.doctor.all_patients.AllPatientsScreen
 import com.farma.parkinsoftapp.presentation.doctor.new_pacient.NewPatientScreen
@@ -50,8 +51,13 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         //Пациент
         composable<PatientAllTestsRoute> {
             PatientAllTestsScreen(
-                navigateToTest = { testId: Int ->
-                    navController.navigate(PatientTestRoute(testId = testId))
+                navigateToTest = { testId: Int, testType: TestType ->
+                    navController.navigate(
+                        PatientTestRoute(
+                            testId = testId,
+                            testType = testType
+                        )
+                    )
                 }
             )
         }

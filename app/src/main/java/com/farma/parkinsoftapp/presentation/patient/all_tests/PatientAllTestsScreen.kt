@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.presentation.patient.all_tests.models.QuestionnaireStatus
 import java.time.LocalDate
 
@@ -50,7 +51,7 @@ import java.time.LocalDate
 fun PatientAllTestsScreen(
     viewModel: PatientAllTestsScreenViewModel = hiltViewModel<PatientAllTestsScreenViewModel>(),
     onProfileClick: () -> Unit = {},
-    navigateToTest: (Int) -> Unit
+    navigateToTest: (Int, TestType) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
     var previousDaysIsOver by remember { mutableStateOf(false) }
@@ -73,7 +74,7 @@ fun PatientAllTestsScreen(
                     }
                     items(listTestsPreview) { test ->
                         TestItem(test) {
-                            navigateToTest(test.id)
+                            navigateToTest(test.id, test.testType)
                         }
                         Spacer(modifier = Modifier.height(24.dp))
                     }
@@ -93,7 +94,7 @@ fun PatientAllTestsScreen(
                     }
                     items(listTestsPreview) { test ->
                         TestItem(test) {
-                            navigateToTest(test.id)
+                            navigateToTest(test.id, test.testType)
                         }
                         Spacer(modifier = Modifier.height(24.dp))
                     }

@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.navigation
 
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.models.user.UserRole
 import kotlinx.serialization.Serializable
 
@@ -19,7 +20,8 @@ object PatientAllTestsRoute
 
 @Serializable
 data class PatientTestRoute(
-    val testId: Int
+    val testId: Int,
+    val testType: TestType
 )
 
 //Врач

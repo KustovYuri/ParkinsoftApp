@@ -1,10 +1,14 @@
 package com.farma.parkinsoftapp.presentation.patient.test
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 import com.farma.parkinsoftapp.domain.models.patient.Question
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,10 +17,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PatientTestViewModel @Inject constructor(
-    private val mainRepository: MainRepository
+    private val mainRepository: MainRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    private val route: PatientTestRoute = savedStateHandle.toRoute()
+    val testType = route.testType
 
-    // Храним ответы по индексу вопроса
     private val selectedAnswers = mutableMapOf<Int, String?>()
 
     private val _uiState: MutableStateFlow<PatientTest> = MutableStateFlow(
@@ -32,7 +38,7 @@ class PatientTestViewModel @Inject constructor(
     val uiState: StateFlow<PatientTest> = _uiState
 
     init {
-        _uiState.value = mainRepository.getPatientSelectedTest(TestType.TEST_SIMULATION)
+        _uiState.value = mainRepository.getPatientSelectedTest(testType)
     }
 
     fun finishTest(testId: Int) {
@@ -74,6 +80,4 @@ class PatientTestViewModel @Inject constructor(
             }
         }
     }
-
-    fun getAllAnswers(): Map<Int, String?> = selectedAnswers.toMap()
 }
