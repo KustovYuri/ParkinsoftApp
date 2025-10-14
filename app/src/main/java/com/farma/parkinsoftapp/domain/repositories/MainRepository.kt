@@ -9,4 +9,6 @@ interface MainRepository {
     fun getPatientTests(): Flow<List<PatientTestPreview>>
 
     fun getPatientSelectedTest(testType: TestType): PatientTest
+
+    fun finishTest(testId: Int)
 }

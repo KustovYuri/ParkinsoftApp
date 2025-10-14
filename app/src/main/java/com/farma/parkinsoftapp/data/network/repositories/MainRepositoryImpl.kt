@@ -39,6 +39,11 @@ class MainRepositoryImpl @Inject constructor(): MainRepository {
             )
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun finishTest(testId: Int) {
+        patientTestPreview.find { it.id == testId }?.isSuccessTest = true
+    }
 }
 
 private val patientStateOfHeathTests = listOf(
@@ -223,7 +228,7 @@ private val patientTestPreview = mutableListOf(
         testType = TestType.STATE_OF_HEALTH
     ),
     PatientTestPreview(
-        id = 1,
+        id = 3,
         testDate = LocalDate.now().minusDays(1),
         questionCount = 10,
         testTime = 15,
@@ -232,7 +237,7 @@ private val patientTestPreview = mutableListOf(
         testType = TestType.TEST_SIMULATION
     ),
     PatientTestPreview(
-        id = 2,
+        id = 4,
         testDate = LocalDate.now().minusDays(1),
         questionCount = 10,
         testTime = 15,
@@ -241,7 +246,7 @@ private val patientTestPreview = mutableListOf(
         testType = TestType.STATE_OF_HEALTH
     ),
     PatientTestPreview(
-        id = 1,
+        id = 5,
         testDate = LocalDate.now().minusDays(2),
         questionCount = 10,
         testTime = 15,
@@ -250,7 +255,7 @@ private val patientTestPreview = mutableListOf(
         testType = TestType.TEST_SIMULATION
     ),
     PatientTestPreview(
-        id = 2,
+        id = 6,
         testDate = LocalDate.now().minusDays(2),
         questionCount = 10,
         testTime = 15,
@@ -259,7 +264,7 @@ private val patientTestPreview = mutableListOf(
         testType = TestType.STATE_OF_HEALTH
     ),
     PatientTestPreview(
-        id = 2,
+        id = 7,
         testDate = LocalDate.now().minusDays(3),
         questionCount = 10,
         testTime = 15,
@@ -268,7 +273,7 @@ private val patientTestPreview = mutableListOf(
         testType = TestType.STATE_OF_HEALTH
     ),
     PatientTestPreview(
-        id = 1,
+        id = 8,
         testDate = LocalDate.now().minusDays(4),
         questionCount = 10,
         testTime = 15,

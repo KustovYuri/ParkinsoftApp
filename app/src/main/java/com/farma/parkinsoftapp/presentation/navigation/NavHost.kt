@@ -23,7 +23,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.PatientTestScreen
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = LoginRoute) {
+    NavHost(navController = navController, startDestination = PatientAllTestsRoute) {
         composable<LoginRoute> {
             LoginScreen(
                 onNavigateToSms = { phoneNumber: String, userRole: UserRole ->
@@ -50,19 +50,22 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         //Пациент
         composable<PatientAllTestsRoute> {
             PatientAllTestsScreen(
-                navigateToTest = {
-                    navController.navigate(PatientTestRoute)
+                navigateToTest = { testId: Int ->
+                    navController.navigate(PatientTestRoute(testId = testId))
                 }
             )
         }
-        composable<PatientTestRoute> {
+        composable<PatientTestRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<PatientTestRoute>()
+
             PatientTestScreen(
+                testId = args.testId,
                 closeTest = {
                     navController.popBackStack()
                 },
                 finishTest = {
                     navController.popBackStack()
-                }
+                },
             )
         }
 

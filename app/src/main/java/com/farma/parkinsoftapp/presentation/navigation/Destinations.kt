@@ -18,7 +18,9 @@ data class SmsRoute(
 object PatientAllTestsRoute
 
 @Serializable
-object PatientTestRoute
+data class PatientTestRoute(
+    val testId: Int
+)
 
 //Врач
 @Serializable

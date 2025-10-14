@@ -8,7 +8,7 @@ data class PatientTestPreview(
     val questionCount: Int,
     val testTime: Int,
     val testName: String,
-    val isSuccessTest: Boolean,
+    var isSuccessTest: Boolean,
     val testType: TestType
 )
 

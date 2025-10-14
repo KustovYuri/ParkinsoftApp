@@ -50,7 +50,7 @@ import java.time.LocalDate
 fun PatientAllTestsScreen(
     viewModel: PatientAllTestsScreenViewModel = hiltViewModel<PatientAllTestsScreenViewModel>(),
     onProfileClick: () -> Unit = {},
-    navigateToTest: () -> Unit
+    navigateToTest: (Int) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
     var previousDaysIsOver by remember { mutableStateOf(false) }
@@ -73,7 +73,7 @@ fun PatientAllTestsScreen(
                     }
                     items(listTestsPreview) { test ->
                         TestItem(test) {
-                            navigateToTest()
+                            navigateToTest(test.id)
                         }
                         Spacer(modifier = Modifier.height(24.dp))
                     }
@@ -93,7 +93,7 @@ fun PatientAllTestsScreen(
                     }
                     items(listTestsPreview) { test ->
                         TestItem(test) {
-                            navigateToTest()
+                            navigateToTest(test.id)
                         }
                         Spacer(modifier = Modifier.height(24.dp))
                     }

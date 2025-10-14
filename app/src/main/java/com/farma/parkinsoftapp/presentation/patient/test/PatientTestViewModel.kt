@@ -35,12 +35,14 @@ class PatientTestViewModel @Inject constructor(
         _uiState.value = mainRepository.getPatientSelectedTest(TestType.TEST_SIMULATION)
     }
 
+    fun finishTest(testId: Int) {
+        mainRepository.finishTest(testId)
+    }
+
     fun selectAnswer(answer: String) {
         val state = _uiState.value
-        if (state != null) {
-            selectedAnswers[state.currentQuestionIndex] = answer
-            _uiState.update { state.copy(selectedAnswer = answer) }
-        }
+        selectedAnswers[state.currentQuestionIndex] = answer
+        _uiState.update { state.copy(selectedAnswer = answer) }
     }
 
     fun nextQuestion() {

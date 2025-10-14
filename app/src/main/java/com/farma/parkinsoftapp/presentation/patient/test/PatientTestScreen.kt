@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.ui.draw.clip
@@ -27,7 +26,8 @@ import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 fun PatientTestScreen(
     viewModel: PatientTestViewModel = hiltViewModel<PatientTestViewModel>(),
     closeTest: () -> Boolean,
-    finishTest: () -> Unit
+    finishTest: () -> Unit,
+    testId: Int
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -38,10 +38,12 @@ fun PatientTestScreen(
 
     Scaffold(
         topBar = { TopScreenBar(closeTest) },
-        bottomBar = { BottomBar(state, viewModel, finishTest) }
+        bottomBar = { BottomBar(state, viewModel, finishTest, testId) },
+        containerColor = Color.White
     ) { padding ->
         Column(
             modifier = Modifier
+                .background(Color.White)
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
@@ -101,10 +103,12 @@ private fun BottomBar(
     state: PatientTest,
     viewModel: PatientTestViewModel,
     finishTest: () -> Unit,
+    testId: Int
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(horizontal = 20.dp, vertical = 35.dp),
     ) {
         if (state.currentQuestionIndex > 0) {
@@ -130,6 +134,7 @@ private fun BottomBar(
                 .height(50.dp),
             onClick = {
                 if (state.isLastQuestion) {
+                    viewModel.finishTest(testId)
                     finishTest()
                 } else {
                     viewModel.nextQuestion()
@@ -155,6 +160,7 @@ private fun BottomBar(
 @Composable
 private fun TopScreenBar(closeTest: () -> Boolean) {
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
         title = {
             Text(
                 text = "Дневник тестовой стимуляции",
