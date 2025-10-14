@@ -24,7 +24,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.PatientTestScreen
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = PatientAllTestsRoute) {
+    NavHost(navController = navController, startDestination = AllPatientsRoute) {
         composable<LoginRoute> {
             LoginScreen(
                 onNavigateToSms = { phoneNumber: String, userRole: UserRole ->
@@ -81,8 +81,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 navigateToAddNewPatientScreen = {
                     navController.navigate(NewPatientRoute)
                 },
-                navigateToPatient = {
-                    navController.navigate(PatientInfoRoute)
+                navigateToPatient = { patientId: Int ->
+                    navController.navigate(PatientInfoRoute(patientId))
                 }
             )
         }

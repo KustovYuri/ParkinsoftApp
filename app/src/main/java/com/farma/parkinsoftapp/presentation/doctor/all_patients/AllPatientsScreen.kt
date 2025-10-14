@@ -22,13 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.domain.models.patient.Patient
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllPatientsScreen(
     viewModel: AllPatientsViewModel = hiltViewModel<AllPatientsViewModel>(),
     navigateToAddNewPatientScreen: () -> Unit,
-    navigateToPatient: () -> Unit,
+    navigateToPatient: (Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -111,7 +112,7 @@ fun AllPatientsScreen(
                 items(uiState.filteredPatients) { patient ->
                     PatientItem(
                         patient = patient,
-                        click = navigateToPatient
+                        click = { navigateToPatient(patient.id) }
                     )
                 }
             }

@@ -35,7 +35,9 @@ object NewPatientRoute
 object NewPatientTestsRoute
 
 @Serializable
-object PatientInfoRoute
+data class PatientInfoRoute(
+    val patientId: Int
+)
 
 @Serializable
 object PatientCurrentTestRoute

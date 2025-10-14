@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,22 +36,89 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
-import com.farma.parkinsoftapp.presentation.doctor.all_patients.Patient
+import com.farma.parkinsoftapp.domain.models.patient.Patient
 
 private enum class TestsTabs{
     DAILY, CONTROL
 }
 
+val mockShortTests = listOf(
+    ShortTestInfo(
+        date = "Сегодня, 09:15",
+        arrowUp = true,
+        questionCount = "7 / 15",
+        newTests = true
+    ),
+    ShortTestInfo(
+        date = "Сегодня, 21:40",
+        arrowUp = false,
+        questionCount = "10 / 15",
+        newTests = false
+    ),
+    ShortTestInfo(
+        date = "Вчера, 18:22",
+        arrowUp = true,
+        questionCount = "15 / 15",
+        newTests = true
+    ),
+    ShortTestInfo(
+        date = "10 октября, 12:30",
+        arrowUp = false,
+        questionCount = "5 / 15",
+        newTests = false
+    ),
+    ShortTestInfo(
+        date = "9 октября, 07:50",
+        arrowUp = true,
+        questionCount = "12 / 15",
+        newTests = false
+    ),
+    ShortTestInfo(
+        date = "8 октября, 22:10",
+        arrowUp = false,
+        questionCount = "3 / 15",
+        newTests = false
+    ),
+    ShortTestInfo(
+        date = "6 октября, 19:45",
+        arrowUp = true,
+        questionCount = "9 / 15",
+        newTests = true
+    ),
+    ShortTestInfo(
+        date = "5 октября, 08:10",
+        arrowUp = false,
+        questionCount = "14 / 15",
+        newTests = false
+    ),
+    ShortTestInfo(
+        date = "3 октября, 23:30",
+        arrowUp = true,
+        questionCount = "6 / 15",
+        newTests = true
+    ),
+    ShortTestInfo(
+        date = "1 октября, 10:05",
+        arrowUp = false,
+        questionCount = "11 / 15",
+        newTests = false
+    )
+)
+
 @Composable
 fun PatientInfoScreen(
+    viewModel: PatientInfoViewModel = hiltViewModel<PatientInfoViewModel>(),
     backNavigation: () -> Unit,
     navigateToTestInfo: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(TestsTabs.DAILY) }
     var selectedTestChip by remember { mutableStateOf("Дневник тестовой стимуляции") }
+    val patient by viewModel.patient.collectAsState()
 
     Scaffold(
         topBar = { TopScreenBar { backNavigation() } }
@@ -63,7 +131,7 @@ fun PatientInfoScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(Modifier.height(34.dp))
-            PatientItem()
+            PatientItem(patient)
             Spacer(Modifier.height(24.dp))
             TherapyDate()
             Spacer(Modifier.height(12.dp))
@@ -97,8 +165,9 @@ fun PatientInfoScreen(
                         }
                     )
                     Spacer(Modifier.height(28.dp))
-                    (1..15).forEach { _ ->
+                    (0..5).forEach { i ->
                         TestItem(
+                            shortTestInfo = mockShortTests[i],
                             click = navigateToTestInfo
                         )
                     }
@@ -112,8 +181,9 @@ fun PatientInfoScreen(
                         }
                     )
                     Spacer(Modifier.height(28.dp))
-                    (1..15).forEach { _ ->
+                    (6..9).forEach { i ->
                         TestItem(
+                            shortTestInfo = mockShortTests[i],
                             click = navigateToTestInfo
                         )
                     }
@@ -124,8 +194,18 @@ fun PatientInfoScreen(
     }
 }
 
+data class ShortTestInfo(
+    val date: String,
+    val arrowUp: Boolean,
+    val questionCount: String,
+    val newTests: Boolean
+)
+
 @Composable
-private fun TestItem(click: () -> Unit) {
+private fun TestItem(
+    shortTestInfo: ShortTestInfo,
+    click: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,7 +219,7 @@ private fun TestItem(click: () -> Unit) {
             modifier = Modifier.padding(vertical = 6.dp)
         ) {
             Text(
-                text = "Сегодня, 23:56",
+                text = shortTestInfo.date,
                 color = Color(0xFF62767A),
                 fontSize = 13.sp
             )
@@ -150,16 +230,30 @@ private fun TestItem(click: () -> Unit) {
             )
         }
         Spacer(Modifier.weight(1f))
-        Icon(
-            painter = painterResource(R.drawable.icon__4_),
-            contentDescription = null,
-            tint = Color(0xFF459C62)
-        )
+        if (shortTestInfo.arrowUp) {
+            Icon(
+                painter = painterResource(R.drawable.icon__4_),
+                contentDescription = null,
+                tint = Color(0xFF459C62)
+            )
+        } else {
+            Icon(
+                painter = painterResource(R.drawable.icon__5_),
+                contentDescription = null,
+                tint = Color(0xFFE27878)
+            )
+        }
         Spacer(Modifier.width(12.dp))
         Text(
-            text = "27 / 60",
-            color = Color(0xFF459C62),
-            fontSize = 17.sp
+            modifier = Modifier.width(60.dp),
+            text = shortTestInfo.questionCount,
+            color = if (shortTestInfo.arrowUp){
+                Color(0xFF459C62)
+            } else {
+                Color(0xFFE27878)
+            },
+            fontSize = 17.sp,
+            textAlign = TextAlign.End
         )
         Spacer(Modifier.width(12.dp))
         Box(
@@ -170,12 +264,14 @@ private fun TestItem(click: () -> Unit) {
                 contentDescription = null,
                 tint = Color.Gray
             )
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF178399))
-            )
+            if (shortTestInfo.newTests) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF178399))
+                )
+            }
         }
     }
 }
@@ -322,17 +418,7 @@ private fun TherapyDate() {
 
 @Composable
 private fun PatientItem(
-    patient: Patient = Patient(
-        id = 1,
-        firstName = "Любовь",
-        lastName = "Константинопольская",
-        middleName = "Сергеевна",
-        age = 63,
-        diagnosis = "Заболевание",
-        onTreatment = false,
-        unreadTests = 0,
-        sex = false
-    )
+    patient: Patient
 ) {
     Row(
         modifier = Modifier
@@ -377,7 +463,7 @@ private fun PatientItem(
             Text(
                 modifier = Modifier
                     .height(20.dp),
-                text = "${patient.lastName}",
+                text = patient.lastName,
                 fontSize = 15.sp,
                 color = Color(0xFF002A33)
             )

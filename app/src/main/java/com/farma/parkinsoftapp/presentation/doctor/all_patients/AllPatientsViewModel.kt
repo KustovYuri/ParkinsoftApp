@@ -1,28 +1,15 @@
 package com.farma.parkinsoftapp.presentation.doctor.all_patients
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.farma.parkinsoftapp.domain.models.patient.Patient
+import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-data class Patient(
-    val id: Int,
-    val firstName: String,
-    val lastName: String,
-    val middleName: String,
-    val age: Int,
-    val diagnosis: String,
-    val onTreatment: Boolean,
-    val unreadTests: Int,
-    val sex: Boolean
-) {
-    val initials: String
-        get() = "${lastName.first()}${firstName.first()}".uppercase()
-    val fullName: String
-        get() = "$lastName ${firstName.first()}. ${middleName.first()}."
-}
 
 data class PatientsUiState(
     val patients: List<Patient> = emptyList(),
@@ -34,25 +21,23 @@ data class PatientsUiState(
 enum class PatientsTab { OnTreatment, Discharged }
 
 @HiltViewModel
-class AllPatientsViewModel @Inject constructor() : ViewModel() {
+class AllPatientsViewModel @Inject constructor(
+    private val mainRepository: MainRepository
+) : ViewModel() {
 
-    private val mockPatients = listOf(
-        Patient(1, "Мария", "Жукова", "Христина", 63, "Заболевание", true, 10, false),
-        Patient(2, "Михаил", "Миронов", "Андреевич", 63, "Заболевание", true, 10, true),
-        Patient(3, "Жанна", "Жукова", "Христина", 63, "Заболевание", true, 0, false),
-        Patient(4, "Михаил", "Миронов", "Андреевич", 63, "Заболевание", false, 0, true),
-        Patient(5, "Мария", "Миронова", "Александровна", 63, "Заболевание", false, 5, false),
-        Patient(6, "Максим", "Миронов", "Сергеевич", 63, "Заболевание", true, 0, true),
-        Patient(7, "Жанна", "Жукова", "Христина", 63, "Заболевание", false, 0, false),
-    )
-
-    private val _uiState = MutableStateFlow(
-        PatientsUiState(
-            patients = mockPatients,
-            filteredPatients = mockPatients.filter { it.onTreatment }
-        )
-    )
+    private val _uiState = MutableStateFlow(PatientsUiState())
     val uiState: StateFlow<PatientsUiState> = _uiState
+
+    init {
+        viewModelScope.launch {
+            mainRepository.getAllPatients().collect { patients ->
+                _uiState.value = PatientsUiState(
+                    patients = patients,
+                    filteredPatients = patients.filter { it.onTreatment }
+                )
+            }
+        }
+    }
 
     fun onSearchQueryChange(query: String) {
         _uiState.update { state ->
@@ -70,9 +55,9 @@ class AllPatientsViewModel @Inject constructor() : ViewModel() {
 
     private fun filterPatients(tab: PatientsTab, query: String): List<Patient> {
         val baseList = if (tab == PatientsTab.OnTreatment) {
-            mockPatients.filter { it.onTreatment }
+            _uiState.value.patients.filter { it.onTreatment }
         } else {
-            mockPatients.filter { !it.onTreatment }
+            _uiState.value.patients.filter { !it.onTreatment }
         }
 
         return if (query.isBlank()) baseList

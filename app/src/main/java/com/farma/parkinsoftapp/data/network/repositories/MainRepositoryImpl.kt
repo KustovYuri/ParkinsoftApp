@@ -2,6 +2,7 @@ package com.farma.parkinsoftapp.data.network.repositories
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.Question
@@ -44,7 +45,25 @@ class MainRepositoryImpl @Inject constructor(): MainRepository {
     override fun finishTest(testId: Int) {
         patientTestPreview.find { it.id == testId }?.isSuccessTest = true
     }
+
+    override fun getAllPatients(): Flow<List<Patient>> = flow {
+        emit(doctorPatients)
+    }
+
+    override fun getPatient(patientId: Int): Patient {
+        return doctorPatients.find { it.id == patientId } ?: doctorPatients[0]
+    }
 }
+
+private val doctorPatients = mutableListOf(
+    Patient(1, "Мария", "Жукова", "Дмитриевна", 52, "Заболевание", true, 10, false),
+    Patient(2, "Михаил", "Миронов", "Андреевич", 33, "Заболевание", true, 7, true),
+    Patient(3, "Жанна", "Жукова", "Александровна", 63, "Заболевание", true, 0, false),
+    Patient(4, "Дмитрий", "Иванов", "Андреевич", 73, "Заболевание", false, 0, true),
+    Patient(5, "Илья", "Мирослав", "Александрович", 24, "Заболевание", false, 0, true),
+    Patient(6, "Максим", "Новиков", "Сергеевич", 64, "Заболевание", true, 0, true),
+    Patient(7, "София", "Надибаидзе", "Христина", 54, "Заболевание", false, 0, false),
+)
 
 private val patientStateOfHeathTests = listOf(
     Question(
