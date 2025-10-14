@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,7 +98,7 @@ fun PatientTestScreen(
 
 @Composable
 private fun BottomBar(
-    state: Content,
+    state: PatientTest,
     viewModel: PatientTestViewModel,
     finishTest: () -> Unit,
 ) {

@@ -1,7 +1,6 @@
 package com.farma.parkinsoftapp.presentation.patient.all_tests
 
 import android.os.Build
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
-import com.farma.parkinsoftapp.presentation.patient.all_tests.models.TestPreviewModel
+import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.presentation.patient.all_tests.models.QuestionnaireStatus
 import java.time.LocalDate
 
@@ -164,7 +162,7 @@ fun DateLabel(label: String) {
 }
 
 @Composable
-fun TestItem(test: TestPreviewModel, onClick: () -> Unit) {
+fun TestItem(test: PatientTestPreview, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,13 +171,13 @@ fun TestItem(test: TestPreviewModel, onClick: () -> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "${test.questionCount} вопросов  •  ${test.durationMinutes} мин",
+                text = "${test.questionCount} вопросов  •  ${test.testTime} мин",
                 color = Color(0xFF62767A),
                 fontSize = 15.sp,
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = test.title,
+                text = test.testName,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -187,7 +185,7 @@ fun TestItem(test: TestPreviewModel, onClick: () -> Unit) {
                 color = Color(0xFF002A33)
             )
             Spacer(modifier = Modifier.height(12.dp))
-            StatusChip(test.status)
+            StatusChip(test.isSuccessTest)
         }
 
         Icon(
@@ -200,15 +198,15 @@ fun TestItem(test: TestPreviewModel, onClick: () -> Unit) {
 }
 
 @Composable
-fun StatusChip(status: QuestionnaireStatus) {
+fun StatusChip(status: Boolean) {
     val statusChipContent = when (status) {
-        QuestionnaireStatus.NEEDS_FILL -> StatusChipContent(
+        false -> StatusChipContent(
             "Нужно заполнить",
             Color(0xFFA9E0EB),
             Color(0xFF002A33),
             R.drawable.edit_icon
         )
-        QuestionnaireStatus.FILLED -> StatusChipContent(
+        true -> StatusChipContent(
             "Заполнен",
             Color(0xFF459C62),
             Color(0xFFFFFFFF),

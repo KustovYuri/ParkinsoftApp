@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.presentation.doctor.all_patients.AllPatientsScreen
 import com.farma.parkinsoftapp.presentation.doctor.new_pacient.NewPatientScreen
 import com.farma.parkinsoftapp.presentation.doctor.new_patient_tests.NewPatientsTestScreen
@@ -25,8 +26,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = LoginRoute) {
         composable<LoginRoute> {
             LoginScreen(
-                onNavigateToSms = { phoneNumber: String ->
-                    navController.navigate(SmsRoute(phoneNumber))
+                onNavigateToSms = { phoneNumber: String, userRole: UserRole ->
+                    navController.navigate(SmsRoute(phoneNumber, userRole))
                 }
             )
         }
@@ -38,7 +39,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     navController.popBackStack()
                 },
                 forwardNavigation = {
-                    navController.navigate(AllPatientsRoute)
+                    when(args.userRole) {
+                        UserRole.DOCTOR -> navController.navigate(AllPatientsRoute)
+                        UserRole.PATIENT -> navController.navigate(PatientAllTestsRoute)
+                    }
                 }
             )
         }

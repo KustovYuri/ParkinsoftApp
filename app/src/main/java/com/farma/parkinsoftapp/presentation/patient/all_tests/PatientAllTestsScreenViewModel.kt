@@ -3,32 +3,43 @@ package com.farma.parkinsoftapp.presentation.patient.all_tests
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
+import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.presentation.patient.all_tests.models.TestPreviewModel
-import com.farma.parkinsoftapp.presentation.patient.all_tests.models.QuestionnaireStatus
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
+import javax.inject.Inject
 
 data class AllPreviewTestsState(
-    val testsPreviewByDays: Map<LocalDate, List<TestPreviewModel>> = emptyMap()
+    val testsPreviewByDays: Map<LocalDate, List<PatientTestPreview>> = emptyMap()
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
-class PatientAllTestsScreenViewModel : ViewModel() {
+@HiltViewModel
+class PatientAllTestsScreenViewModel @Inject constructor(
+    private val mainRepository: MainRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AllPreviewTestsState())
     val uiState: StateFlow<AllPreviewTestsState> = _uiState
 
     init {
-        convertDataToState(loadMockData())
+        viewModelScope.launch {
+            mainRepository.getPatientTests().collect {
+                convertDataToState(it)
+            }
+        }
     }
 
-    fun convertDataToState(data: List<TestPreviewModel>){
-        val resultMap: Map<LocalDate, List<TestPreviewModel>> = data
-            .groupBy { it.dateLabel }
+    fun convertDataToState(data: List<PatientTestPreview>){
+        val resultMap: Map<LocalDate, List<PatientTestPreview>> = data
+            .groupBy { it.testDate }
             .toSortedMap (compareByDescending { it })
 
         _uiState.value = _uiState.value.copy(resultMap)
@@ -51,91 +62,5 @@ class PatientAllTestsScreenViewModel : ViewModel() {
             .uppercase()
 
         return "$dayOfWeek $dayOfMonth $month"
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun loadMockData(): List<TestPreviewModel> {
-        return listOf(
-            TestPreviewModel(
-                1,
-                "Дневник тестовой стимуляции",
-                10,
-                15,
-                QuestionnaireStatus.FILLED,
-                LocalDate.now()
-            ),
-            TestPreviewModel(
-                2,
-                "Дневник тестовой стимуляции",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now()
-            ),
-            TestPreviewModel(
-                3,
-                "Дневник общего самочувствия",
-                10,
-                15,
-                QuestionnaireStatus.FILLED,
-                LocalDate.now()
-            ),
-            TestPreviewModel(
-                4,
-                "Дневник общего самочувствия",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now()
-            ),
-            TestPreviewModel(
-                5,
-                "Дневник тестовой стимуляции",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now().minusDays(1)
-            ),
-            TestPreviewModel(
-                6,
-                "Дневник общего самочувствия",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now().minusDays(1)
-            ),
-            TestPreviewModel(
-                7,
-                "Дневник тестовой стимуляции",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now().minusDays(1)
-            ),
-            TestPreviewModel(
-                8,
-                "Дневник общего самочувствия",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now().minusDays(2)
-            ),
-            TestPreviewModel(
-                9,
-                "Дневник тестовой стимуляции",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now().minusDays(2)
-            ),
-            TestPreviewModel(
-                10,
-                "Дневник общего самочувствия",
-                10,
-                15,
-                QuestionnaireStatus.NEEDS_FILL,
-                LocalDate.now().minusDays(3)
-            )
-        )
     }
 }

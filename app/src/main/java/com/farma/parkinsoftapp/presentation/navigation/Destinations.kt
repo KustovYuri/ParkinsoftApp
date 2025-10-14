@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.navigation
 
+import com.farma.parkinsoftapp.domain.models.user.UserRole
 import kotlinx.serialization.Serializable
 
 //Логин
@@ -7,7 +8,10 @@ import kotlinx.serialization.Serializable
 object LoginRoute
 
 @Serializable
-data class SmsRoute(val phoneNumber: String)
+data class SmsRoute(
+    val phoneNumber: String,
+    val userRole: UserRole
+)
 
 //Пациент
 @Serializable

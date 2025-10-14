@@ -32,21 +32,25 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.presentation.login.login_screen.models.PhoneNumberState
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginScreenViewModel = hiltViewModel<LoginScreenViewModel>(),
-    onNavigateToSms: (String) -> Unit
+    onNavigateToSms: (String, UserRole) -> Unit
 ) {
     val phoneNumberFieldState = remember { viewModel.numberFieldState }
-    val validationIsSuccess = viewModel.validationIsSuccess.collectAsStateWithLifecycle()
+    val newUserRole = viewModel.newUserRole.collectAsStateWithLifecycle()
 
-    LaunchedEffect(validationIsSuccess.value) {
-        if (validationIsSuccess.value) {
+    LaunchedEffect(newUserRole.value) {
+        if (newUserRole.value != null) {
             viewModel.cleanValidationIsSuccessState()
-            onNavigateToSms(phoneNumberFieldState.value.number)
+            onNavigateToSms(
+                phoneNumberFieldState.value.number,
+                newUserRole.value ?: UserRole.PATIENT
+            )
         }
     }
 
