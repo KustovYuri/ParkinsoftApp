@@ -2,7 +2,9 @@ package com.farma.parkinsoftapp.presentation.doctor.new_pacient
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,15 +25,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.presentation.doctor.new_pacient.modles.NewPatientIntent
 import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPatientScreen(
     viewModel: NewPatientViewModel = hiltViewModel<NewPatientViewModel>(),
     closeScreen: () -> Unit,
-    nextScreenNavigation: () -> Unit
+    nextScreenNavigation: (Patient) -> Unit
 ) {
     val context = LocalContext.current
     val spacerHeightModifier = Modifier.height(24.dp)
@@ -42,7 +46,7 @@ fun NewPatientScreen(
     LaunchedEffect(validationIsSuccess.value) {
         if (validationIsSuccess.value) {
             viewModel.cleanValidationIsSuccessState()
-            nextScreenNavigation()
+            nextScreenNavigation(viewModel.getPatient())
         }
     }
 

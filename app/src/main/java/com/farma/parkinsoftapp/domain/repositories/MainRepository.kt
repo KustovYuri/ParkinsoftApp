@@ -16,4 +16,6 @@ interface MainRepository {
     fun getAllPatients(): Flow<List<Patient>>
 
     fun getPatient(patientId: Int): Patient
+
+    fun addNewPatient(patient: Patient): Int
 }

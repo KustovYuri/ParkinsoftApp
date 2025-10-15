@@ -1,7 +1,7 @@
 package com.farma.parkinsoftapp.di
 
-import com.farma.parkinsoftapp.data.network.repositories.AuthRepositoryImpl
-import com.farma.parkinsoftapp.data.network.repositories.MainRepositoryImpl
+import com.farma.parkinsoftapp.data.repositories.AuthRepositoryImpl
+import com.farma.parkinsoftapp.data.repositories.MainRepositoryImpl
 import com.farma.parkinsoftapp.domain.repositories.AuthRepository
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import dagger.Binds

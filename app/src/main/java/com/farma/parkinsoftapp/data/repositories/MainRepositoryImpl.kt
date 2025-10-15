@@ -1,4 +1,4 @@
-package com.farma.parkinsoftapp.data.network.repositories
+package com.farma.parkinsoftapp.data.repositories
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -52,6 +52,13 @@ class MainRepositoryImpl @Inject constructor(): MainRepository {
 
     override fun getPatient(patientId: Int): Patient {
         return doctorPatients.find { it.id == patientId } ?: doctorPatients[0]
+    }
+
+    override fun addNewPatient(patient: Patient): Int {
+        val patientId = doctorPatients.size + 2
+
+        doctorPatients.add(patient.copy(id = patientId))
+        return patientId
     }
 }
 

@@ -2,13 +2,22 @@ package com.farma.parkinsoftapp.presentation.doctor.new_patient_tests
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.toRoute
+import com.farma.parkinsoftapp.domain.models.patient.Patient
+import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import com.farma.parkinsoftapp.presentation.navigation.NewPatientTestsRoute
+import com.farma.parkinsoftapp.presentation.navigation.PatientInfoRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.collections.plus
 
 @HiltViewModel
-class NewPatientsTestViewModel @Inject constructor(): ViewModel() {
+class NewPatientsTestViewModel @Inject constructor(
+    private val mainRepository: MainRepository,
+    savedStateHandle: SavedStateHandle
+): ViewModel() {
     val controlTests = listOf("HADS", "DN4", "Освестри", "SF-36", "LANSS", "PainDetect")
     val dailyTests = listOf("Дневник тестовой стимуляции", "Дневник общего самочуствия")
 
@@ -23,6 +32,26 @@ class NewPatientsTestViewModel @Inject constructor(): ViewModel() {
             _selectedControlItems.value - item
         else
             _selectedControlItems.value + item
+    }
+
+    fun createPatient(
+        navigationArgs: NewPatientTestsRoute
+    ): Int {
+        return mainRepository.addNewPatient(navigationArgs.convertToPatient())
+    }
+
+    private fun NewPatientTestsRoute.convertToPatient(): Patient {
+        return Patient(
+            this.id,
+            this.firstName,
+            this.lastName,
+            this.middleName,
+            this.age,
+            this.diagnosis,
+            this.onTreatment,
+            this.unreadTests,
+            this.sex
+        )
     }
 
     fun setSelectedDailyItem(item: String, itemSelected: Boolean) {

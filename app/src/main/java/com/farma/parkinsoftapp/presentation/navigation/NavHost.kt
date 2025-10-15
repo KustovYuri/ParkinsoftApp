@@ -92,19 +92,38 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 closeScreen = {
                     navController.popBackStack()
                 },
-                nextScreenNavigation = {
-                    navController.navigate(NewPatientTestsRoute)
+                nextScreenNavigation = { patient ->
+                    navController.navigate(
+                        NewPatientTestsRoute(
+                            patient.id,
+                            patient.firstName,
+                            patient.lastName,
+                            patient.middleName,
+                            patient.age,
+                            patient.diagnosis,
+                            patient.onTreatment,
+                            patient.unreadTests,
+                            patient.sex
+                        )
+                    )
                 }
             )
         }
 
-        composable<NewPatientTestsRoute> {
+        composable<NewPatientTestsRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<NewPatientTestsRoute>()
+
             NewPatientsTestScreen(
+                navigationArgs = args,
                 backNavigation = {
                     navController.popBackStack()
                 },
-                nextScreenNavigation = {
-                    navController.navigate(PatientInfoRoute)
+                nextScreenNavigation = { patientId ->
+                    navController.navigate(PatientInfoRoute(patientId = patientId)) {
+                        popUpTo<NewPatientRoute> {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

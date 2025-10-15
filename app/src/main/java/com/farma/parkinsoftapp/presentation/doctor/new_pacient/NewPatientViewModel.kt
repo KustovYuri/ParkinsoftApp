@@ -1,5 +1,7 @@
 package com.farma.parkinsoftapp.presentation.doctor.new_pacient
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -7,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.farma.parkinsoftapp.presentation.doctor.new_pacient.modles.NewPatientState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.validation.ValidationResult
 import com.farma.parkinsoftapp.domain.usecases.validation.ValidationNameUseCase
 import com.farma.parkinsoftapp.domain.usecases.validation.ValidationPhoneNumberUseCase
@@ -15,6 +18,9 @@ import com.farma.parkinsoftapp.presentation.doctor.new_pacient.modles.NewPatient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -168,6 +174,31 @@ class NewPatientViewModel @Inject constructor(
 
     fun cleanValidationIsSuccessState() {
         _validationIsSuccess.value = false
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getPatient(): Patient{
+        return Patient(
+            id = 0,
+            firstName = _newPatientState.value.name.value,
+            lastName = _newPatientState.value.surname.value,
+            middleName = _newPatientState.value.middleName.value,
+            age = calculateAge(_newPatientState.value.birthday.value),
+            diagnosis = _newPatientState.value.diagnosis.value,
+            onTreatment = true,
+            unreadTests = 0,
+            sex = true
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun calculateAge(birthDateString: String): Int {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+        val birthDate = LocalDate.parse(birthDateString, formatter)
+        val currentDate = LocalDate.now()
+        val period = Period.between(birthDate, currentDate)
+
+        return period.years
     }
 }
 

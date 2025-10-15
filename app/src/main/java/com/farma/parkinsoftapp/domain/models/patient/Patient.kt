@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.domain.models.patient
 
+
 data class Patient(
     val id: Int,
     val firstName: String,

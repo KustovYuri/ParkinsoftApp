@@ -37,13 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.presentation.navigation.NewPatientTestsRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPatientsTestScreen(
     viewModel: NewPatientsTestViewModel = hiltViewModel<NewPatientsTestViewModel>(),
     backNavigation: () -> Unit,
-    nextScreenNavigation: () -> Unit
+    nextScreenNavigation: (Int) -> Unit,
+    navigationArgs: NewPatientTestsRoute
 ) {
     val controlTests = viewModel.controlTests
     val dailyTests = viewModel.dailyTests
@@ -95,7 +97,10 @@ fun NewPatientsTestScreen(
             NextButton(
                 isActive = true,
                 click = {
-                    nextScreenNavigation()
+                    val patientId = viewModel.createPatient(
+                        navigationArgs
+                    )
+                    nextScreenNavigation(patientId)
                 }
             )
             Spacer(Modifier.height(35.dp))

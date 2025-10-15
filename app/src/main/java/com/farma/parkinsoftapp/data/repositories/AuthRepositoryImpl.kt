@@ -1,4 +1,4 @@
-package com.farma.parkinsoftapp.data.network.repositories
+package com.farma.parkinsoftapp.data.repositories
 
 import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.domain.repositories.AuthRepository
