@@ -1,6 +1,5 @@
 package com.farma.parkinsoftapp.presentation.doctor.all_patients
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +21,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.patient.Patient
+import com.farma.parkinsoftapp.presentation.composable.ProfileButton
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,13 +30,20 @@ fun AllPatientsScreen(
     viewModel: AllPatientsViewModel = hiltViewModel<AllPatientsViewModel>(),
     navigateToAddNewPatientScreen: () -> Unit,
     navigateToPatient: (Int) -> Unit,
+    navigateToLogin: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = Color(0xFFFFFFFF),
         topBar = {
-            TopScreenBar()
+            TopScreenBar {
+                scope.launch {
+                    viewModel.logOut()
+                    navigateToLogin()
+                }
+            }
         },
         floatingActionButton = {
             AddNewPatientFloatingButton(navigateToAddNewPatientScreen)
@@ -140,7 +147,7 @@ private fun AddNewPatientFloatingButton(navigateToAddNewPatientScreen: () -> Uni
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopScreenBar() {
+private fun TopScreenBar(logOut: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -152,12 +159,8 @@ private fun TopScreenBar() {
             )
         },
         navigationIcon = {
-            IconButton(onClick = {}) {
-                Icon(
-                    painterResource(R.drawable.user),
-                    contentDescription = "Профиль",
-                    tint = Color(0xFF002A33)
-                )
+            ProfileButton {
+                logOut()
             }
         },
         actions = {

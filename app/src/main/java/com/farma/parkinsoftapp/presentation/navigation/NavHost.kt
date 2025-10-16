@@ -94,6 +94,13 @@ fun AppNavHost(
                 },
                 navigateToPatient = { patientId: Int ->
                     navController.navigate(PatientInfoRoute(patientId))
+                },
+                navigateToLogin = {
+                    navController.navigate(LoginRoute){
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

@@ -2,6 +2,7 @@ package com.farma.parkinsoftapp.presentation.doctor.all_patients
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,7 @@ enum class PatientsTab { OnTreatment, Discharged }
 
 @HiltViewModel
 class AllPatientsViewModel @Inject constructor(
-    private val mainRepository: MainRepository
+    private val mainRepository: MainRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PatientsUiState())
@@ -37,6 +38,10 @@ class AllPatientsViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    suspend fun logOut() {
+        mainRepository.setUserRole(UserRoleValues.UNAUTHORIZED)
     }
 
     fun onSearchQueryChange(query: String) {

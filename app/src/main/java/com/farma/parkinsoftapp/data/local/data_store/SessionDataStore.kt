@@ -19,7 +19,7 @@ class SessionDataStore @Inject constructor(
 
     private val USER_ROLE = stringPreferencesKey("userRole")
     fun getCurrentUserRole(): Flow<String> = context.dataStore.data.map {
-        it[USER_ROLE] ?: UserRoleValues.UNAUTHORIZED.value
+        it[USER_ROLE] ?: UserRoleValues.DOCTOR.value
     }
 
     suspend fun setCurrentUserRole(userRole: UserRoleValues) {
