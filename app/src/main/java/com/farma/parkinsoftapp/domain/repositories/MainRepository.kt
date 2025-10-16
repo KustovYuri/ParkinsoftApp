@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.domain.repositories
 
+import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
@@ -18,4 +19,8 @@ interface MainRepository {
     fun getPatient(patientId: Int): Patient
 
     fun addNewPatient(patient: Patient): Int
+
+    fun getUserRole(): Flow<UserRoleValues>
+
+    suspend fun setUserRole(newUserRole: UserRoleValues)
 }

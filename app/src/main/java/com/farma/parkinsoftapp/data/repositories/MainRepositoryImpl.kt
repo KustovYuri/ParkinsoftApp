@@ -2,6 +2,8 @@ package com.farma.parkinsoftapp.data.repositories
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
+import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
@@ -9,11 +11,15 @@ import com.farma.parkinsoftapp.domain.models.patient.Question
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
 
-class MainRepositoryImpl @Inject constructor(): MainRepository {
+class MainRepositoryImpl @Inject constructor(
+    private val sessionDataStore: SessionDataStore
+): MainRepository {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getPatientTests(): Flow<List<PatientTestPreview>> = flow {
@@ -59,6 +65,16 @@ class MainRepositoryImpl @Inject constructor(): MainRepository {
 
         doctorPatients.add(patient.copy(id = patientId))
         return patientId
+    }
+
+    override fun getUserRole(): Flow<UserRoleValues> {
+        return sessionDataStore.getCurrentUserRole().map { it ->
+            UserRoleValues.fromValue(it) ?: UserRoleValues.UNAUTHORIZED
+        }
+    }
+
+    override suspend fun setUserRole(newUserRole: UserRoleValues) {
+        sessionDataStore.setCurrentUserRole(newUserRole)
     }
 }
 

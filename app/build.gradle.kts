@@ -70,6 +70,9 @@ dependencies {
     implementation(libs.android.datapicker.core)
     implementation(libs.android.datapicker.calendar)
 
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
+
     implementation(libs.android.retrofit)
     implementation(libs.android.retrofit.gson)
     implementation(libs.android.retrofit.code.gson)

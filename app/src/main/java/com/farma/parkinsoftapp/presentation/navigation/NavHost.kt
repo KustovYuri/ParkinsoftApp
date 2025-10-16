@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.presentation.doctor.all_patients.AllPatientsScreen
@@ -23,8 +24,18 @@ import com.farma.parkinsoftapp.presentation.patient.test.PatientTestScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavHost(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = AllPatientsRoute) {
+fun AppNavHost(
+    navController: NavHostController = rememberNavController(),
+    userRole: UserRoleValues
+) {
+    NavHost(
+        navController = navController,
+        startDestination = when(userRole) {
+            UserRoleValues.DOCTOR -> AllPatientsRoute
+            UserRoleValues.PATIENT -> PatientAllTestsRoute
+            UserRoleValues.UNAUTHORIZED -> LoginRoute
+        }
+    ) {
         composable<LoginRoute> {
             LoginScreen(
                 onNavigateToSms = { phoneNumber: String, userRole: UserRole ->

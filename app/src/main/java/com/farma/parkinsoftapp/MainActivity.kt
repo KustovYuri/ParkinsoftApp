@@ -2,17 +2,27 @@ package com.farma.parkinsoftapp
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.presentation.navigation.AppNavHost
 import com.farma.parkinsoftapp.ui.theme.ParkinsoftAppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val activityViewModel: MainActivityViewModel by viewModels()
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,8 +30,11 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
+            val userRole by activityViewModel.userRole.collectAsState()
             ParkinsoftAppTheme {
-                AppNavHost()
+                if (userRole != null) {
+                    AppNavHost(userRole = userRole ?: UserRoleValues.UNAUTHORIZED)
+                }
             }
         }
     }
