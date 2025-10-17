@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
@@ -28,6 +29,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        installSplashScreen().apply {
+            setKeepVisibleCondition {
+                activityViewModel.isLoading.value
+            }
+        }
 
         setContent {
             val userRole by activityViewModel.userRole.collectAsState()

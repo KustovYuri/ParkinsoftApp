@@ -50,11 +50,11 @@ fun AppNavHost(
                 backNavigation = {
                     navController.popBackStack()
                 },
-                forwardNavigation = {
-                    when(args.userRole) {
-                        UserRole.DOCTOR -> navController.navigate(AllPatientsRoute)
-                        UserRole.PATIENT -> navController.navigate(PatientAllTestsRoute)
-                    }
+                navigationToDoctor = {
+                    navController.navigate(AllPatientsRoute)
+                },
+                navigationToPatient = {
+                    navController.navigate(PatientAllTestsRoute)
                 }
             )
         }

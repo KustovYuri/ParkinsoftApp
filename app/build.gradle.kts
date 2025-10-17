@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
 
+    implementation(libs.androidx.splashscreen)
+
     implementation(libs.android.retrofit)
     implementation(libs.android.retrofit.gson)
     implementation(libs.android.retrofit.code.gson)
