@@ -11,6 +11,7 @@ import com.farma.parkinsoftapp.domain.models.patient.Question
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -52,18 +53,16 @@ class MainRepositoryImpl @Inject constructor(
         patientTestPreview.find { it.id == testId }?.isSuccessTest = true
     }
 
-    override fun getAllPatients(): Flow<List<Patient>> = flow {
-        emit(doctorPatients)
-    }
+    override fun getAllPatients(): Flow<List<Patient>> = doctorPatients
 
     override fun getPatient(patientId: Int): Patient {
-        return doctorPatients.find { it.id == patientId } ?: doctorPatients[0]
+        return doctorPatients.value.find { it.id == patientId } ?: doctorPatients.value[0]
     }
 
     override fun addNewPatient(patient: Patient): Int {
-        val patientId = doctorPatients.size + 2
+        val patientId = doctorPatients.value.size + 2
 
-        doctorPatients.add(patient.copy(id = patientId))
+        doctorPatients.value = doctorPatients.value + patient.copy(id = patientId)
         return patientId
     }
 
@@ -78,14 +77,16 @@ class MainRepositoryImpl @Inject constructor(
     }
 }
 
-private val doctorPatients = mutableListOf(
-    Patient(1, "Мария", "Жукова", "Дмитриевна", 52, "Заболевание", true, 10, false),
-    Patient(2, "Михаил", "Миронов", "Андреевич", 33, "Заболевание", true, 7, true),
-    Patient(3, "Жанна", "Жукова", "Александровна", 63, "Заболевание", true, 0, false),
-    Patient(4, "Дмитрий", "Иванов", "Андреевич", 73, "Заболевание", false, 0, true),
-    Patient(5, "Илья", "Мирослав", "Александрович", 24, "Заболевание", false, 0, true),
-    Patient(6, "Максим", "Новиков", "Сергеевич", 64, "Заболевание", true, 0, true),
-    Patient(7, "София", "Надибаидзе", "Христина", 54, "Заболевание", false, 0, false),
+private val doctorPatients = MutableStateFlow(
+    listOf(
+        Patient(1, "Мария", "Жукова", "Дмитриевна", 52, "Заболевание", true, 10, false),
+        Patient(2, "Михаил", "Миронов", "Андреевич", 33, "Заболевание", true, 7, true),
+        Patient(3, "Жанна", "Жукова", "Александровна", 63, "Заболевание", true, 0, false),
+        Patient(4, "Дмитрий", "Иванов", "Андреевич", 73, "Заболевание", false, 0, true),
+        Patient(5, "Илья", "Мирослав", "Александрович", 24, "Заболевание", false, 0, true),
+        Patient(6, "Максим", "Новиков", "Сергеевич", 64, "Заболевание", true, 0, true),
+        Patient(7, "София", "Надибаидзе", "Христина", 54, "Заболевание", false, 0, false),
+    )
 )
 
 private val patientStateOfHeathTests = listOf(
