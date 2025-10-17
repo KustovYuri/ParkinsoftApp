@@ -69,6 +69,13 @@ fun AppNavHost(
                             testType = testType
                         )
                     )
+                },
+                navigateToLogin = {
+                    navController.navigate(LoginRoute){
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

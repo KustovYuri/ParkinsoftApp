@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +43,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.TestType
-import com.farma.parkinsoftapp.presentation.patient.all_tests.models.QuestionnaireStatus
+import com.farma.parkinsoftapp.presentation.composable.ProfileButton
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -50,14 +52,22 @@ import java.time.LocalDate
 @Composable
 fun PatientAllTestsScreen(
     viewModel: PatientAllTestsScreenViewModel = hiltViewModel<PatientAllTestsScreenViewModel>(),
-    onProfileClick: () -> Unit = {},
+    navigateToLogin: () -> Unit,
     navigateToTest: (Int, TestType) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
     var previousDaysIsOver by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
-        topBar = { TopBar(onProfileClick) }
+        topBar = {
+            TopBar {
+                scope.launch {
+                    viewModel.logOut()
+                    navigateToLogin()
+                }
+            }
+        }
     ) { padding ->
         LazyColumn(
             contentPadding = padding,
@@ -106,7 +116,7 @@ fun PatientAllTestsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(onProfileClick: () -> Unit) {
+private fun TopBar(logOut: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -119,12 +129,8 @@ private fun TopBar(onProfileClick: () -> Unit) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = onProfileClick) {
-                Icon(
-                    painter = painterResource(R.drawable.user),
-                    contentDescription = "Профиль",
-                    tint = Color(0xFF002A33)
-                )
+            ProfileButton {
+                logOut()
             }
         },
         actions = {
@@ -207,6 +213,7 @@ fun StatusChip(status: Boolean) {
             Color(0xFF002A33),
             R.drawable.edit_icon
         )
+
         true -> StatusChipContent(
             "Заполнен",
             Color(0xFF459C62),

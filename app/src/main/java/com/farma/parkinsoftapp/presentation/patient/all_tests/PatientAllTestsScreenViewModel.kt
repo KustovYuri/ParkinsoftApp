@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.presentation.patient.all_tests.models.TestPreviewModel
@@ -35,6 +36,10 @@ class PatientAllTestsScreenViewModel @Inject constructor(
                 convertDataToState(it)
             }
         }
+    }
+
+    suspend fun logOut() {
+        mainRepository.setUserRole(UserRoleValues.UNAUTHORIZED)
     }
 
     fun convertDataToState(data: List<PatientTestPreview>){
