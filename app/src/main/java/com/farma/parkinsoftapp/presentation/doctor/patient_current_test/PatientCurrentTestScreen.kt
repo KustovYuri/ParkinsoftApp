@@ -43,12 +43,12 @@ fun PatientCurrentTestScreen(backNavigation: () -> Boolean) {
         TestAnswer(
             testQuestion = "Самообслуживание\n(умывание, одевание и т.д.)",
             testAnswer = "Я могу обслужить себя нормально без особой боли",
-            testScores = "1 / 5",
+            testScores = "3 / 5",
         ),
         TestAnswer(
             testQuestion = "Стояние",
             testAnswer = "Я могу стоять столько, сколько захочу, без особой боли",
-            testScores = "1 / 5",
+            testScores = "2 / 5",
         ),
         TestAnswer(
             testQuestion = "Сидение",
@@ -58,12 +58,27 @@ fun PatientCurrentTestScreen(backNavigation: () -> Boolean) {
         TestAnswer(
             testQuestion = "Самообслуживание\n(умывание, одевание и т.д.)",
             testAnswer = "Я могу обслужить себя нормально без особой боли",
-            testScores = "1 / 5",
+            testScores = "5 / 5",
         ),
         TestAnswer(
             testQuestion = "Стояние",
             testAnswer = "Я могу стоять столько, сколько захочу, без особой боли",
-            testScores = "1 / 5",
+            testScores = "3 / 5",
+        ),
+        TestAnswer(
+            testQuestion = "Сидение",
+            testAnswer = "Я могу сидеть на любом стуле столько, сколько захочу",
+            testScores = "4 / 5",
+        ),
+        TestAnswer(
+            testQuestion = "Самообслуживание\n(умывание, одевание и т.д.)",
+            testAnswer = "Я могу обслужить себя нормально без особой боли",
+            testScores = "5 / 5",
+        ),
+        TestAnswer(
+            testQuestion = "Стояние",
+            testAnswer = "Я могу стоять столько, сколько захочу, без особой боли",
+            testScores = "5 / 5",
         ),
         TestAnswer(
             testQuestion = "Сидение",
@@ -73,17 +88,32 @@ fun PatientCurrentTestScreen(backNavigation: () -> Boolean) {
         TestAnswer(
             testQuestion = "Самообслуживание\n(умывание, одевание и т.д.)",
             testAnswer = "Я могу обслужить себя нормально без особой боли",
-            testScores = "1 / 5",
+            testScores = "3 / 5",
         ),
         TestAnswer(
             testQuestion = "Стояние",
             testAnswer = "Я могу стоять столько, сколько захочу, без особой боли",
-            testScores = "1 / 5",
+            testScores = "2 / 5",
         ),
         TestAnswer(
             testQuestion = "Сидение",
             testAnswer = "Я могу сидеть на любом стуле столько, сколько захочу",
             testScores = "1 / 5",
+        ),
+        TestAnswer(
+            testQuestion = "Самообслуживание\n(умывание, одевание и т.д.)",
+            testAnswer = "Я могу обслужить себя нормально без особой боли",
+            testScores = "5 / 5",
+        ),
+        TestAnswer(
+            testQuestion = "Стояние",
+            testAnswer = "Я могу стоять столько, сколько захочу, без особой боли",
+            testScores = "3 / 5",
+        ),
+        TestAnswer(
+            testQuestion = "Сидение",
+            testAnswer = "Я могу сидеть на любом стуле столько, сколько захочу",
+            testScores = "4 / 5",
         ),
     )
 
