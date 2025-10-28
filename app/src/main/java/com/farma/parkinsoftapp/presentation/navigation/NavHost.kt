@@ -62,7 +62,7 @@ fun AppNavHost(
         //Пациент
         composable<PatientAllTestsRoute> {
             PatientAllTestsScreen(
-                navigateToTest = { testId: Int, testType: TestType ->
+                navigateToTest = { testId: Long, testType: TestType ->
                     navController.navigate(
                         PatientTestRoute(
                             testId = testId,
@@ -80,10 +80,7 @@ fun AppNavHost(
             )
         }
         composable<PatientTestRoute> { backStackEntry ->
-            val args = backStackEntry.toRoute<PatientTestRoute>()
-
             PatientTestScreen(
-                testId = args.testId,
                 closeTest = {
                     navController.popBackStack()
                 },

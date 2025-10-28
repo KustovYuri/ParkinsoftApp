@@ -1,23 +1,15 @@
 package com.farma.parkinsoftapp.data.network
 
-import com.google.gson.annotations.SerializedName
+import com.farma.parkinsoftapp.data.network.models.LoginRequest
+import com.farma.parkinsoftapp.data.network.models.LoginResponse
+import com.farma.parkinsoftapp.data.network.models.ShortPatient
+import com.farma.parkinsoftapp.data.network.models.TestModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-data class LoginRequest(
-    val phone: String = "",
-    val email: String = "patient@test.ru",
-    val password: String = "12345"
-)
-data class LoginResponse(
-    @SerializedName("session_key")
-    val sessionKey: String,
-    @SerializedName("role_id")
-    val roleId: Int,
-)
 
 interface ApiService {
 
@@ -26,4 +18,14 @@ interface ApiService {
         @Body body: LoginRequest = LoginRequest()
     ): Response<LoginResponse>
 
+    @GET("/patient/short/{patientId}")
+    suspend fun getShortPatientById(
+        @Path("patientId") userId: Long
+    ): Response<ShortPatient>
+
+    @GET("/test/allTests/{testPreviewId}/{testType}")
+    suspend fun getShortPatientById(
+        @Path("testPreviewId") testPreviewId: Long,
+        @Path("testType") testType: String
+    ): Response<List<TestModel>>
 }

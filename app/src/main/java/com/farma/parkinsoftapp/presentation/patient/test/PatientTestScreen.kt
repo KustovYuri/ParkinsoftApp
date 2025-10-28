@@ -15,12 +15,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.data.network.models.TestAnswer
+import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 import com.farma.parkinsoftapp.domain.models.patient.TestType
+import com.farma.parkinsoftapp.presentation.patient.test.models.TestScreenState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,59 +32,96 @@ fun PatientTestScreen(
     viewModel: PatientTestViewModel = hiltViewModel<PatientTestViewModel>(),
     closeTest: () -> Boolean,
     finishTest: () -> Unit,
-    testId: Int
 ) {
     val state by viewModel.uiState.collectAsState()
+    val currentQuestionIndex by viewModel.currentTestQuestionId.collectAsState()
+    val selectedAnswers by viewModel.selectedAnswers.collectAsState()
 
     val progress by animateFloatAsState(
-        targetValue = (state.currentQuestionIndex + 1).toFloat() / state.totalQuestions,
+        targetValue = (currentQuestionIndex + 1).toFloat() / state.data.size,
         label = "ProgressAnimation"
     )
 
     Scaffold(
         topBar = { TopScreenBar(closeTest, viewModel.testType) },
-        bottomBar = { BottomBar(state, viewModel, finishTest, testId) },
+        bottomBar = { BottomBar(state, currentQuestionIndex,viewModel, selectedAnswers,finishTest) },
         containerColor = Color.White
     ) { padding ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .background(Color.White)
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(padding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    color = Color(0xFF178399)
+                )
+            } else if (state.error != null){
                 Text(
-                    text = "Вопрос ${state.currentQuestionIndex + 1} из ${state.totalQuestions}",
-                    fontSize = 13.sp,
-                    color = Color(0xFF49454F)
+                    text = state.error ?: "Неизвестная ошибка"
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
-                    color = Color(0xFF178399),
-                    trackColor = Color(0xFFEDF1F2),
-                    drawStopIndicator = {}
-                )
+            } else {
+                TestScreen(currentQuestionIndex, state, progress, selectedAnswers, viewModel)
             }
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(24.dp))
-
+@Composable
+private fun TestScreen(
+    currentQuestionIndex: Int,
+    state: TestScreenState,
+    progress: Float,
+    selectedAnswers: Map<TestModel, TestAnswer>,
+    viewModel: PatientTestViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+        Row {
             Text(
-                text = state.question.text,
-                fontSize = 17.sp,
-                color = Color(0xFF1C1B1F)
+                text = "Вопрос ${currentQuestionIndex + 1} из ${state.data.size}",
+                fontSize = 13.sp,
+                color = Color(0xFF49454F)
             )
+            Spacer(modifier = Modifier.width(12.dp))
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = Color(0xFF178399),
+                trackColor = Color(0xFFEDF1F2),
+                drawStopIndicator = {}
+            )
+        }
 
-            Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-            state.question.answers.forEach { answer ->
-                val isSelected = state.selectedAnswer == answer
+        Text(
+            text = if (state.data.isNotEmpty()) {
+                state.data[currentQuestionIndex].questionName
+            } else {
+                ""
+            },
+            fontSize = 17.sp,
+            color = Color(0xFF1C1B1F)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        if (state.data.isNotEmpty()) {
+            state.data[currentQuestionIndex].answers.forEach { answer ->
+                val isSelected = selectedAnswers[state.data[currentQuestionIndex]] == answer
                 Box(
                     modifier = Modifier
                         .padding(vertical = 4.dp)
@@ -89,10 +130,16 @@ fun PatientTestScreen(
                             shape = RoundedCornerShape(20.dp)
                         )
                         .clip(RoundedCornerShape(20.dp))
-                        .clickable { viewModel.selectAnswer(answer) }
+                        .clickable {
+                            viewModel
+                                .selectAnswer(
+                                    state.data[currentQuestionIndex],
+                                    answer
+                                )
+                        }
                         .padding(vertical = 12.dp, horizontal = 16.dp)
                 ) {
-                    Text(text = answer, fontSize = 16.sp)
+                    Text(text = answer.testAnswer, fontSize = 16.sp)
                 }
             }
         }
@@ -101,10 +148,11 @@ fun PatientTestScreen(
 
 @Composable
 private fun BottomBar(
-    state: PatientTest,
+    state: TestScreenState,
+    currentQuestionIndex: Int,
     viewModel: PatientTestViewModel,
+    selectedAnswers: Map<TestModel, TestAnswer>,
     finishTest: () -> Unit,
-    testId: Int
 ) {
     Row(
         modifier = Modifier
@@ -112,7 +160,7 @@ private fun BottomBar(
             .background(Color.White)
             .padding(horizontal = 20.dp, vertical = 35.dp),
     ) {
-        if (state.currentQuestionIndex > 0) {
+        if (currentQuestionIndex > 0) {
             OutlinedButton(
                 modifier = Modifier
                     .width(90.dp)
@@ -134,15 +182,19 @@ private fun BottomBar(
                 .fillMaxWidth()
                 .height(50.dp),
             onClick = {
-                if (state.isLastQuestion) {
-                    viewModel.finishTest(testId)
+                if (currentQuestionIndex == state.data.size - 1) {
+                    viewModel.finishTest()
                     finishTest()
                 } else {
                     viewModel.nextQuestion()
                 }
             },
             shape = RoundedCornerShape(12.dp),
-            enabled = state.selectedAnswer != null,
+            enabled = if (state.data.isNotEmpty()) {
+                selectedAnswers[state.data[currentQuestionIndex]] != null
+            } else {
+                false
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF178399),
                 contentColor = Color(0xFFFFFFFF),
@@ -151,7 +203,7 @@ private fun BottomBar(
             )
         ) {
             Text(
-                if (state.isLastQuestion) "Завершить" else "Далее",
+                if (state.data.size - 1 == currentQuestionIndex) "Завершить" else "Далее",
             )
         }
     }
@@ -165,8 +217,8 @@ private fun TopScreenBar(closeTest: () -> Boolean, testType: TestType) {
         title = {
             Text(
                 text = when(testType){
-                    TestType.TEST_SIMULATION -> "Дневник тестовой стимуляции"
-                    TestType.STATE_OF_HEALTH -> "Дневник общего самочувствия"
+                    TestType.TEST_STIMULATION_DIARY -> "Дневник тестовой стимуляции"
+                    TestType.STATE_OF_HEALTH_DIARY -> "Дневник общего самочувствия"
                 },
                 fontSize = 17.sp,
                 color = Color(0xFF002A33)

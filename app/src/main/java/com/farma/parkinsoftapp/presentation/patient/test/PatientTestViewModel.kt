@@ -2,17 +2,20 @@ package com.farma.parkinsoftapp.presentation.patient.test
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.farma.parkinsoftapp.domain.models.patient.PatientTest
-import com.farma.parkinsoftapp.domain.models.patient.Question
-import com.farma.parkinsoftapp.domain.models.patient.TestType
+import com.farma.parkinsoftapp.data.network.models.TestAnswer
+import com.farma.parkinsoftapp.data.network.models.TestModel
+import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
+import com.farma.parkinsoftapp.presentation.patient.test.models.TestScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,62 +25,55 @@ class PatientTestViewModel @Inject constructor(
 ) : ViewModel() {
     private val route: PatientTestRoute = savedStateHandle.toRoute()
     val testType = route.testType
+    private val testId = route.testId
 
-    private val selectedAnswers = mutableMapOf<Int, String?>()
+    private val _selectedAnswers = MutableStateFlow(mapOf<TestModel, TestAnswer>())
+    val selectedAnswers = _selectedAnswers.asStateFlow()
+    private val _uiState: MutableStateFlow<TestScreenState> = MutableStateFlow(TestScreenState())
+    val uiState: StateFlow<TestScreenState> = _uiState
 
-    private val _uiState: MutableStateFlow<PatientTest> = MutableStateFlow(
-        PatientTest(
-            currentQuestionIndex = 0,
-            totalQuestions = 15,
-            question = Question(id = 1, text = "", answers = emptyList()),
-            selectedAnswer = null,
-            isLastQuestion = false,
-            allQuestion = emptyList()
-        )
-    )
-    val uiState: StateFlow<PatientTest> = _uiState
+    private val _currentTestQuestionId = MutableStateFlow(0)
+    val currentTestQuestionId = _currentTestQuestionId.asStateFlow()
 
     init {
-        _uiState.value = mainRepository.getPatientSelectedTest(testType)
+        viewModelScope.launch {
+            mainRepository.getPatientSelectedTest(testId, testType).collect { test ->
+                when(test) {
+                    is Result.Error -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = test.message
+                        )
+                    }
+                    is Result.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                        )
+                    }
+                    is Result.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            data = test.result
+                        )
+                    }
+                }
+            }
+        }
     }
 
-    fun finishTest(testId: Int) {
+    fun finishTest() {
         mainRepository.finishTest(testId)
     }
 
-    fun selectAnswer(answer: String) {
-        val state = _uiState.value
-        selectedAnswers[state.currentQuestionIndex] = answer
-        _uiState.update { state.copy(selectedAnswer = answer) }
+    fun selectAnswer(testQuestion: TestModel, selectedAnswer: TestAnswer) {
+        _selectedAnswers.value = _selectedAnswers.value + (testQuestion to selectedAnswer)
     }
 
     fun nextQuestion() {
-        val state = _uiState.value
-        if (state != null) {
-            if (state.currentQuestionIndex < state.allQuestion.lastIndex) {
-                val nextIndex = state.currentQuestionIndex + 1
-                _uiState.value = state.copy(
-                    currentQuestionIndex = nextIndex,
-                    question = state.allQuestion[nextIndex],
-                    selectedAnswer = selectedAnswers[nextIndex],
-                    isLastQuestion = nextIndex == state.allQuestion.lastIndex
-                )
-            }
-        }
+        _currentTestQuestionId.value++
     }
 
     fun previousQuestion() {
-        val state = _uiState.value
-        if (state != null) {
-            if (state.currentQuestionIndex > 0) {
-                val prevIndex = state.currentQuestionIndex - 1
-                _uiState.value = state.copy(
-                    currentQuestionIndex = prevIndex,
-                    question = state.allQuestion[prevIndex],
-                    selectedAnswer = selectedAnswers[prevIndex],
-                    isLastQuestion = false
-                )
-            }
-        }
+        _currentTestQuestionId.value--
     }
 }

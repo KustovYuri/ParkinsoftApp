@@ -1,8 +1,10 @@
 package com.farma.parkinsoftapp.domain.repositories
 
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
+import com.farma.parkinsoftapp.data.network.models.ShortPatient
+import com.farma.parkinsoftapp.data.network.models.TestModel
+import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
-import com.farma.parkinsoftapp.domain.models.patient.PatientTest
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import kotlinx.coroutines.flow.Flow
@@ -10,9 +12,11 @@ import kotlinx.coroutines.flow.Flow
 interface MainRepository {
     fun getPatientTests(): Flow<List<PatientTestPreview>>
 
-    fun getPatientSelectedTest(testType: TestType): PatientTest
+    fun getShortPatientData(patientId: Long): Flow<Result<ShortPatient>>
 
-    fun finishTest(testId: Int)
+    fun getPatientSelectedTest(testId: Long, testType: TestType): Flow<Result<List<TestModel>>>
+
+    fun finishTest(testId: Long)
 
     fun getAllPatients(): Flow<List<Patient>>
 

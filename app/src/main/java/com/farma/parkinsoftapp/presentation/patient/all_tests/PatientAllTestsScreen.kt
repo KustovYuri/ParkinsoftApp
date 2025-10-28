@@ -4,7 +4,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,7 +56,7 @@ import java.time.LocalDate
 fun PatientAllTestsScreen(
     viewModel: PatientAllTestsScreenViewModel = hiltViewModel<PatientAllTestsScreenViewModel>(),
     navigateToLogin: () -> Unit,
-    navigateToTest: (Int, TestType) -> Unit
+    navigateToTest: (Long, TestType) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
     var previousDaysIsOver by remember { mutableStateOf(false) }
@@ -69,45 +72,75 @@ fun PatientAllTestsScreen(
             }
         }
     ) { padding ->
-        LazyColumn(
-            contentPadding = padding,
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .padding(horizontal = 20.dp)
+                .background(Color(0xFFFFFFFF))
+                .padding(padding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    color = Color(0xFF178399)
+                )
+            } else if (state.error != null){
+                Text(
+                    text = state.error ?: "Неизвестная ошибка"
+                )
+            } else {
+                TestPreviewList(state, navigateToTest, previousDaysIsOver, viewModel)
+            }
+        }
+    }
+}
 
-            for ((day, listTestsPreview) in state.testsPreviewByDays) {
-                if (day == LocalDate.now()) {
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun TestPreviewList(
+    state: AllPreviewTestsState,
+    navigateToTest: (Long, TestType) -> Unit,
+    previousDaysIsOver: Boolean,
+    viewModel: PatientAllTestsScreenViewModel
+) {
+    var previousDaysIsOver1 = previousDaysIsOver
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(horizontal = 20.dp)
+    ) {
+
+        for ((day, listTestsPreview) in state.testsPreviewByDays) {
+            if (day == LocalDate.now()) {
+                item {
+                    SectionHeader("За сегодня", Modifier.padding(top = 12.dp, bottom = 24.dp))
+                }
+                items(listTestsPreview) { test ->
+                    TestItem(test) {
+                        navigateToTest(test.id, test.testType)
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            } else {
+                if (!previousDaysIsOver1) {
                     item {
-                        SectionHeader("За сегодня", Modifier.padding(top = 12.dp, bottom = 24.dp))
+                        SectionHeader(
+                            "За пропущенные дни",
+                            Modifier.padding(top = 44.dp, bottom = 16.dp)
+                        )
                     }
-                    items(listTestsPreview) { test ->
-                        TestItem(test) {
-                            navigateToTest(test.id, test.testType)
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
+                    previousDaysIsOver1 = true
+                }
+                item {
+                    DateLabel(viewModel.convertLocalDateToUiDate(day))
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+                items(listTestsPreview) { test ->
+                    TestItem(test) {
+                        navigateToTest(test.id, test.testType)
                     }
-                } else {
-                    if (!previousDaysIsOver) {
-                        item {
-                            SectionHeader(
-                                "За пропущенные дни",
-                                Modifier.padding(top = 44.dp, bottom = 16.dp)
-                            )
-                        }
-                        previousDaysIsOver = true
-                    }
-                    item {
-                        DateLabel(viewModel.convertLocalDateToUiDate(day))
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-                    items(listTestsPreview) { test ->
-                        TestItem(test) {
-                            navigateToTest(test.id, test.testType)
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }

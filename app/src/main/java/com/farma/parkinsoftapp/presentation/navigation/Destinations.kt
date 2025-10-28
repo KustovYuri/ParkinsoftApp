@@ -21,7 +21,7 @@ object PatientAllTestsRoute
 
 @Serializable
 data class PatientTestRoute(
-    val testId: Int,
+    val testId: Long,
     val testType: TestType
 )
 

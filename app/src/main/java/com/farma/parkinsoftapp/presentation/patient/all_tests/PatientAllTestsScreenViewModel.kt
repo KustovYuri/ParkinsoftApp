@@ -5,20 +5,26 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
+import com.farma.parkinsoftapp.data.network.models.ShortPatient
+import com.farma.parkinsoftapp.data.network.models.TestPreview
+import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
-import com.farma.parkinsoftapp.presentation.patient.all_tests.models.TestPreviewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 import javax.inject.Inject
 
 data class AllPreviewTestsState(
-    val testsPreviewByDays: Map<LocalDate, List<PatientTestPreview>> = emptyMap()
+    val testsPreviewByDays: Map<LocalDate, List<PatientTestPreview>> = emptyMap(),
+    val isLoading: Boolean = false,
+    val error: String? = null
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -32,8 +38,23 @@ class PatientAllTestsScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            mainRepository.getPatientTests().collect {
-                convertDataToState(it)
+            mainRepository.getShortPatientData(1).collect {
+                when (it) {
+                    is Result.Error -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = it.message
+                        )
+                    }
+                    is Result.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = true,
+                        )
+                    }
+                    is Result.Success -> {
+                        convertDataToState(it.result)
+                    }
+                }
             }
         }
     }
@@ -42,12 +63,35 @@ class PatientAllTestsScreenViewModel @Inject constructor(
         mainRepository.setUserRole(UserRoleValues.UNAUTHORIZED)
     }
 
-    fun convertDataToState(data: List<PatientTestPreview>){
-        val resultMap: Map<LocalDate, List<PatientTestPreview>> = data
+    fun convertDataToState(shortPatient: ShortPatient) {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
+        val resultMap: Map<LocalDate, List<PatientTestPreview>> = shortPatient.testPreview
+            .map {
+                PatientTestPreview(
+                    id = it.id ?: 0,
+                    testDate = LocalDate.parse(it.testDate, formatter),
+                    questionCount = it.questionsCount,
+                    testTime = it.testTime,
+                    testName = it.getTestName(),
+                    isSuccessTest = it.isCompleted,
+                    testType = TestType.fromString(it.testType) ?: TestType.TEST_STIMULATION_DIARY
+                )
+            }
             .groupBy { it.testDate }
-            .toSortedMap (compareByDescending { it })
+            .toSortedMap(compareByDescending { it })
 
-        _uiState.value = _uiState.value.copy(resultMap)
+        _uiState.value = _uiState.value.copy(
+            isLoading = false,
+            testsPreviewByDays = resultMap
+        )
+    }
+
+    private fun TestPreview.getTestName(): String {
+        return when (this.testType) {
+            "test_stimulation_diary" -> "Дневник тестовой стимуляции"
+            "state_of_health_diary" -> "Дневник общего самочувствия"
+            else -> "Неизвестный тест"
+        }
     }
 
     fun convertLocalDateToUiDate(dateLabel: LocalDate): String {

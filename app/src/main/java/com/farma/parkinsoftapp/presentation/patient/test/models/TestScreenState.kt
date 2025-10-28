@@ -1,0 +1,9 @@
+package com.farma.parkinsoftapp.presentation.patient.test.models
+
+import com.farma.parkinsoftapp.data.network.models.TestModel
+
+data class TestScreenState(
+    val data: List<TestModel> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
+)
