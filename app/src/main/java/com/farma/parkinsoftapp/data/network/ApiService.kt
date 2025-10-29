@@ -3,6 +3,7 @@ package com.farma.parkinsoftapp.data.network
 import com.farma.parkinsoftapp.data.network.models.LoginRequest
 import com.farma.parkinsoftapp.data.network.models.LoginResponse
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
+import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -28,4 +29,9 @@ interface ApiService {
         @Path("testPreviewId") testPreviewId: Long,
         @Path("testType") testType: String
     ): Response<List<TestModel>>
+
+    @POST("/test/saveTestAnswers")
+    suspend fun saveTestAnswers(
+        @Body body: List<TestAnswer>
+    )
 }

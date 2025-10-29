@@ -2,6 +2,7 @@ package com.farma.parkinsoftapp.domain.repositories
 
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
+import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
@@ -16,8 +17,6 @@ interface MainRepository {
 
     fun getPatientSelectedTest(testId: Long, testType: TestType): Flow<Result<List<TestModel>>>
 
-    fun finishTest(testId: Long)
-
     fun getAllPatients(): Flow<List<Patient>>
 
     fun getPatient(patientId: Int): Patient
@@ -27,4 +26,5 @@ interface MainRepository {
     fun getUserRole(): Flow<UserRoleValues>
 
     suspend fun setUserRole(newUserRole: UserRoleValues)
+    suspend fun finishTest(testAnswers: List<TestAnswer>)
 }

@@ -6,6 +6,7 @@ import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.data.network.ApiService
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
+import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
@@ -13,10 +14,13 @@ import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.Question
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 import okio.IOException
 import java.time.LocalDate
 import javax.inject.Inject
@@ -64,9 +68,10 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun finishTest(testId: Long) {
-        patientTestPreview.find { it.id == testId }?.isSuccessTest = true
+    override suspend fun finishTest(testAnswers: List<TestAnswer>) {
+        withContext(Dispatchers.IO) {
+            apiService.saveTestAnswers(testAnswers)
+        }
     }
 
     override fun getAllPatients(): Flow<List<Patient>> = doctorPatients

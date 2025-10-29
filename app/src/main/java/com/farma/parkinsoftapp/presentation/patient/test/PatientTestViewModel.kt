@@ -53,7 +53,13 @@ class PatientTestViewModel @Inject constructor(
                     is Result.Success -> {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            data = test.result
+                            data = test.result.also { allTests ->
+                                allTests.forEach { test ->
+                                    test.answers.find { it.isSelected }?.let { selectedAnswer ->
+                                        _selectedAnswers.value = _selectedAnswers.value + (test to selectedAnswer)
+                                    }
+                                }
+                            }
                         )
                     }
                 }
@@ -61,8 +67,16 @@ class PatientTestViewModel @Inject constructor(
         }
     }
 
-    fun finishTest() {
-        mainRepository.finishTest(testId)
+    fun finishTest(navigation: () -> Unit) {
+        _uiState.value = _uiState.value.copy(isSending = true)
+        viewModelScope.launch {
+            mainRepository.finishTest(
+                testAnswers = _selectedAnswers.value.values.toList().map {
+                    it.copy(isSelected = true)
+                }
+            )
+            navigation()
+        }
     }
 
     fun selectAnswer(testQuestion: TestModel, selectedAnswer: TestAnswer) {

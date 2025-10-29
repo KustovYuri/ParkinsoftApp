@@ -85,7 +85,11 @@ fun AppNavHost(
                     navController.popBackStack()
                 },
                 finishTest = {
-                    navController.popBackStack()
+                    navController.navigate(PatientAllTestsRoute) {
+                        popUpTo<PatientAllTestsRoute> {
+                            inclusive = true
+                        }
+                    }
                 },
             )
         }

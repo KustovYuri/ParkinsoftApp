@@ -5,5 +5,6 @@ import com.farma.parkinsoftapp.data.network.models.TestModel
 data class TestScreenState(
     val data: List<TestModel> = emptyList(),
     val isLoading: Boolean = false,
+    val isSending: Boolean = false,
     val error: String? = null
 )

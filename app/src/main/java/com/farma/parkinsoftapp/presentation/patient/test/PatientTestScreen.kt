@@ -64,9 +64,39 @@ fun PatientTestScreen(
                     text = state.error ?: "Неизвестная ошибка"
                 )
             } else {
-                TestScreen(currentQuestionIndex, state, progress, selectedAnswers, viewModel)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                ) {
+                    TestScreen(
+                        currentQuestionIndex,
+                        state,
+                        progress,
+                        selectedAnswers,
+                        viewModel
+                    )
+                    if (state.isSending) {
+                        LoadingScreen()
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Color(0x6DFFFFFF)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = Color(0xFF178399)
+        )
     }
 }
 
@@ -131,11 +161,12 @@ private fun TestScreen(
                         )
                         .clip(RoundedCornerShape(20.dp))
                         .clickable {
-                            viewModel
-                                .selectAnswer(
+                            if (!state.isSending) {
+                                viewModel.selectAnswer(
                                     state.data[currentQuestionIndex],
                                     answer
                                 )
+                            }
                         }
                         .padding(vertical = 12.dp, horizontal = 16.dp)
                 ) {
@@ -165,7 +196,11 @@ private fun BottomBar(
                 modifier = Modifier
                     .width(90.dp)
                     .height(50.dp),
-                onClick = { viewModel.previousQuestion() },
+                onClick = {
+                    if (!state.isSending) {
+                        viewModel.previousQuestion()
+                    }
+                },
                 shape = RoundedCornerShape(12.dp),
                 border = BorderStroke(width = 1.dp, color = Color(0xFF178399)),
             ) {
@@ -182,11 +217,12 @@ private fun BottomBar(
                 .fillMaxWidth()
                 .height(50.dp),
             onClick = {
-                if (currentQuestionIndex == state.data.size - 1) {
-                    viewModel.finishTest()
-                    finishTest()
-                } else {
-                    viewModel.nextQuestion()
+                if (!state.isSending) {
+                    if (currentQuestionIndex == state.data.size - 1) {
+                        viewModel.finishTest(finishTest)
+                    } else {
+                        viewModel.nextQuestion()
+                    }
                 }
             },
             shape = RoundedCornerShape(12.dp),
