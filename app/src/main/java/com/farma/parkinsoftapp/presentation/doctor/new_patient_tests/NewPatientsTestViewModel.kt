@@ -36,7 +36,7 @@ class NewPatientsTestViewModel @Inject constructor(
 
     fun createPatient(
         navigationArgs: NewPatientTestsRoute
-    ): Int {
+    ): Long {
         return mainRepository.addNewPatient(navigationArgs.convertToPatient())
     }
 

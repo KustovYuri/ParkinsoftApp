@@ -11,6 +11,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.validation.ValidationResult
+import com.farma.parkinsoftapp.domain.usecases.CalculateAgeUseCase
 import com.farma.parkinsoftapp.domain.usecases.validation.ValidationNameUseCase
 import com.farma.parkinsoftapp.domain.usecases.validation.ValidationPhoneNumberUseCase
 import com.farma.parkinsoftapp.presentation.doctor.new_pacient.modles.NewPatientFieldState
@@ -26,7 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NewPatientViewModel @Inject constructor(
     private val validationPhoneNumberUseCase: ValidationPhoneNumberUseCase,
-    private val validationNameUseCase: ValidationNameUseCase
+    private val validationNameUseCase: ValidationNameUseCase,
+    private val calculateAgeUseCase: CalculateAgeUseCase
 ) : ViewModel() {
 
     private val _newPatientState = mutableStateOf(NewPatientState())
@@ -193,12 +195,7 @@ class NewPatientViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun calculateAge(birthDateString: String): Int {
-        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-        val birthDate = LocalDate.parse(birthDateString, formatter)
-        val currentDate = LocalDate.now()
-        val period = Period.between(birthDate, currentDate)
-
-        return period.years
+        return calculateAgeUseCase(birthDateString)
     }
 }
 

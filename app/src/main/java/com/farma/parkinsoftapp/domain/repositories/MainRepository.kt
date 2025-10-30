@@ -1,6 +1,7 @@
 package com.farma.parkinsoftapp.domain.repositories
 
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
+import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
@@ -17,11 +18,11 @@ interface MainRepository {
 
     fun getPatientSelectedTest(testId: Long, testType: TestType): Flow<Result<List<TestModel>>>
 
-    fun getAllPatients(): Flow<List<Patient>>
+    fun getDoctorWithPatients(doctorId: Long): Flow<Result<DoctorWithPatientsModel>>
 
-    fun getPatient(patientId: Int): Patient
+    fun getPatient(patientId: Long): Patient
 
-    fun addNewPatient(patient: Patient): Int
+    fun addNewPatient(patient: Patient): Long
 
     fun getUserRole(): Flow<UserRoleValues>
 

@@ -44,7 +44,7 @@ import com.farma.parkinsoftapp.presentation.navigation.NewPatientTestsRoute
 fun NewPatientsTestScreen(
     viewModel: NewPatientsTestViewModel = hiltViewModel<NewPatientsTestViewModel>(),
     backNavigation: () -> Unit,
-    nextScreenNavigation: (Int) -> Unit,
+    nextScreenNavigation: (Long) -> Unit,
     navigationArgs: NewPatientTestsRoute
 ) {
     val controlTests = viewModel.controlTests

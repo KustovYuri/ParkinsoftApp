@@ -100,7 +100,7 @@ fun AppNavHost(
                 navigateToAddNewPatientScreen = {
                     navController.navigate(NewPatientRoute)
                 },
-                navigateToPatient = { patientId: Int ->
+                navigateToPatient = { patientId: Long ->
                     navController.navigate(PatientInfoRoute(patientId))
                 },
                 navigateToLogin = {

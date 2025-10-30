@@ -1,5 +1,7 @@
 package com.farma.parkinsoftapp.presentation.doctor.all_patients
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,15 +23,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.patient.Patient
+import com.farma.parkinsoftapp.domain.models.patient.PatientModel
 import com.farma.parkinsoftapp.presentation.composable.ProfileButton
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllPatientsScreen(
     viewModel: AllPatientsViewModel = hiltViewModel<AllPatientsViewModel>(),
     navigateToAddNewPatientScreen: () -> Unit,
-    navigateToPatient: (Int) -> Unit,
+    navigateToPatient: (Long) -> Unit,
     navigateToLogin: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -119,7 +123,10 @@ fun AllPatientsScreen(
                 items(uiState.filteredPatients) { patient ->
                     PatientItem(
                         patient = patient,
-                        click = { navigateToPatient(patient.id) }
+                        click = { navigateToPatient(patient.id ?: -1) },
+                        calculateAge = {birthdate: String ->
+                            viewModel.calculateAge(birthdate)
+                        }
                     )
                 }
             }
@@ -200,7 +207,7 @@ private fun TabButton(text: String, selected: Boolean, onClick: () -> Unit, modi
 }
 
 @Composable
-private fun PatientItem(patient: Patient, click: () -> Unit) {
+private fun PatientItem(patient: PatientModel, calculateAge: (String) -> Int, click: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -234,7 +241,7 @@ private fun PatientItem(patient: Patient, click: () -> Unit) {
         Column(modifier = Modifier.weight(1f)) {
             Row {
                 Text(
-                    "${patient.age} года",
+                    "${calculateAge(patient.birthDate)} года",
                     fontSize = 15.sp,
                     color = Color(0xFF002A33)
                 )

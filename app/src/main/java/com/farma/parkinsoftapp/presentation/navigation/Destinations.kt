@@ -47,7 +47,7 @@ data class NewPatientTestsRoute(
 
 @Serializable
 data class PatientInfoRoute(
-    val patientId: Int
+    val patientId: Long
 )
 
 @Serializable

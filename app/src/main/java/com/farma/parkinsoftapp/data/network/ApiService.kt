@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.data.network
 
+import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LoginRequest
 import com.farma.parkinsoftapp.data.network.models.LoginResponse
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
@@ -29,6 +30,11 @@ interface ApiService {
         @Path("testPreviewId") testPreviewId: Long,
         @Path("testType") testType: String
     ): Response<List<TestModel>>
+
+    @GET("/doctor/{doctorId}")
+    suspend fun getDoctorWithPatientsByDoctorId(
+        @Path("doctorId") doctorId: Long,
+    ): Response<DoctorWithPatientsModel>
 
     @POST("/test/saveTestAnswers")
     suspend fun saveTestAnswers(

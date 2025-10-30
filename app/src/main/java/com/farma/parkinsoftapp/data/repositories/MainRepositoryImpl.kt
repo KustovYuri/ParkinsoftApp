@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.data.network.ApiService
+import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
@@ -74,17 +75,28 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAllPatients(): Flow<List<Patient>> = doctorPatients
+    override fun getDoctorWithPatients(doctorId: Long): Flow<Result<DoctorWithPatientsModel>> = flow {
+        emit(Result.Loading())
+        try {
+            val response = apiService
+                .getDoctorWithPatientsByDoctorId(doctorId)
+                .body() ?: throw IOException()
 
-    override fun getPatient(patientId: Int): Patient {
-        return doctorPatients.value.find { it.id == patientId } ?: doctorPatients.value[0]
+            emit(Result.Success(response))
+        }catch (throwable: Throwable) {
+            emit(Result.Error("Ошибка получения информации о пациентах", throwable))
+        }
     }
 
-    override fun addNewPatient(patient: Patient): Int {
+    override fun getPatient(patientId: Long): Patient {
+        return doctorPatients.value.find { it.id.toLong() == patientId } ?: doctorPatients.value[0]
+    }
+
+    override fun addNewPatient(patient: Patient): Long {
         val patientId = doctorPatients.value.size + 2
 
         doctorPatients.value = doctorPatients.value + patient.copy(id = patientId)
-        return patientId
+        return patientId.toLong()
     }
 
     override fun getUserRole(): Flow<UserRoleValues> {
