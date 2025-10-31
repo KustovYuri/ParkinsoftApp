@@ -6,13 +6,13 @@ import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.data.network.ApiService
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
+import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
-import com.farma.parkinsoftapp.domain.models.patient.Question
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import okio.IOException
 import java.time.LocalDate
 import javax.inject.Inject
@@ -88,8 +87,14 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getPatient(patientId: Long): Patient {
-        return doctorPatients.value.find { it.id.toLong() == patientId } ?: doctorPatients.value[0]
+    override fun getPatientInfo(patientId: Long) = flow {
+        emit(Result.Loading())
+        try {
+            val result = apiService.getDoctorPatientInfo(patientId).body() ?: throw IOException()
+            emit(Result.Success(result))
+        }catch (e: Throwable) {
+            emit(Result.Error("Ошибка получения данных пациента", e))
+        }
     }
 
     override fun addNewPatient(patient: Patient): Long {

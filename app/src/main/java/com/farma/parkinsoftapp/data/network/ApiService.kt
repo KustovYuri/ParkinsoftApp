@@ -1,6 +1,7 @@
 package com.farma.parkinsoftapp.data.network
 
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
+import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.LoginRequest
 import com.farma.parkinsoftapp.data.network.models.LoginResponse
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
@@ -14,12 +15,6 @@ import retrofit2.http.Path
 
 
 interface ApiService {
-
-    @POST("/api/login/")
-    suspend fun login(
-        @Body body: LoginRequest = LoginRequest()
-    ): Response<LoginResponse>
-
     @GET("/patient/short/{patientId}")
     suspend fun getShortPatientById(
         @Path("patientId") userId: Long
@@ -40,4 +35,9 @@ interface ApiService {
     suspend fun saveTestAnswers(
         @Body body: List<TestAnswer>
     )
+
+    @GET("/doctor/patientInfo/{patientId}")
+    suspend fun getDoctorPatientInfo(
+        @Path("patientId") patientId: Long,
+    ): Response<LargePatientModel>
 }

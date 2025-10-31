@@ -1,0 +1,34 @@
+package com.farma.parkinsoftapp.data.network.models
+
+data class LargePatientModel(
+    val id: Long? = null,
+    val doctorId: Long,
+    val name: String,
+    val secondName: String,
+    val middleName: String,
+    val sex: Boolean,
+    val birthDate: String,
+    val diagnosis: String,
+    val dateReceipt: String,
+    val stateHealth: String,
+    val onTreatments: Boolean,
+    val testsPreview: List<TestPreviewModel>
+){
+    val initials: String
+        get() = "${secondName.first()}${name.first()}".uppercase()
+
+    val fullName: String
+        get() = "$secondName ${name.first()}. ${middleName.first()}."
+}
+
+data class TestPreviewModel(
+    val id: Long? = null,
+    val patientId: Long,
+    val testType: String,
+    val testDate: String,
+    val questionsCount: Int,
+    val isViewed: Boolean? = null,
+    val maxPoints: Int,
+    val summaryPoints: Int,
+    val progressStatus: Boolean
+)

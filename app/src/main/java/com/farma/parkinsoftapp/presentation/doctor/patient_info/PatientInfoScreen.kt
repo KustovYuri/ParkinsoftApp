@@ -1,10 +1,13 @@
 package com.farma.parkinsoftapp.presentation.doctor.patient_info
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,75 +45,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
-import com.farma.parkinsoftapp.domain.models.patient.Patient
+import com.farma.parkinsoftapp.data.network.models.LargePatientModel
+import com.farma.parkinsoftapp.data.network.models.TestPreviewModel
+import com.farma.parkinsoftapp.presentation.common.ScreenState
 
 private enum class TestsTabs{
     DAILY, CONTROL
 }
 
-val mockShortTests = listOf(
-    ShortTestInfo(
-        date = "Сегодня, 09:15",
-        arrowUp = true,
-        questionCount = "7 / 15",
-        newTests = true
-    ),
-    ShortTestInfo(
-        date = "Сегодня, 21:40",
-        arrowUp = false,
-        questionCount = "10 / 15",
-        newTests = false
-    ),
-    ShortTestInfo(
-        date = "Вчера, 18:22",
-        arrowUp = true,
-        questionCount = "15 / 15",
-        newTests = true
-    ),
-    ShortTestInfo(
-        date = "10 октября, 12:30",
-        arrowUp = false,
-        questionCount = "5 / 15",
-        newTests = false
-    ),
-    ShortTestInfo(
-        date = "9 октября, 07:50",
-        arrowUp = true,
-        questionCount = "12 / 15",
-        newTests = false
-    ),
-    ShortTestInfo(
-        date = "8 октября, 22:10",
-        arrowUp = false,
-        questionCount = "3 / 15",
-        newTests = false
-    ),
-    ShortTestInfo(
-        date = "6 октября, 19:45",
-        arrowUp = true,
-        questionCount = "9 / 15",
-        newTests = true
-    ),
-    ShortTestInfo(
-        date = "5 октября, 08:10",
-        arrowUp = false,
-        questionCount = "14 / 15",
-        newTests = false
-    ),
-    ShortTestInfo(
-        date = "3 октября, 23:30",
-        arrowUp = true,
-        questionCount = "6 / 15",
-        newTests = true
-    ),
-    ShortTestInfo(
-        date = "1 октября, 10:05",
-        arrowUp = false,
-        questionCount = "11 / 15",
-        newTests = false
-    )
-)
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PatientInfoScreen(
     viewModel: PatientInfoViewModel = hiltViewModel<PatientInfoViewModel>(),
@@ -118,79 +62,122 @@ fun PatientInfoScreen(
 ) {
     var selectedTab by remember { mutableStateOf(TestsTabs.DAILY) }
     var selectedTestChip by remember { mutableStateOf("Дневник тестовой стимуляции") }
-    val patient by viewModel.patient.collectAsState()
+    val patientState by viewModel.patientState.collectAsState()
 
     Scaffold(
         topBar = { TopScreenBar { backNavigation() } }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFFFFFF))
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                .background(Color(0xFFFFFFFF)),
+            contentAlignment = Alignment.Center
         ) {
-            Spacer(Modifier.height(34.dp))
-            PatientItem(patient)
-            Spacer(Modifier.height(24.dp))
-            TherapyDate()
-            Spacer(Modifier.height(12.dp))
-            TherapyResult()
-            Spacer(Modifier.height(28.dp))
-            Text(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                text = "Опросы",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(12.dp))
-            Tabs(
-                selectedTab = selectedTab,
-                clickTab = { tab: TestsTabs ->
-                    selectedTestChip = ""
-                    selectedTab = tab
+            when(patientState) {
+                is ScreenState.Error -> {
+                    Text((patientState as ScreenState.Error).message)
                 }
-            )
-            Spacer(Modifier.height(12.dp))
-            when(selectedTab) {
-                TestsTabs.DAILY -> {
-                    TestChips(
-                        tests = listOf(
-                            "Дневник тестовой стимуляции",
-                            "Дневник общего самочувствия"
-                        ),
-                        selectedTestChip = selectedTestChip,
-                        onChipSelected = { selectedChip ->
-                            selectedTestChip = selectedChip
+                is ScreenState.Loading -> {
+                    CircularProgressIndicator(
+                        color = Color(0xFF178399)
+                    )
+                }
+                is ScreenState.Success -> {
+                    Screen(
+                        (patientState as ScreenState.Success<LargePatientModel>).data,
+                        paddingValues,
+                        selectedTab,
+                        selectedTestChip,
+                        navigateToTestInfo,
+                        calculateAge = {date: String ->
+                            viewModel.calculateAge(date)
                         }
                     )
-                    Spacer(Modifier.height(28.dp))
-                    (0..5).forEach { i ->
-                        TestItem(
-                            shortTestInfo = mockShortTests[i],
-                            click = navigateToTestInfo
-                        )
-                    }
-                }
-                TestsTabs.CONTROL -> {
-                    TestChips(
-                        tests = listOf("HADS", "DN4", "Освестри", "SF-36", "LANSS", "PainDetect"),
-                        selectedTestChip = selectedTestChip,
-                        onChipSelected = { selectedChip ->
-                            selectedTestChip = selectedChip
-                        }
-                    )
-                    Spacer(Modifier.height(28.dp))
-                    (6..9).forEach { i ->
-                        TestItem(
-                            shortTestInfo = mockShortTests[i],
-                            click = navigateToTestInfo
-                        )
-                    }
                 }
             }
-            Spacer(Modifier.height(16.dp))
         }
+    }
+}
+
+@Composable
+private fun Screen(
+    patientInfo: LargePatientModel,
+    paddingValues: PaddingValues,
+    selectedTab: TestsTabs,
+    selectedTestChip: String,
+    navigateToTestInfo: () -> Unit,
+    calculateAge: (String) -> Int
+) {
+    var selectedTab1 = selectedTab
+    var selectedTestChip1 = selectedTestChip
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFFFFFF))
+            .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Spacer(Modifier.height(34.dp))
+        PatientItem(patientInfo, calculateAge)
+        Spacer(Modifier.height(24.dp))
+        TherapyDate()
+        Spacer(Modifier.height(12.dp))
+        TherapyResult()
+        Spacer(Modifier.height(28.dp))
+        Text(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            text = "Опросы",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.height(12.dp))
+        Tabs(
+            selectedTab = selectedTab1,
+            clickTab = { tab: TestsTabs ->
+                selectedTestChip1 = ""
+                selectedTab1 = tab
+            }
+        )
+        Spacer(Modifier.height(12.dp))
+        when (selectedTab1) {
+            TestsTabs.DAILY -> {
+                TestChips(
+                    tests = listOf(
+                        "Дневник тестовой стимуляции",
+                        "Дневник общего самочувствия"
+                    ),
+                    selectedTestChip = selectedTestChip1,
+                    onChipSelected = { selectedChip ->
+                        selectedTestChip1 = selectedChip
+                    }
+                )
+                Spacer(Modifier.height(28.dp))
+                patientInfo.testsPreview.forEach {
+                    TestItem(
+                        shortTestInfo = it,
+                        click = navigateToTestInfo
+                    )
+                }
+            }
+
+            TestsTabs.CONTROL -> {
+                TestChips(
+                    tests = listOf("HADS", "DN4", "Освестри", "SF-36", "LANSS", "PainDetect"),
+                    selectedTestChip = selectedTestChip1,
+                    onChipSelected = { selectedChip ->
+                        selectedTestChip1 = selectedChip
+                    }
+                )
+                Spacer(Modifier.height(28.dp))
+                patientInfo.testsPreview.forEach {
+                    TestItem(
+                        shortTestInfo = it,
+                        click = navigateToTestInfo
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(16.dp))
     }
 }
 
@@ -203,7 +190,7 @@ data class ShortTestInfo(
 
 @Composable
 private fun TestItem(
-    shortTestInfo: ShortTestInfo,
+    shortTestInfo: TestPreviewModel,
     click: () -> Unit
 ) {
     Row(
@@ -219,7 +206,7 @@ private fun TestItem(
             modifier = Modifier.padding(vertical = 6.dp)
         ) {
             Text(
-                text = shortTestInfo.date,
+                text = "11.09.2025",
                 color = Color(0xFF62767A),
                 fontSize = 13.sp
             )
@@ -230,7 +217,7 @@ private fun TestItem(
             )
         }
         Spacer(Modifier.weight(1f))
-        if (shortTestInfo.arrowUp) {
+        if (shortTestInfo.progressStatus) {
             Icon(
                 painter = painterResource(R.drawable.icon__4_),
                 contentDescription = null,
@@ -246,8 +233,8 @@ private fun TestItem(
         Spacer(Modifier.width(12.dp))
         Text(
             modifier = Modifier.width(60.dp),
-            text = shortTestInfo.questionCount,
-            color = if (shortTestInfo.arrowUp){
+            text = "${shortTestInfo.summaryPoints}/${shortTestInfo.maxPoints}",
+            color = if (shortTestInfo.progressStatus){
                 Color(0xFF459C62)
             } else {
                 Color(0xFFE27878)
@@ -264,7 +251,7 @@ private fun TestItem(
                 contentDescription = null,
                 tint = Color.Gray
             )
-            if (shortTestInfo.newTests) {
+            if (shortTestInfo.isViewed ?: true) {
                 Box(
                     modifier = Modifier
                         .size(6.dp)
@@ -418,7 +405,8 @@ private fun TherapyDate() {
 
 @Composable
 private fun PatientItem(
-    patient: Patient
+    patientInfo: LargePatientModel,
+    calculateAge: (String) -> Int
 ) {
     Row(
         modifier = Modifier
@@ -432,13 +420,13 @@ private fun PatientItem(
                 .size(60.dp)
 //                .padding(top = 4.dp)
                 .background(
-                    color = if (patient.sex) Color(0xFFE1E7FA) else Color(0xFFFAE1E9),
+                    color = if (patientInfo.sex) Color(0xFFE1E7FA) else Color(0xFFFAE1E9),
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = patient.initials,
+                text = patientInfo.initials,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = Color(0xFF002A33)
@@ -450,12 +438,12 @@ private fun PatientItem(
         Column() {
             Row {
                 Text(
-                    "${patient.age} года",
+                    "${calculateAge(patientInfo.birthDate)} года",
                     fontSize = 15.sp,
                     color = Color(0xFF002A33)
                 )
                 Text(
-                    " · ${patient.diagnosis}",
+                    " · ${patientInfo.diagnosis}",
                     fontSize = 15.sp,
                     color = Color(0xFF62767A)
                 )
@@ -463,14 +451,14 @@ private fun PatientItem(
             Text(
                 modifier = Modifier
                     .height(20.dp),
-                text = patient.lastName,
+                text = patientInfo.secondName,
                 fontSize = 15.sp,
                 color = Color(0xFF002A33)
             )
             Text(
                 modifier = Modifier
                     .height(20.dp),
-                text = "${patient.firstName} ${patient.middleName}",
+                text = "${patientInfo.name} ${patientInfo.middleName}",
                 fontSize = 15.sp,
                 color = Color(0xFF002A33),
             )
