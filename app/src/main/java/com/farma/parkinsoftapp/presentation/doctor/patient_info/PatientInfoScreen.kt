@@ -206,7 +206,7 @@ private fun TestItem(
             modifier = Modifier.padding(vertical = 6.dp)
         ) {
             Text(
-                text = "11.09.2025",
+                text = shortTestInfo.testCompletedDate,
                 color = Color(0xFF62767A),
                 fontSize = 13.sp
             )

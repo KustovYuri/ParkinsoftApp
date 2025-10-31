@@ -30,5 +30,6 @@ data class TestPreviewModel(
     val isViewed: Boolean? = null,
     val maxPoints: Int,
     val summaryPoints: Int,
-    val progressStatus: Boolean
+    val progressStatus: Boolean,
+    val testCompletedDate: String
 )
