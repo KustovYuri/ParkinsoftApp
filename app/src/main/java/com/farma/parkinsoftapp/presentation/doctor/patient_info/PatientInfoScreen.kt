@@ -29,11 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,8 +49,19 @@ import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.TestPreviewModel
 import com.farma.parkinsoftapp.presentation.common.ScreenState
 
-private enum class TestsTabs{
+private enum class TestsTabs {
     DAILY, CONTROL
+}
+
+private enum class TestsTypes(val value: String, val testType: String) {
+    STATE_OF_HEALTH_DIARY("Дневник тестовой стимуляции", "test_stimulation_diary"),
+    TEST_STIMULATION_DIARY("Дневник общего самочувствия", "state_of_health_diary"),
+    HADS("HADS", "hads"),
+    DN4("DN4", "dn4"),
+    OSVESTRY("Освестри", "osvestry"),
+    SF36("SF-36", "sf36"),
+    LANSS("LANSS", "lanss"),
+    PAIN_DETECTED("PainDetect", "pain_detected")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -60,8 +71,8 @@ fun PatientInfoScreen(
     backNavigation: () -> Unit,
     navigateToTestInfo: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(TestsTabs.DAILY) }
-    var selectedTestChip by remember { mutableStateOf("Дневник тестовой стимуляции") }
+    val selectedTab = remember { mutableStateOf(TestsTabs.DAILY) }
+    val selectedTestChip = remember { mutableStateOf(TestsTypes.TEST_STIMULATION_DIARY) }
     val patientState by viewModel.patientState.collectAsState()
 
     Scaffold(
@@ -73,15 +84,17 @@ fun PatientInfoScreen(
                 .background(Color(0xFFFFFFFF)),
             contentAlignment = Alignment.Center
         ) {
-            when(patientState) {
+            when (patientState) {
                 is ScreenState.Error -> {
                     Text((patientState as ScreenState.Error).message)
                 }
+
                 is ScreenState.Loading -> {
                     CircularProgressIndicator(
                         color = Color(0xFF178399)
                     )
                 }
+
                 is ScreenState.Success -> {
                     Screen(
                         (patientState as ScreenState.Success<LargePatientModel>).data,
@@ -89,7 +102,7 @@ fun PatientInfoScreen(
                         selectedTab,
                         selectedTestChip,
                         navigateToTestInfo,
-                        calculateAge = {date: String ->
+                        calculateAge = { date: String ->
                             viewModel.calculateAge(date)
                         }
                     )
@@ -103,13 +116,11 @@ fun PatientInfoScreen(
 private fun Screen(
     patientInfo: LargePatientModel,
     paddingValues: PaddingValues,
-    selectedTab: TestsTabs,
-    selectedTestChip: String,
+    selectedTab: MutableState<TestsTabs>,
+    selectedTestChip: MutableState<TestsTypes>,
     navigateToTestInfo: () -> Unit,
     calculateAge: (String) -> Int
 ) {
-    var selectedTab1 = selectedTab
-    var selectedTestChip1 = selectedTestChip
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -132,61 +143,72 @@ private fun Screen(
         )
         Spacer(Modifier.height(12.dp))
         Tabs(
-            selectedTab = selectedTab1,
+            selectedTab = selectedTab.value,
             clickTab = { tab: TestsTabs ->
-                selectedTestChip1 = ""
-                selectedTab1 = tab
+                selectedTestChip.value =
+                    if (tab == TestsTabs.DAILY) {
+                        TestsTypes.TEST_STIMULATION_DIARY
+                    } else {
+                        TestsTypes.HADS
+                    }
+                selectedTab.value = tab
             }
         )
         Spacer(Modifier.height(12.dp))
-        when (selectedTab1) {
+        when (selectedTab.value) {
             TestsTabs.DAILY -> {
                 TestChips(
                     tests = listOf(
-                        "Дневник тестовой стимуляции",
-                        "Дневник общего самочувствия"
+                        TestsTypes.TEST_STIMULATION_DIARY,
+                        TestsTypes.STATE_OF_HEALTH_DIARY
                     ),
-                    selectedTestChip = selectedTestChip1,
-                    onChipSelected = { selectedChip ->
-                        selectedTestChip1 = selectedChip
+                    selectedTestChip = selectedTestChip.value,
+                    onChipSelected = { selectedChip: TestsTypes ->
+                        selectedTestChip.value = selectedChip
                     }
                 )
                 Spacer(Modifier.height(28.dp))
-                patientInfo.testsPreview.forEach {
-                    TestItem(
-                        shortTestInfo = it,
-                        click = navigateToTestInfo
-                    )
-                }
+                patientInfo.testsPreview
+                    .filter {
+                        it.testType == selectedTestChip.value.testType
+                    }.forEach {
+                        TestItem(
+                            shortTestInfo = it,
+                            click = navigateToTestInfo
+                        )
+                    }
             }
 
             TestsTabs.CONTROL -> {
                 TestChips(
-                    tests = listOf("HADS", "DN4", "Освестри", "SF-36", "LANSS", "PainDetect"),
-                    selectedTestChip = selectedTestChip1,
+                    tests = listOf(
+                        TestsTypes.HADS,
+                        TestsTypes.DN4,
+                        TestsTypes.OSVESTRY,
+                        TestsTypes.SF36,
+                        TestsTypes.LANSS,
+                        TestsTypes.PAIN_DETECTED
+                    ),
+                    selectedTestChip = selectedTestChip.value,
                     onChipSelected = { selectedChip ->
-                        selectedTestChip1 = selectedChip
+                        selectedTestChip.value = selectedChip
                     }
                 )
                 Spacer(Modifier.height(28.dp))
-                patientInfo.testsPreview.forEach {
-                    TestItem(
-                        shortTestInfo = it,
-                        click = navigateToTestInfo
-                    )
-                }
+                patientInfo.testsPreview
+                    .filter {
+                        it.testType == selectedTestChip.value.testType
+                    }.forEach {
+                        TestItem(
+                            shortTestInfo = it,
+                            click = navigateToTestInfo
+                        )
+                    }
             }
         }
         Spacer(Modifier.height(16.dp))
     }
 }
-
-data class ShortTestInfo(
-    val date: String,
-    val arrowUp: Boolean,
-    val questionCount: String,
-    val newTests: Boolean
-)
 
 @Composable
 private fun TestItem(
@@ -234,7 +256,7 @@ private fun TestItem(
         Text(
             modifier = Modifier.width(60.dp),
             text = "${shortTestInfo.summaryPoints}/${shortTestInfo.maxPoints}",
-            color = if (shortTestInfo.progressStatus){
+            color = if (shortTestInfo.progressStatus) {
                 Color(0xFF459C62)
             } else {
                 Color(0xFFE27878)
@@ -265,9 +287,9 @@ private fun TestItem(
 
 @Composable
 private fun TestChips(
-    tests: List<String>,
-    selectedTestChip: String,
-    onChipSelected: (selectedChip: String) -> Unit
+    tests: List<TestsTypes>,
+    selectedTestChip: TestsTypes,
+    onChipSelected: (TestsTypes) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -286,9 +308,9 @@ private fun TestChips(
 
 @Composable
 private fun DailyTestsChips(
-    dailyTest: List<String>,
-    selectedTestChip: String,
-    onChipSelected: (String) -> Unit,
+    dailyTest: List<TestsTypes>,
+    selectedTestChip: TestsTypes,
+    onChipSelected: (TestsTypes) -> Unit,
 ) {
 
     dailyTest.forEach { test ->
@@ -308,7 +330,7 @@ private fun DailyTestsChips(
                 .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = test, fontSize = 13.sp)
+            Text(text = test.value, fontSize = 13.sp)
         }
     }
 }
