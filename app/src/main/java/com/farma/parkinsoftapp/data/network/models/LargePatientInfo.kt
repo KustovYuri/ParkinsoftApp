@@ -14,6 +14,8 @@ data class LargePatientModel(
     val onTreatments: Boolean,
     val testsPreview: List<TestPreviewModel>
 ){
+    val secondNameWithInitials: String
+        get() = "$secondName ${name.first()}. ${middleName.first()}."
     val initials: String
         get() = "${secondName.first()}${name.first()}".uppercase()
 

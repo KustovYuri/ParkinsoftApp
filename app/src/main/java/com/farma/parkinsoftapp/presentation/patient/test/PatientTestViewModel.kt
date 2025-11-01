@@ -72,7 +72,9 @@ class PatientTestViewModel @Inject constructor(
         viewModelScope.launch {
             mainRepository.finishTest(
                 testAnswers = _selectedAnswers.value.values.toList().map {
-                    it.copy(isSelected = true)
+                    it.copy(
+                        isSelected = true,
+                    )
                 }
             )
             navigation()

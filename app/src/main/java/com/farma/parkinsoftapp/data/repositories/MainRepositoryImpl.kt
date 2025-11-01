@@ -10,6 +10,7 @@ import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
+import com.farma.parkinsoftapp.data.network.models.TestResultModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
@@ -71,6 +72,26 @@ class MainRepositoryImpl @Inject constructor(
     override suspend fun finishTest(testAnswers: List<TestAnswer>) {
         withContext(Dispatchers.IO) {
             apiService.saveTestAnswers(testAnswers)
+        }
+    }
+
+    override suspend fun getResultTests(
+        testPreviewId: Long,
+        testType: TestType
+    ): Flow<Result<List<TestResultModel>>> = flow {
+        emit(Result.Loading())
+        try {
+            val result = apiService
+                .getResultTest(
+                    testPreviewId,
+                    testType.value
+                ).body() ?: throw IOException()
+
+            emit(Result.Success(result))
+        } catch (e: Throwable) {
+            emit(
+                Result.Error("Ошибка запроса данных теста пациента", e)
+            )
         }
     }
 

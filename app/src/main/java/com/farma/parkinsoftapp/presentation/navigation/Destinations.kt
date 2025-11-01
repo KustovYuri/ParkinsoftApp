@@ -51,4 +51,9 @@ data class PatientInfoRoute(
 )
 
 @Serializable
-object PatientCurrentTestRoute
+data class PatientCurrentTestRoute(
+    val initials: String,
+    val testDate: String,
+    val testType: TestType,
+    val testPreviewId: Long,
+)

@@ -7,6 +7,7 @@ import com.farma.parkinsoftapp.data.network.models.LoginResponse
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
+import com.farma.parkinsoftapp.data.network.models.TestResultModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -25,6 +26,12 @@ interface ApiService {
         @Path("testPreviewId") testPreviewId: Long,
         @Path("testType") testType: String
     ): Response<List<TestModel>>
+
+    @GET("/test/getResultTests/{testPreviewId}/{testType}")
+    suspend fun getResultTest(
+        @Path("testPreviewId") testPreviewId: Long,
+        @Path("testType") testType: String
+    ): Response<List<TestResultModel>>
 
     @GET("/doctor/{doctorId}")
     suspend fun getDoctorWithPatientsByDoctorId(

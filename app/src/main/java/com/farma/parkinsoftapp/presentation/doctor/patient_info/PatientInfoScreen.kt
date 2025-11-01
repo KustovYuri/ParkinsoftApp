@@ -47,6 +47,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.TestPreviewModel
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.presentation.common.ScreenState
 
 private enum class TestsTabs {
@@ -69,7 +70,7 @@ private enum class TestsTypes(val value: String, val testType: String) {
 fun PatientInfoScreen(
     viewModel: PatientInfoViewModel = hiltViewModel<PatientInfoViewModel>(),
     backNavigation: () -> Unit,
-    navigateToTestInfo: () -> Unit
+    navigateToTestInfo: (String, String, TestType, Long) -> Unit
 ) {
     val selectedTab = remember { mutableStateOf(TestsTabs.DAILY) }
     val selectedTestChip = remember { mutableStateOf(TestsTypes.TEST_STIMULATION_DIARY) }
@@ -118,7 +119,7 @@ private fun Screen(
     paddingValues: PaddingValues,
     selectedTab: MutableState<TestsTabs>,
     selectedTestChip: MutableState<TestsTypes>,
-    navigateToTestInfo: () -> Unit,
+    navigateToTestInfo: (String, String, TestType, Long) -> Unit,
     calculateAge: (String) -> Int
 ) {
     Column(
@@ -173,7 +174,8 @@ private fun Screen(
                         it.testType == selectedTestChip.value.testType
                     }.forEach {
                         TestItem(
-                            shortTestInfo = it,
+                            secondNameWithInitials = patientInfo.secondNameWithInitials,
+                            testPreviewInfo = it,
                             click = navigateToTestInfo
                         )
                     }
@@ -200,8 +202,9 @@ private fun Screen(
                         it.testType == selectedTestChip.value.testType
                     }.forEach {
                         TestItem(
-                            shortTestInfo = it,
-                            click = navigateToTestInfo
+                            secondNameWithInitials = patientInfo.secondNameWithInitials,
+                            testPreviewInfo = it,
+                            click = navigateToTestInfo,
                         )
                     }
             }
@@ -212,15 +215,22 @@ private fun Screen(
 
 @Composable
 private fun TestItem(
-    shortTestInfo: TestPreviewModel,
-    click: () -> Unit
+    secondNameWithInitials: String,
+    testPreviewInfo: TestPreviewModel,
+    click: (String, String, TestType, Long) -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .clickable {
-                click()
+                click(
+                    secondNameWithInitials,
+                    testPreviewInfo.testDate,
+                    TestType.fromString(testPreviewInfo.testType)
+                        ?: TestType.TEST_STIMULATION_DIARY,
+                    testPreviewInfo.id ?: -1
+                )
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -228,7 +238,7 @@ private fun TestItem(
             modifier = Modifier.padding(vertical = 6.dp)
         ) {
             Text(
-                text = shortTestInfo.testCompletedDate,
+                text = testPreviewInfo.testCompletedDate,
                 color = Color(0xFF62767A),
                 fontSize = 13.sp
             )
@@ -239,7 +249,7 @@ private fun TestItem(
             )
         }
         Spacer(Modifier.weight(1f))
-        if (shortTestInfo.progressStatus) {
+        if (testPreviewInfo.progressStatus) {
             Icon(
                 painter = painterResource(R.drawable.icon__4_),
                 contentDescription = null,
@@ -255,8 +265,8 @@ private fun TestItem(
         Spacer(Modifier.width(12.dp))
         Text(
             modifier = Modifier.width(60.dp),
-            text = "${shortTestInfo.summaryPoints}/${shortTestInfo.maxPoints}",
-            color = if (shortTestInfo.progressStatus) {
+            text = "${testPreviewInfo.summaryPoints}/${testPreviewInfo.maxPoints}",
+            color = if (testPreviewInfo.progressStatus) {
                 Color(0xFF459C62)
             } else {
                 Color(0xFFE27878)
@@ -273,7 +283,7 @@ private fun TestItem(
                 contentDescription = null,
                 tint = Color.Gray
             )
-            if (shortTestInfo.isViewed ?: true) {
+            if (testPreviewInfo.isViewed ?: true) {
                 Box(
                     modifier = Modifier
                         .size(6.dp)

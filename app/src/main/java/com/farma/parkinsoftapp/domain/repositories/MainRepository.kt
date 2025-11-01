@@ -6,6 +6,7 @@ import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
+import com.farma.parkinsoftapp.data.network.models.TestResultModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
@@ -29,4 +30,6 @@ interface MainRepository {
 
     suspend fun setUserRole(newUserRole: UserRoleValues)
     suspend fun finishTest(testAnswers: List<TestAnswer>)
+
+    suspend fun getResultTests(testPreviewId: Long, testType: TestType): Flow<Result<List<TestResultModel>>>
 }

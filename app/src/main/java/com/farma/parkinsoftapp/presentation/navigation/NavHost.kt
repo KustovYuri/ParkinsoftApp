@@ -30,7 +30,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = when(userRole) {
+        startDestination = when (userRole) {
             UserRoleValues.DOCTOR -> AllPatientsRoute
             UserRoleValues.PATIENT -> PatientAllTestsRoute
             UserRoleValues.UNAUTHORIZED -> LoginRoute
@@ -71,7 +71,7 @@ fun AppNavHost(
                     )
                 },
                 navigateToLogin = {
-                    navController.navigate(LoginRoute){
+                    navController.navigate(LoginRoute) {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
@@ -104,7 +104,7 @@ fun AppNavHost(
                     navController.navigate(PatientInfoRoute(patientId))
                 },
                 navigateToLogin = {
-                    navController.navigate(LoginRoute){
+                    navController.navigate(LoginRoute) {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
@@ -157,21 +157,32 @@ fun AppNavHost(
         composable<PatientInfoRoute> {
             PatientInfoScreen(
                 backNavigation = {
-                    navController.navigate(AllPatientsRoute){
+                    navController.navigate(AllPatientsRoute) {
                         popUpTo(0)
                     }
                 },
-                navigateToTestInfo = {
-                    navController.navigate(PatientCurrentTestRoute)
+                navigateToTestInfo = { initials: String, testDate: String, testType: TestType, testPreviewId: Long ->
+                    navController.navigate(
+                        PatientCurrentTestRoute(
+                            initials,
+                            testDate,
+                            testType,
+                            testPreviewId
+                        )
+                    )
                 }
             )
         }
 
-        composable<PatientCurrentTestRoute> {
+        composable<PatientCurrentTestRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<PatientCurrentTestRoute>()
+
             PatientCurrentTestScreen(
+                patientInitials = args.initials,
                 backNavigation = {
                     navController.popBackStack()
                 },
+                testDate = args.testDate
             )
         }
     }
