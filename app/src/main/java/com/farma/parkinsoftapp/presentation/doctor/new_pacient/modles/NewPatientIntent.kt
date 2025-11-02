@@ -13,5 +13,7 @@ sealed interface NewPatientIntent {
 
     data class SetDiagnosisIntent(val newValue: String): NewPatientIntent
 
+    data class SetPatientSex(val newValue: Boolean): NewPatientIntent
+
     object SuccessIntent: NewPatientIntent
 }

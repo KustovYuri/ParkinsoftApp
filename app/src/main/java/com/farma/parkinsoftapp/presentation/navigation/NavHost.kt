@@ -97,8 +97,8 @@ fun AppNavHost(
         //Врач
         composable<AllPatientsRoute> {
             AllPatientsScreen(
-                navigateToAddNewPatientScreen = {
-                    navController.navigate(NewPatientRoute)
+                navigateToAddNewPatientScreen = { doctorId: Long ->
+                    navController.navigate(NewPatientRoute(doctorId))
                 },
                 navigateToPatient = { patientId: Long ->
                     navController.navigate(PatientInfoRoute(patientId))
@@ -113,7 +113,9 @@ fun AppNavHost(
             )
         }
 
-        composable<NewPatientRoute> {
+        composable<NewPatientRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<NewPatientRoute>()
+
             NewPatientScreen(
                 closeScreen = {
                     navController.popBackStack()
@@ -121,15 +123,18 @@ fun AppNavHost(
                 nextScreenNavigation = { patient ->
                     navController.navigate(
                         NewPatientTestsRoute(
-                            patient.id,
-                            patient.firstName,
-                            patient.lastName,
-                            patient.middleName,
-                            patient.age,
-                            patient.diagnosis,
-                            patient.onTreatment,
-                            patient.unreadTests,
-                            patient.sex
+                            id = patient.id,
+                            doctorId = args.doctorId,
+                            firstName = patient.firstName,
+                            lastName = patient.lastName,
+                            middleName = patient.middleName,
+                            age = patient.age,
+                            phoneNumber = patient.phoneNumber,
+                            birthdayDate = patient.birthdayDate,
+                            diagnosis = patient.diagnosis,
+                            onTreatment = patient.onTreatment,
+                            unreadTests = patient.unreadTests,
+                            sex = patient.sex
                         )
                     )
                 }

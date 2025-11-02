@@ -30,15 +30,20 @@ data class PatientTestRoute(
 object AllPatientsRoute
 
 @Serializable
-object NewPatientRoute
+data class NewPatientRoute(
+    val doctorId: Long
+)
 
 @Serializable
 data class NewPatientTestsRoute(
     val id: Int,
+    val doctorId: Long,
     val firstName: String,
     val lastName: String,
     val middleName: String,
     val age: Int,
+    val phoneNumber: String,
+    val birthdayDate: String,
     val diagnosis: String,
     val onTreatment: Boolean,
     val unreadTests: Int,

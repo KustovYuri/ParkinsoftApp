@@ -45,6 +45,7 @@ class NewPatientViewModel @Inject constructor(
             _newPatientState.value.phoneNumber.value.isNotBlank(),
             _newPatientState.value.birthday.value.isNotBlank(),
             _newPatientState.value.diagnosis.value.isNotBlank(),
+            _newPatientState.value.sex != null
         ).all { it }
     }
 
@@ -93,6 +94,12 @@ class NewPatientViewModel @Inject constructor(
                     surname = NewPatientFieldState(
                         value = intent.newValue
                     )
+                )
+            }
+
+            is NewPatientIntent.SetPatientSex -> {
+                _newPatientState.value = _newPatientState.value.copy(
+                    sex = intent.newValue
                 )
             }
 
@@ -165,6 +172,12 @@ class NewPatientViewModel @Inject constructor(
             }
         }
 
+        val sexIsValidate = if (_newPatientState.value.sex == null) {
+            ValidationResult.Error("Поле не должно быть пустым")
+        } else {
+            ValidationResult.Success()
+        }
+
         return listOf(
             nameIsValidate,
             middleNameIsValidate,
@@ -186,10 +199,12 @@ class NewPatientViewModel @Inject constructor(
             lastName = _newPatientState.value.surname.value,
             middleName = _newPatientState.value.middleName.value,
             age = calculateAge(_newPatientState.value.birthday.value),
+            phoneNumber = _newPatientState.value.phoneNumber.value,
+            birthdayDate = _newPatientState.value.birthday.value,
             diagnosis = _newPatientState.value.diagnosis.value,
             onTreatment = true,
             unreadTests = 0,
-            sex = true
+            sex = _newPatientState.value.sex ?: true
         )
     }
 

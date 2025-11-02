@@ -19,6 +19,8 @@ iterceptor = "5.0.0-alpha.11"
 serialization = "1.9.0"
 datastore = "1.1.7"
 splashscreen = "1.0.0-alpha02"
+ktor = "3.3.1"
+logback = "1.2.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +51,16 @@ android-retrofit = {group = "com.squareup.retrofit2", name = "retrofit", version
 android-retrofit-gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit"}
 android-retrofit-code-gson = {group  = "com.google.code.gson", name = "gson", version.ref ="gson"}
 android-retrofit-logging-interceptor = {group  = "com.squareup.okhttp3", name = "logging-interceptor", version.ref ="iterceptor"}
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-bom = { module = "io.ktor:ktor-bom", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
+ktor-client-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 

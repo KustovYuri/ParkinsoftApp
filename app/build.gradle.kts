@@ -79,4 +79,14 @@ dependencies {
     implementation(libs.android.retrofit.gson)
     implementation(libs.android.retrofit.code.gson)
     implementation(libs.android.retrofit.logging.interceptor)
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(platform(libs.ktor.client.bom))
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.ktor.client.negotiation)
+    implementation(libs.ktor.client.json)
+    implementation(libs.ktor.client.logback)
 }

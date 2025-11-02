@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.doctor.new_patient_tests
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,18 +27,22 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.domain.models.patient.AllTestsTypes
+import com.farma.parkinsoftapp.presentation.common.ScreenState
 import com.farma.parkinsoftapp.presentation.navigation.NewPatientTestsRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,73 +53,112 @@ fun NewPatientsTestScreen(
     nextScreenNavigation: (Long) -> Unit,
     navigationArgs: NewPatientTestsRoute
 ) {
-    val controlTests = viewModel.controlTests
-    val dailyTests = viewModel.dailyTests
+    val controlTests = AllTestsTypes.listControlTests()
+    val dailyTests = AllTestsTypes.listDailyTests()
     val selectedControlItems by remember { viewModel.selectedControlItems }
     val selectedDailyItems by remember { viewModel.selectedDailyItems }
+    val uiState = remember { viewModel.screenState }
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState.value) {
+        val uiStateVariable = uiState.value
+
+        if (uiStateVariable is ScreenState.Success) {
+            nextScreenNavigation(uiStateVariable.data)
+        }
+    }
 
     Scaffold(
         topBar = { TopScreenBar(backNavigation) },
         containerColor = Color(0xFFFFFFFF)
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(horizontal = 20.dp)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Spacer(Modifier.height(34.dp))
-            Text(
-                text = "Контрольные опросники",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "При постановке на лечение и при выписке",
-                fontSize = 17.sp,
-            )
-            Spacer(Modifier.height(24.dp))
-            ControlTestsChips(controlTests, selectedControlItems) {item: String, isSelected: Boolean ->
-                viewModel.setSelectedControlItem(item, isSelected)
-            }
-            Spacer(Modifier.height(32.dp))
-            Text(
-                text = "Ежедневные опросники",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Для пациента",
-                fontSize = 17.sp,
-            )
-            Spacer(Modifier.height(24.dp))
-            DailyTestsChips(dailyTests, selectedDailyItems) {item: String, isSelected: Boolean ->
-                viewModel.setSelectedDailyItem(item, isSelected)
-            }
-            Spacer(Modifier.weight(1f))
-            NextButton(
-                isActive = true,
-                click = {
-                    val patientId = viewModel.createPatient(
-                        navigationArgs
-                    )
-                    nextScreenNavigation(patientId)
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(horizontal = 20.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                Spacer(Modifier.height(34.dp))
+                Text(
+                    text = "Контрольные опросники",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "При постановке на лечение и при выписке",
+                    fontSize = 17.sp,
+                )
+                Spacer(Modifier.height(24.dp))
+                ControlTestsChips(controlTests, selectedControlItems) {item: AllTestsTypes, isSelected: Boolean ->
+                    viewModel.setSelectedControlItem(item, isSelected)
                 }
-            )
-            Spacer(Modifier.height(35.dp))
-        }
+                Spacer(Modifier.height(32.dp))
+                Text(
+                    text = "Ежедневные опросники",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Для пациента",
+                    fontSize = 17.sp,
+                )
+                Spacer(Modifier.height(24.dp))
+                DailyTestsChips(dailyTests, selectedDailyItems) {item: AllTestsTypes, isSelected: Boolean ->
+                    viewModel.setSelectedDailyItem(item, isSelected)
+                }
+                Spacer(Modifier.weight(1f))
+                NextButton(
+                    isActive = viewModel.createButtonIsActive.value,
+                    click = {
+                        viewModel.createPatient(navigationArgs)
+                    }
+                )
+                Spacer(Modifier.height(35.dp))
+            }
+            if (uiState.value is ScreenState.Loading) {
+                LoadingScreen()
+            }
 
+            val currentUiState = uiState.value
+            if (currentUiState is ScreenState.Error) {
+                Toast.makeText(
+                    context,
+                    currentUiState.message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Color(0x6DFFFFFF)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = Color(0xFF178399)
+        )
     }
 }
 
 @Composable
 private fun DailyTestsChips(
-    dailyTest: List<String>,
-    selectedDailyItems: Set<String>,
-    itemClick: (String, Boolean)-> Unit
+    dailyTest: List<AllTestsTypes>,
+    selectedDailyItems: Set<AllTestsTypes>,
+    itemClick: (AllTestsTypes, Boolean) -> Unit
 ) {
     dailyTest.forEach { dailyTest ->
         val isSelected = selectedDailyItems.contains(dailyTest)
@@ -128,16 +173,16 @@ private fun DailyTestsChips(
                 .clickable { itemClick(dailyTest, isSelected) }
                 .padding(vertical = 12.dp, horizontal = 16.dp)
         ) {
-            Text(text = dailyTest, fontSize = 16.sp)
+            Text(text = dailyTest.testName, fontSize = 16.sp)
         }
     }
 }
 
 @Composable
 private fun ControlTestsChips(
-    controlItems: List<String>,
-    selectedControlItems: Set<String>,
-    itemClick: (String, Boolean)-> Unit
+    controlItems: List<AllTestsTypes>,
+    selectedControlItems: Set<AllTestsTypes>,
+    itemClick: (AllTestsTypes, Boolean) -> Unit
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -147,7 +192,7 @@ private fun ControlTestsChips(
             val isSelected = selectedControlItems.contains(controlTest)
 
             Text(
-                text = controlTest,
+                text = controlTest.testName,
                 color = Color(0xFF002A33),
                 fontSize = 15.sp,
                 modifier = Modifier

@@ -47,6 +47,7 @@ class AllPatientsViewModel @Inject constructor(
                     }
                     is Result.Success -> {
                         _uiState.value = PatientsUiState(
+                            doctorId = result.result.id ?: -1,
                             patients = result.result.patients,
                             filteredPatients = result.result.patients.filter { it.onTreatments }
                         )

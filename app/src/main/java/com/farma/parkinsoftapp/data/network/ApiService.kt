@@ -2,12 +2,11 @@ package com.farma.parkinsoftapp.data.network
 
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
-import com.farma.parkinsoftapp.data.network.models.LoginRequest
-import com.farma.parkinsoftapp.data.network.models.LoginResponse
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.data.network.models.TestResultModel
+import com.farma.parkinsoftapp.domain.models.patient.Patient
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -42,6 +41,11 @@ interface ApiService {
     suspend fun saveTestAnswers(
         @Body body: List<TestAnswer>
     )
+
+    @POST("/doctor/createNewPatient")
+    suspend fun createNewPatient(
+        @Body body: Patient
+    ): Long
 
     @GET("/doctor/patientInfo/{patientId}")
     suspend fun getDoctorPatientInfo(

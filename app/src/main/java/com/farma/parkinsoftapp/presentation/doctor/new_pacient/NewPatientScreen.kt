@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -88,6 +89,10 @@ fun NewPatientScreen(
                 error = screenState.middleName.error
             )
             Spacer(spacerHeightModifier)
+            GenderSelector(screenState.sex) {
+                viewModel.applyIntent(NewPatientIntent.SetPatientSex(it))
+            }
+            Spacer(spacerHeightModifier)
             InputFieldWithLabel(
                 label = "Телефон",
                 value = screenState.phoneNumber.value,
@@ -121,6 +126,46 @@ fun NewPatientScreen(
                     viewModel.applyIntent(NewPatientIntent.SuccessIntent)
                 }
             )
+        }
+    }
+}
+
+@Composable
+private fun GenderSelector(
+    selectedGender: Boolean?,
+    onGenderSelected: (Boolean) -> Unit
+) {
+    Column {
+        Text(
+            text = "Пол",
+            fontSize = 15.sp,
+            fontWeight = FontWeight(400),
+        )
+        Spacer(Modifier.height(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = selectedGender != null  && selectedGender,
+                    onClick = { onGenderSelected(true) },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color(0xFF239FB6)
+                    )
+                )
+                Text(text = "Мужской")
+            }
+            Spacer(Modifier.width(16.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = selectedGender != null && !selectedGender,
+                    onClick = { onGenderSelected(false) },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color(0xFF239FB6)
+                    )
+                )
+                Text(text = "Женский")
+            }
         }
     }
 }

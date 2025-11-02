@@ -31,7 +31,7 @@ class PatientInfoViewModel @Inject constructor(
         MutableStateFlow(ScreenState.Loading())
     val patientState: StateFlow<ScreenState<LargePatientModel>> = _patientState
 
-    init {
+    fun getPatientInfo() {
         viewModelScope.launch {
             mainRepository.getPatientInfo(patientId).collect { result ->
                 _patientState.value = result.convertToScreenState()

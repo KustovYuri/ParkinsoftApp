@@ -9,6 +9,7 @@ data class NewPatientState(
     val phoneNumber: NewPatientFieldState = NewPatientFieldState(),
     val birthday: NewPatientFieldState = NewPatientFieldState(),
     val diagnosis: NewPatientFieldState = NewPatientFieldState(),
+    val sex: Boolean? = null
 )
 
 data class NewPatientFieldState(

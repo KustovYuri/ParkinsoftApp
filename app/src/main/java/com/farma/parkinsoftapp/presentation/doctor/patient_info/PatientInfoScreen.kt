@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,21 +49,11 @@ import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.TestPreviewModel
 import com.farma.parkinsoftapp.domain.models.patient.TestType
+import com.farma.parkinsoftapp.domain.models.patient.AllTestsTypes
 import com.farma.parkinsoftapp.presentation.common.ScreenState
 
 private enum class TestsTabs {
     DAILY, CONTROL
-}
-
-private enum class TestsTypes(val value: String, val testType: String) {
-    STATE_OF_HEALTH_DIARY("Дневник тестовой стимуляции", "test_stimulation_diary"),
-    TEST_STIMULATION_DIARY("Дневник общего самочувствия", "state_of_health_diary"),
-    HADS("HADS", "hads"),
-    DN4("DN4", "dn4"),
-    OSVESTRY("Освестри", "osvestry"),
-    SF36("SF-36", "sf36"),
-    LANSS("LANSS", "lanss"),
-    PAIN_DETECTED("PainDetect", "pain_detected")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -73,8 +64,12 @@ fun PatientInfoScreen(
     navigateToTestInfo: (String, String, TestType, Long) -> Unit
 ) {
     val selectedTab = remember { mutableStateOf(TestsTabs.DAILY) }
-    val selectedTestChip = remember { mutableStateOf(TestsTypes.TEST_STIMULATION_DIARY) }
+    val selectedTestChip = remember { mutableStateOf(AllTestsTypes.TEST_STIMULATION_DIARY) }
     val patientState by viewModel.patientState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getPatientInfo()
+    }
 
     Scaffold(
         topBar = { TopScreenBar { backNavigation() } }
@@ -118,7 +113,7 @@ private fun Screen(
     patientInfo: LargePatientModel,
     paddingValues: PaddingValues,
     selectedTab: MutableState<TestsTabs>,
-    selectedTestChip: MutableState<TestsTypes>,
+    selectedTestChip: MutableState<AllTestsTypes>,
     navigateToTestInfo: (String, String, TestType, Long) -> Unit,
     calculateAge: (String) -> Int
 ) {
@@ -148,9 +143,9 @@ private fun Screen(
             clickTab = { tab: TestsTabs ->
                 selectedTestChip.value =
                     if (tab == TestsTabs.DAILY) {
-                        TestsTypes.TEST_STIMULATION_DIARY
+                        AllTestsTypes.TEST_STIMULATION_DIARY
                     } else {
-                        TestsTypes.HADS
+                        AllTestsTypes.HADS
                     }
                 selectedTab.value = tab
             }
@@ -160,11 +155,11 @@ private fun Screen(
             TestsTabs.DAILY -> {
                 TestChips(
                     tests = listOf(
-                        TestsTypes.TEST_STIMULATION_DIARY,
-                        TestsTypes.STATE_OF_HEALTH_DIARY
+                        AllTestsTypes.TEST_STIMULATION_DIARY,
+                        AllTestsTypes.STATE_OF_HEALTH_DIARY
                     ),
                     selectedTestChip = selectedTestChip.value,
-                    onChipSelected = { selectedChip: TestsTypes ->
+                    onChipSelected = { selectedChip: AllTestsTypes ->
                         selectedTestChip.value = selectedChip
                     }
                 )
@@ -184,12 +179,12 @@ private fun Screen(
             TestsTabs.CONTROL -> {
                 TestChips(
                     tests = listOf(
-                        TestsTypes.HADS,
-                        TestsTypes.DN4,
-                        TestsTypes.OSVESTRY,
-                        TestsTypes.SF36,
-                        TestsTypes.LANSS,
-                        TestsTypes.PAIN_DETECTED
+                        AllTestsTypes.HADS,
+                        AllTestsTypes.DN4,
+                        AllTestsTypes.OSVESTRY,
+                        AllTestsTypes.SF36,
+                        AllTestsTypes.LANSS,
+                        AllTestsTypes.PAIN_DETECTED
                     ),
                     selectedTestChip = selectedTestChip.value,
                     onChipSelected = { selectedChip ->
@@ -283,7 +278,7 @@ private fun TestItem(
                 contentDescription = null,
                 tint = Color.Gray
             )
-            if (testPreviewInfo.isViewed ?: true) {
+            if (!(testPreviewInfo.isViewed ?: true)) {
                 Box(
                     modifier = Modifier
                         .size(6.dp)
@@ -297,9 +292,9 @@ private fun TestItem(
 
 @Composable
 private fun TestChips(
-    tests: List<TestsTypes>,
-    selectedTestChip: TestsTypes,
-    onChipSelected: (TestsTypes) -> Unit
+    tests: List<AllTestsTypes>,
+    selectedTestChip: AllTestsTypes,
+    onChipSelected: (AllTestsTypes) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -318,9 +313,9 @@ private fun TestChips(
 
 @Composable
 private fun DailyTestsChips(
-    dailyTest: List<TestsTypes>,
-    selectedTestChip: TestsTypes,
-    onChipSelected: (TestsTypes) -> Unit,
+    dailyTest: List<AllTestsTypes>,
+    selectedTestChip: AllTestsTypes,
+    onChipSelected: (AllTestsTypes) -> Unit,
 ) {
 
     dailyTest.forEach { test ->
@@ -340,7 +335,7 @@ private fun DailyTestsChips(
                 .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = test.value, fontSize = 13.sp)
+            Text(text = test.testName, fontSize = 13.sp)
         }
     }
 }

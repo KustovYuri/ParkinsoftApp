@@ -1,16 +1,23 @@
 package com.farma.parkinsoftapp.domain.models.patient
 
+import kotlinx.serialization.Serializable
+
 
 data class Patient(
     val id: Int,
+    val doctorId: Long = -1,
     val firstName: String,
     val lastName: String,
     val middleName: String,
     val age: Int,
+    val phoneNumber: String = "",
+    val birthdayDate: String = "",
     val diagnosis: String,
     val onTreatment: Boolean,
     val unreadTests: Int,
-    val sex: Boolean
+    val sex: Boolean,
+    val dailyTests: List<String> = emptyList(),
+    val controlTests: List<String> = emptyList()
 ) {
     val initials: String
         get() = "${lastName.first()}${firstName.first()}".uppercase()
@@ -19,6 +26,7 @@ data class Patient(
         get() = "$lastName ${firstName.first()}. ${middleName.first()}."
 }
 
+@Serializable
 data class PatientModel(
     val id: Long? = null,
     val doctorId: Long,

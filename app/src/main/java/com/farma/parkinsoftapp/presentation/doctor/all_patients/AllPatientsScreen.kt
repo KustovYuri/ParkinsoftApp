@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
-import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientModel
 import com.farma.parkinsoftapp.presentation.composable.ProfileButton
 import kotlinx.coroutines.launch
@@ -32,7 +31,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AllPatientsScreen(
     viewModel: AllPatientsViewModel = hiltViewModel<AllPatientsViewModel>(),
-    navigateToAddNewPatientScreen: () -> Unit,
+    navigateToAddNewPatientScreen: (Long) -> Unit,
     navigateToPatient: (Long) -> Unit,
     navigateToLogin: () -> Unit,
 ) {
@@ -50,7 +49,11 @@ fun AllPatientsScreen(
             }
         },
         floatingActionButton = {
-            AddNewPatientFloatingButton(navigateToAddNewPatientScreen)
+            AddNewPatientFloatingButton {
+                navigateToAddNewPatientScreen(
+                    uiState.doctorId
+                )
+            }
         }
     ) { padding ->
         Column(

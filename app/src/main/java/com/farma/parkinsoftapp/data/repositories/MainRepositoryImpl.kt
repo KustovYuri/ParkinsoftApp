@@ -5,6 +5,8 @@ import androidx.annotation.RequiresApi
 import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.data.network.ApiService
+import com.farma.parkinsoftapp.data.network.KtorApiService
+import com.farma.parkinsoftapp.data.network.PostService
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
@@ -30,6 +32,8 @@ class MainRepositoryImpl @Inject constructor(
     private val sessionDataStore: SessionDataStore,
     private val apiService: ApiService
 ): MainRepository {
+
+    private val client = KtorApiService.create()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getPatientTests(): Flow<List<PatientTestPreview>> = flow {
@@ -98,9 +102,10 @@ class MainRepositoryImpl @Inject constructor(
     override fun getDoctorWithPatients(doctorId: Long): Flow<Result<DoctorWithPatientsModel>> = flow {
         emit(Result.Loading())
         try {
-            val response = apiService
-                .getDoctorWithPatientsByDoctorId(doctorId)
-                .body() ?: throw IOException()
+//            val response = apiService
+//                .getDoctorWithPatientsByDoctorId(doctorId)
+//                .body() ?: throw IOException()
+            val response = client.getDoctorWithPatientsByDoctorId(1)
 
             emit(Result.Success(response))
         }catch (throwable: Throwable) {
@@ -118,12 +123,16 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun addNewPatient(patient: Patient): Long {
-        val patientId = doctorPatients.value.size + 2
-
-        doctorPatients.value = doctorPatients.value + patient.copy(id = patientId)
-        return patientId.toLong()
+    override fun addNewPatient(patient: Patient): Flow<Result<Long>> = flow {
+        emit(Result.Loading())
+        try {
+            val patientId = apiService.createNewPatient(patient)
+            emit(Result.Success(patientId))
+        }catch (e: Throwable) {
+            emit(Result.Error("Ошибка создания пациента", e))
+        }
     }
+
 
     override fun getUserRole(): Flow<UserRoleValues> {
         return sessionDataStore.getCurrentUserRole().map { it ->
@@ -135,18 +144,6 @@ class MainRepositoryImpl @Inject constructor(
         sessionDataStore.setCurrentUserRole(newUserRole)
     }
 }
-
-private val doctorPatients = MutableStateFlow(
-    listOf(
-        Patient(1, "Мария", "Жукова", "Дмитриевна", 52, "Заболевание", true, 10, false),
-        Patient(2, "Михаил", "Миронов", "Андреевич", 33, "Заболевание", true, 7, true),
-        Patient(3, "Жанна", "Жукова", "Александровна", 63, "Заболевание", true, 0, false),
-        Patient(4, "Дмитрий", "Иванов", "Андреевич", 73, "Заболевание", false, 0, true),
-        Patient(5, "Илья", "Мирослав", "Александрович", 24, "Заболевание", false, 0, true),
-        Patient(6, "Максим", "Новиков", "Сергеевич", 64, "Заболевание", true, 0, true),
-        Patient(7, "София", "Надибаидзе", "Христина", 54, "Заболевание", false, 0, false),
-    )
-)
 
 @RequiresApi(Build.VERSION_CODES.O)
 private val patientTestPreview = mutableListOf(

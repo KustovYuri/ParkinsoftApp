@@ -24,7 +24,7 @@ interface MainRepository {
 
     fun getPatientInfo(patientId: Long): Flow<Result<LargePatientModel>>
 
-    fun addNewPatient(patient: Patient): Long
+    fun addNewPatient(patient: Patient): Flow<Result<Long>>
 
     fun getUserRole(): Flow<UserRoleValues>
 
