@@ -1,4 +1,4 @@
-package com.farma.parkinsoftapp.data.network
+package com.farma.parkinsoftapp.data.network.retrofit
 
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
@@ -12,7 +12,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-
 
 interface ApiService {
     @GET("/patient/short/{patientId}")

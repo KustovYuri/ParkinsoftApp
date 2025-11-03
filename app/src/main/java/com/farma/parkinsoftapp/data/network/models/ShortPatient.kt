@@ -1,10 +1,14 @@
 package com.farma.parkinsoftapp.data.network.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ShortPatient(
-    val patientId: Long,
+    val id: Long,
     val testPreview: List<TestPreview>
 )
 
+@Serializable
 data class TestPreview(
     val id: Long? = null,
     val patientId: Long,
@@ -13,5 +17,5 @@ data class TestPreview(
     val testTime: Int,
     val questionsCount: Int,
     val isCompleted: Boolean,
-    val isViewed: Boolean,
+    val isViewed: Boolean?,
 )

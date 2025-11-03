@@ -14,8 +14,6 @@ import com.farma.parkinsoftapp.domain.models.patient.TestType
 import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
-    fun getPatientTests(): Flow<List<PatientTestPreview>>
-
     fun getShortPatientData(patientId: Long): Flow<Result<ShortPatient>>
 
     fun getPatientSelectedTest(testId: Long, testType: TestType): Flow<Result<List<TestModel>>>

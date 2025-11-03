@@ -19,9 +19,6 @@ import com.farma.parkinsoftapp.presentation.doctor.new_pacient.modles.NewPatient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel

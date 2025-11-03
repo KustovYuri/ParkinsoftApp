@@ -2,7 +2,7 @@ package com.farma.parkinsoftapp.domain.models.patient
 
 import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class Patient(
     val id: Int,
     val doctorId: Long = -1,

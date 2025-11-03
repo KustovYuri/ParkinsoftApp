@@ -1,5 +1,9 @@
 package com.farma.parkinsoftapp.data.network.models
 
+import kotlinx.serialization.Serializable
+
+
+@Serializable
 data class LargePatientModel(
     val id: Long? = null,
     val doctorId: Long,
@@ -23,6 +27,7 @@ data class LargePatientModel(
         get() = "$secondName ${name.first()}. ${middleName.first()}."
 }
 
+@Serializable
 data class TestPreviewModel(
     val id: Long? = null,
     val patientId: Long,

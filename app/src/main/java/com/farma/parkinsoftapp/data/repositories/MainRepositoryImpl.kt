@@ -4,11 +4,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
-import com.farma.parkinsoftapp.data.network.ApiService
-import com.farma.parkinsoftapp.data.network.KtorApiService
-import com.farma.parkinsoftapp.data.network.PostService
+import com.farma.parkinsoftapp.data.network.httpExceptionHandler
+import com.farma.parkinsoftapp.data.network.retrofit.ApiService
+import com.farma.parkinsoftapp.data.network.ktor.KtorService
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
-import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
@@ -20,7 +19,6 @@ import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -30,47 +28,25 @@ import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor(
     private val sessionDataStore: SessionDataStore,
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val ktorService: KtorService
 ): MainRepository {
-
-    private val client = KtorApiService.create()
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun getPatientTests(): Flow<List<PatientTestPreview>> = flow {
-        emit(patientTestPreview)
-    }
 
     override fun getPatientSelectedTest(testId: Long, testType: TestType): Flow<Result<List<TestModel>>> =
     flow {
         emit(Result.Loading())
-        try {
-            val testData = apiService
-                .getShortPatientById(
-                testId, testType.value
-                ).body() ?: throw IOException()
-
-            emit(Result.Success(testData))
-        } catch (throwable: Throwable) {
-            emit(
-                Result.Error("Ошибка запроса данных теста", throwable)
-            )
+        val result = httpExceptionHandler {
+            ktorService.getShortPatientById(testId, testType.value)
         }
+        emit(result)
     }
 
     override fun getShortPatientData(patientId: Long): Flow<Result<ShortPatient>> = flow {
         emit(Result.Loading())
-        try {
-            val shortPatient = apiService
-                .getShortPatientById(
-                    userId = patientId
-                ).body() ?: throw IOException()
-
-            emit(Result.Success(shortPatient))
-        } catch (e: Throwable) {
-            emit(
-                Result.Error("Ошибка запроса данных пациента", e)
-            )
+        val result = httpExceptionHandler {
+            ktorService.getShortPatientById(patientId)
         }
+        emit(result)
     }
 
     override suspend fun finishTest(testAnswers: List<TestAnswer>) {
@@ -84,55 +60,35 @@ class MainRepositoryImpl @Inject constructor(
         testType: TestType
     ): Flow<Result<List<TestResultModel>>> = flow {
         emit(Result.Loading())
-        try {
-            val result = apiService
-                .getResultTest(
-                    testPreviewId,
-                    testType.value
-                ).body() ?: throw IOException()
-
-            emit(Result.Success(result))
-        } catch (e: Throwable) {
-            emit(
-                Result.Error("Ошибка запроса данных теста пациента", e)
-            )
+        val result = httpExceptionHandler {
+            ktorService.getResultTest(testPreviewId, testType.value)
         }
+        emit(result)
     }
 
     override fun getDoctorWithPatients(doctorId: Long): Flow<Result<DoctorWithPatientsModel>> = flow {
         emit(Result.Loading())
-        try {
-//            val response = apiService
-//                .getDoctorWithPatientsByDoctorId(doctorId)
-//                .body() ?: throw IOException()
-            val response = client.getDoctorWithPatientsByDoctorId(1)
-
-            emit(Result.Success(response))
-        }catch (throwable: Throwable) {
-            emit(Result.Error("Ошибка получения информации о пациентах", throwable))
+        val response = httpExceptionHandler {
+            ktorService.getDoctorWithPatientsByDoctorId(doctorId)
         }
+        emit(response)
     }
 
     override fun getPatientInfo(patientId: Long) = flow {
         emit(Result.Loading())
-        try {
-            val result = apiService.getDoctorPatientInfo(patientId).body() ?: throw IOException()
-            emit(Result.Success(result))
-        }catch (e: Throwable) {
-            emit(Result.Error("Ошибка получения данных пациента", e))
+        val result = httpExceptionHandler {
+            ktorService.getDoctorPatientInfo(patientId)
         }
+        emit(result)
     }
 
     override fun addNewPatient(patient: Patient): Flow<Result<Long>> = flow {
         emit(Result.Loading())
-        try {
-            val patientId = apiService.createNewPatient(patient)
-            emit(Result.Success(patientId))
-        }catch (e: Throwable) {
-            emit(Result.Error("Ошибка создания пациента", e))
+        val result = httpExceptionHandler {
+            ktorService.createNewPatient(patient)
         }
+        emit(result)
     }
-
 
     override fun getUserRole(): Flow<UserRoleValues> {
         return sessionDataStore.getCurrentUserRole().map { it ->
@@ -144,79 +100,3 @@ class MainRepositoryImpl @Inject constructor(
         sessionDataStore.setCurrentUserRole(newUserRole)
     }
 }
-
-@RequiresApi(Build.VERSION_CODES.O)
-private val patientTestPreview = mutableListOf(
-    PatientTestPreview(
-        id = 1,
-        testDate = LocalDate.now(),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник тестовой стимуляции",
-        isSuccessTest = false,
-        testType = TestType.TEST_STIMULATION_DIARY
-    ),
-    PatientTestPreview(
-        id = 2,
-        testDate = LocalDate.now(),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник общего самочувствия",
-        isSuccessTest = false,
-        testType = TestType.STATE_OF_HEALTH_DIARY
-    ),
-    PatientTestPreview(
-        id = 3,
-        testDate = LocalDate.now().minusDays(1),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник тестовой стимуляции",
-        isSuccessTest = false,
-        testType = TestType.TEST_STIMULATION_DIARY
-    ),
-    PatientTestPreview(
-        id = 4,
-        testDate = LocalDate.now().minusDays(1),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник общего самочувствия",
-        isSuccessTest = false,
-        testType = TestType.STATE_OF_HEALTH_DIARY
-    ),
-    PatientTestPreview(
-        id = 5,
-        testDate = LocalDate.now().minusDays(2),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник тестовой стимуляции",
-        isSuccessTest = false,
-        testType = TestType.TEST_STIMULATION_DIARY
-    ),
-    PatientTestPreview(
-        id = 6,
-        testDate = LocalDate.now().minusDays(2),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник общего самочувствия",
-        isSuccessTest = false,
-        testType = TestType.STATE_OF_HEALTH_DIARY
-    ),
-    PatientTestPreview(
-        id = 7,
-        testDate = LocalDate.now().minusDays(3),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник общего самочувствия",
-        isSuccessTest = false,
-        testType = TestType.STATE_OF_HEALTH_DIARY
-    ),
-    PatientTestPreview(
-        id = 8,
-        testDate = LocalDate.now().minusDays(4),
-        questionCount = 10,
-        testTime = 15,
-        testName = "Дневник тестовой стимуляции",
-        isSuccessTest = false,
-        testType = TestType.TEST_STIMULATION_DIARY
-    ),
-)
