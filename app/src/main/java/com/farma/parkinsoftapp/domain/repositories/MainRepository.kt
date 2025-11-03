@@ -14,19 +14,19 @@ import com.farma.parkinsoftapp.domain.models.patient.TestType
 import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
-    fun getShortPatientData(patientId: Long): Flow<Result<ShortPatient>>
+    fun getShortPatientData(): Flow<Result<ShortPatient>>
 
     fun getPatientSelectedTest(testId: Long, testType: TestType): Flow<Result<List<TestModel>>>
 
-    fun getDoctorWithPatients(doctorId: Long): Flow<Result<DoctorWithPatientsModel>>
+    fun getDoctorWithPatients(): Flow<Result<DoctorWithPatientsModel>>
 
     fun getPatientInfo(patientId: Long): Flow<Result<LargePatientModel>>
 
     fun addNewPatient(patient: Patient): Flow<Result<Long>>
 
-    fun getUserRole(): Flow<UserRoleValues>
+    fun getUserRole(): Flow<Pair<Long?, UserRoleValues>>
 
-    suspend fun setUserRole(newUserRole: UserRoleValues)
+    suspend fun setUserRole(userId: Long, newUserRole: UserRoleValues)
     suspend fun finishTest(testAnswers: List<TestAnswer>)
 
     suspend fun getResultTests(testPreviewId: Long, testType: TestType): Flow<Result<List<TestResultModel>>>

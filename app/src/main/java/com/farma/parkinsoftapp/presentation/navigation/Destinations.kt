@@ -12,7 +12,8 @@ object LoginRoute
 @Serializable
 data class SmsRoute(
     val phoneNumber: String,
-    val userRole: UserRole
+    val userId: Long,
+    val role: UserRole
 )
 
 //Пациент

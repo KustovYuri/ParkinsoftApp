@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.Text
@@ -27,11 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.data.network.models.LoginModel
 import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.presentation.login.login_screen.models.PhoneNumberState
 
@@ -39,17 +42,17 @@ import com.farma.parkinsoftapp.presentation.login.login_screen.models.PhoneNumbe
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginScreenViewModel = hiltViewModel<LoginScreenViewModel>(),
-    onNavigateToSms: (String, UserRole) -> Unit
+    onNavigateToSms: (String, LoginModel) -> Unit
 ) {
-    val phoneNumberFieldState = remember { viewModel.numberFieldState }
+    val screenState = remember { viewModel.numberFieldState }
     val newUserRole = viewModel.newUserRole.collectAsStateWithLifecycle()
 
     LaunchedEffect(newUserRole.value) {
         if (newUserRole.value != null) {
             viewModel.cleanValidationIsSuccessState()
             onNavigateToSms(
-                phoneNumberFieldState.value.number,
-                newUserRole.value ?: UserRole.PATIENT
+                screenState.value.data.number,
+                newUserRole.value ?: LoginModel(-1, "")
             )
         }
     }
@@ -76,14 +79,25 @@ fun LoginScreen(
         )
         Spacer(Modifier.height(50.dp))
         PhoneNumberTextField(
-            phoneNumberState = phoneNumberFieldState.value,
+            phoneNumberState = screenState.value.data,
             setPhoneNumber = { newText: String -> viewModel.setPhoneNumber(newText) }
         )
         Spacer(Modifier.height(50.dp))
         NextButton(
-            isActive = phoneNumberFieldState.value.number != "",
+            isActive = screenState.value.data.number != "" || !screenState.value.isLoading,
+            isLoading = screenState.value.isLoading,
             click = { viewModel.login() }
         )
+        Spacer(Modifier.height(16.dp))
+        if (screenState.value.error != null) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = screenState.value.error ?: "",
+                textAlign = TextAlign.Center,
+                color = Color(0xFFA82323)
+            )
+        }
         Spacer(Modifier.height(50.dp))
     }
 }
@@ -91,6 +105,7 @@ fun LoginScreen(
 @Composable
 private fun NextButton(
     isActive: Boolean,
+    isLoading: Boolean,
     click: () -> Unit,
 ) {
     TextButton(
@@ -107,11 +122,17 @@ private fun NextButton(
             disabledContentColor = Color(0xFFB2BFC2)
         )
     ) {
-        Text(
-            text = "Продолжить",
-            fontSize = 17.sp,
-            fontWeight = FontWeight(400),
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color(0xFFFFFFFF)
+            )
+        } else {
+            Text(
+                text = "Продолжить",
+                fontSize = 17.sp,
+                fontWeight = FontWeight(400),
+            )
+        }
     }
 }
 

@@ -19,6 +19,8 @@ import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -41,10 +43,18 @@ class MainRepositoryImpl @Inject constructor(
         emit(result)
     }
 
-    override fun getShortPatientData(patientId: Long): Flow<Result<ShortPatient>> = flow {
+    override fun getShortPatientData(): Flow<Result<ShortPatient>> = flow {
         emit(Result.Loading())
+        val userId = sessionDataStore.getCurrentUserId().map { it ->
+            if (it.isNotBlank()) {
+                it.toLong()
+            } else {
+                -1
+            }
+        }
+
         val result = httpExceptionHandler {
-            ktorService.getShortPatientById(patientId)
+            ktorService.getShortPatientById(userId.first())
         }
         emit(result)
     }
@@ -66,10 +76,18 @@ class MainRepositoryImpl @Inject constructor(
         emit(result)
     }
 
-    override fun getDoctorWithPatients(doctorId: Long): Flow<Result<DoctorWithPatientsModel>> = flow {
+    override fun getDoctorWithPatients(): Flow<Result<DoctorWithPatientsModel>> = flow {
         emit(Result.Loading())
+        val doctorId = sessionDataStore.getCurrentUserId().map { it ->
+            if (it.isNotBlank()) {
+                it.toLong()
+            } else {
+                -1
+            }
+        }
+
         val response = httpExceptionHandler {
-            ktorService.getDoctorWithPatientsByDoctorId(doctorId)
+            ktorService.getDoctorWithPatientsByDoctorId(doctorId.first())
         }
         emit(response)
     }
@@ -90,13 +108,26 @@ class MainRepositoryImpl @Inject constructor(
         emit(result)
     }
 
-    override fun getUserRole(): Flow<UserRoleValues> {
-        return sessionDataStore.getCurrentUserRole().map { it ->
+    override fun getUserRole(): Flow<Pair<Long?, UserRoleValues>> {
+        val userRole = sessionDataStore.getCurrentUserRole().map { it ->
             UserRoleValues.fromValue(it) ?: UserRoleValues.UNAUTHORIZED
+        }
+
+        val userId = sessionDataStore.getCurrentUserId().map { it ->
+            if (it.isNotBlank()) {
+                it.toLong()
+            } else {
+                null
+            }
+        }
+
+        return userRole.combine(userId) { role, id ->
+            Pair(id, role)
         }
     }
 
-    override suspend fun setUserRole(newUserRole: UserRoleValues) {
+    override suspend fun setUserRole(userId: Long, newUserRole: UserRoleValues) {
         sessionDataStore.setCurrentUserRole(newUserRole)
+        sessionDataStore.setCurrentUserId(userId)
     }
 }

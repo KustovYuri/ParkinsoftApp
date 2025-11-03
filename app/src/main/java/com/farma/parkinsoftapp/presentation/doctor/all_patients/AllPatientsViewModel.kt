@@ -32,7 +32,7 @@ class AllPatientsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            mainRepository.getDoctorWithPatients(1).collect { result ->
+            mainRepository.getDoctorWithPatients().collect { result ->
                 when(result) {
                     is Result.Error -> {
                         _uiState.value = _uiState.value.copy(
@@ -59,7 +59,7 @@ class AllPatientsViewModel @Inject constructor(
     }
 
     suspend fun logOut() {
-        mainRepository.setUserRole(UserRoleValues.UNAUTHORIZED)
+        mainRepository.setUserRole(-1, UserRoleValues.UNAUTHORIZED)
     }
 
     fun onSearchQueryChange(query: String) {

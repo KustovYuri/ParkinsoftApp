@@ -38,7 +38,7 @@ class PatientAllTestsScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            mainRepository.getShortPatientData(1).collect {
+            mainRepository.getShortPatientData().collect {
                 when (it) {
                     is Result.Error -> {
                         _uiState.value = _uiState.value.copy(
@@ -60,7 +60,7 @@ class PatientAllTestsScreenViewModel @Inject constructor(
     }
 
     suspend fun logOut() {
-        mainRepository.setUserRole(UserRoleValues.UNAUTHORIZED)
+        mainRepository.setUserRole(-1,UserRoleValues.UNAUTHORIZED)
     }
 
     fun convertDataToState(shortPatient: ShortPatient) {

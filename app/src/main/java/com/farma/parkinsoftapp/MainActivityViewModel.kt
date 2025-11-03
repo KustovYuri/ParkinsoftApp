@@ -1,6 +1,5 @@
 package com.farma.parkinsoftapp
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
@@ -24,12 +23,12 @@ class MainActivityViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
 
     init {
-        getUserRole()
+        getUserRoleWithId()
     }
 
-    private fun getUserRole() {
+    private fun getUserRoleWithId() {
         viewModelScope.launch {
-            _userRole.value = mainRepository.getUserRole().first()
+            _userRole.value = mainRepository.getUserRole().first().second
             _isLoading.value = false
         }
     }

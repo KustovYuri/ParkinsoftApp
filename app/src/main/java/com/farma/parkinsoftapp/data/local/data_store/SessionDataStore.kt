@@ -18,13 +18,24 @@ class SessionDataStore @Inject constructor(
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Constants.PREFERENCES")
 
     private val USER_ROLE = stringPreferencesKey("userRole")
+    private val USER_ID = stringPreferencesKey("userId")
     fun getCurrentUserRole(): Flow<String> = context.dataStore.data.map {
         it[USER_ROLE] ?: UserRoleValues.UNAUTHORIZED .value
+    }
+
+    fun getCurrentUserId(): Flow<String> = context.dataStore.data.map {
+        it[USER_ID] ?: ""
     }
 
     suspend fun setCurrentUserRole(userRole: UserRoleValues) {
         context.dataStore.edit {
             it[USER_ROLE] = userRole.value
+        }
+    }
+
+    suspend fun setCurrentUserId(userId: Long) {
+        context.dataStore.edit {
+            it[USER_ID] = userId.toString()
         }
     }
 }

@@ -2,6 +2,7 @@ package com.farma.parkinsoftapp.data.network.ktor
 
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
+import com.farma.parkinsoftapp.data.network.models.LoginModel
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
@@ -72,5 +73,11 @@ class KtorService(
         return client.get(
             urlString = "$BASE_URL/doctor/patientInfo/$patientId"
         ).body<LargePatientModel>()
+    }
+
+    override suspend fun login(phoneNumber: String): LoginModel {
+        return client.get(
+            urlString = "$BASE_URL/login/$phoneNumber"
+        ).body<LoginModel>()
     }
 }

@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
+import com.farma.parkinsoftapp.data.network.models.LoginModel
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.presentation.doctor.all_patients.AllPatientsScreen
@@ -26,7 +27,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.PatientTestScreen
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
-    userRole: UserRoleValues
+    userRole: UserRoleValues,
 ) {
     NavHost(
         navController = navController,
@@ -38,8 +39,14 @@ fun AppNavHost(
     ) {
         composable<LoginRoute> {
             LoginScreen(
-                onNavigateToSms = { phoneNumber: String, userRole: UserRole ->
-                    navController.navigate(SmsRoute(phoneNumber, userRole))
+                onNavigateToSms = { phoneNumber: String, loginModel: LoginModel ->
+                    navController.navigate(
+                        SmsRoute(
+                            phoneNumber,
+                            loginModel.userId,
+                            UserRole.valueOf(loginModel.role)
+                        )
+                    )
                 }
             )
         }
@@ -51,10 +58,14 @@ fun AppNavHost(
                     navController.popBackStack()
                 },
                 navigationToDoctor = {
-                    navController.navigate(AllPatientsRoute)
+                    navController.navigate(AllPatientsRoute){
+                        popUpTo(0) { inclusive = true }
+                    }
                 },
                 navigationToPatient = {
-                    navController.navigate(PatientAllTestsRoute)
+                    navController.navigate(PatientAllTestsRoute){
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
