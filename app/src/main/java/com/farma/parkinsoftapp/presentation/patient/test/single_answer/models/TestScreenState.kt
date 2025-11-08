@@ -1,4 +1,4 @@
-package com.farma.parkinsoftapp.presentation.patient.test.models
+package com.farma.parkinsoftapp.presentation.patient.test.single_answer.models
 
 import com.farma.parkinsoftapp.data.network.models.TestModel
 

@@ -1,4 +1,4 @@
-package com.farma.parkinsoftapp.presentation.patient.test
+package com.farma.parkinsoftapp.presentation.patient.test.single_answer
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,12 +9,11 @@ import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
-import com.farma.parkinsoftapp.presentation.patient.test.models.TestScreenState
+import com.farma.parkinsoftapp.presentation.patient.test.single_answer.models.TestScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
