@@ -2,6 +2,11 @@ package com.farma.parkinsoftapp.presentation.doctor.all_patients
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
@@ -12,6 +17,7 @@ import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.domain.usecases.CalculateAgeUseCase
 import com.farma.parkinsoftapp.presentation.doctor.all_patients.models.PatientsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -30,22 +36,40 @@ class AllPatientsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PatientsUiState())
     val uiState: StateFlow<PatientsUiState> = _uiState
 
+    private val _isRefreshing = mutableStateOf(false)
+    val isRefreshing: State<Boolean> = _isRefreshing
+
+    private var viewModelJob: Job? = null
+
     init {
-        viewModelScope.launch {
+        getData()
+    }
+
+    fun getData() {
+        viewModelJob = null
+        _isRefreshing.value = true
+
+        viewModelJob = viewModelScope.launch {
             mainRepository.getDoctorWithPatients().collect { result ->
-                when(result) {
+                when (result) {
                     is Result.Error -> {
+                        _isRefreshing.value = false
+
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             error = result.message
                         )
                     }
+
                     is Result.Loading -> {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                         )
                     }
+
                     is Result.Success -> {
+                        _isRefreshing.value = false
+
                         _uiState.value = PatientsUiState(
                             doctorId = result.result.id ?: -1,
                             patients = result.result.patients,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,100 +38,110 @@ fun AllPatientsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
+    val isRefreshing by remember { viewModel.isRefreshing }
 
-    Scaffold(
-        containerColor = Color(0xFFFFFFFF),
-        topBar = {
-            TopScreenBar {
-                scope.launch {
-                    viewModel.logOut()
-                    navigateToLogin()
+    PullToRefreshBox(
+        modifier = Modifier.fillMaxSize(),
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            viewModel.getData()
+        },
+    ) {
+        Scaffold(
+            containerColor = Color(0xFFFFFFFF),
+            topBar = {
+                TopScreenBar {
+                    scope.launch {
+                        viewModel.logOut()
+                        navigateToLogin()
+                    }
+                }
+            },
+            floatingActionButton = {
+                AddNewPatientFloatingButton {
+                    navigateToAddNewPatientScreen(
+                        uiState.doctorId
+                    )
                 }
             }
-        },
-        floatingActionButton = {
-            AddNewPatientFloatingButton {
-                navigateToAddNewPatientScreen(
-                    uiState.doctorId
-                )
-            }
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-        ) {
-            // Поисковая строка
-            OutlinedTextField(
-                value = uiState.searchQuery,
-                onValueChange = viewModel::onSearchQueryChange,
-                placeholder = {
-                    Text(
-                        "Искать пациента",
-                        color = Color(0xFF62767A)
-                    )
-                },
+        ) { padding ->
+
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(R.drawable.search),
-                        contentDescription = "Поиск пациента",
-                        tint = Color(0xFF62767A)
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFFEDF1F2),
-                    unfocusedContainerColor = Color(0xFFEDF1F2),
-                    unfocusedIndicatorColor = Color(0xFFEDF1F2),
-                    focusedIndicatorColor = Color(0xFF62767A),
-                    focusedTextColor = Color(0xFF002A33)
-                )
-            )
-
-            // Переключатель вкладок
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = Color(0xFFEDF1F2),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(4.dp)
+                    .padding(padding)
+                    .padding(16.dp)
             ) {
-                TabButton(
-                    modifier = Modifier.weight(1f),
-                    text = "На лечении",
-                    selected = uiState.selectedTab == PatientsTab.OnTreatment,
-                    onClick = { viewModel.onTabSelected(PatientsTab.OnTreatment) }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                TabButton(
-                    modifier = Modifier.weight(1f),
-                    text = "Выписаны",
-                    selected = uiState.selectedTab == PatientsTab.Discharged,
-                    onClick = { viewModel.onTabSelected(PatientsTab.Discharged) },
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Список пациентов
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(uiState.filteredPatients) { patient ->
-                    PatientItem(
-                        patient = patient,
-                        click = { navigateToPatient(patient.id ?: -1) },
-                        calculateAge = {birthdate: String ->
-                            viewModel.calculateAge(birthdate)
-                        }
+                // Поисковая строка
+                OutlinedTextField(
+                    value = uiState.searchQuery,
+                    onValueChange = viewModel::onSearchQueryChange,
+                    placeholder = {
+                        Text(
+                            "Искать пациента",
+                            color = Color(0xFF62767A)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.search),
+                            contentDescription = "Поиск пациента",
+                            tint = Color(0xFF62767A)
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFEDF1F2),
+                        unfocusedContainerColor = Color(0xFFEDF1F2),
+                        unfocusedIndicatorColor = Color(0xFFEDF1F2),
+                        focusedIndicatorColor = Color(0xFF62767A),
+                        focusedTextColor = Color(0xFF002A33)
                     )
+                )
+
+                // Переключатель вкладок
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color(0xFFEDF1F2),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(4.dp)
+                ) {
+                    TabButton(
+                        modifier = Modifier.weight(1f),
+                        text = "На лечении",
+                        selected = uiState.selectedTab == PatientsTab.OnTreatment,
+                        onClick = { viewModel.onTabSelected(PatientsTab.OnTreatment) }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TabButton(
+                        modifier = Modifier.weight(1f),
+                        text = "Выписаны",
+                        selected = uiState.selectedTab == PatientsTab.Discharged,
+                        onClick = { viewModel.onTabSelected(PatientsTab.Discharged) },
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Список пациентов
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.filteredPatients) { patient ->
+                        PatientItem(
+                            patient = patient,
+                            click = { navigateToPatient(patient.id ?: -1) },
+                            calculateAge = { birthdate: String ->
+                                viewModel.calculateAge(birthdate)
+                            }
+                        )
+                    }
                 }
             }
         }

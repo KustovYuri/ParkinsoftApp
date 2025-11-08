@@ -180,7 +180,8 @@ class NewPatientViewModel @Inject constructor(
             middleNameIsValidate,
             surnameIsValidate,
             phoneIsValidate,
-            diagnosisIsValidate
+            diagnosisIsValidate,
+            sexIsValidate
         )
     }
 

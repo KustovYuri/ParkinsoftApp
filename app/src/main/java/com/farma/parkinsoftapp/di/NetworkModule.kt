@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.di
 
+import android.util.Log
 import com.farma.parkinsoftapp.data.network.retrofit.ApiService
 import com.farma.parkinsoftapp.data.network.ktor.KtorService
 import dagger.Module
@@ -26,12 +27,18 @@ object NetworkModule {
         return HttpClient(Android) {
             install(Logging) {
                 level = LogLevel.ALL
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        Log.d("KtorLogger", message)
+                    }
+                }
             }
             install(ContentNegotiation) {
                 json(
                     Json {
                         ignoreUnknownKeys = true
                         prettyPrint = true
+                        isLenient = true
                     }
                 )
             }
