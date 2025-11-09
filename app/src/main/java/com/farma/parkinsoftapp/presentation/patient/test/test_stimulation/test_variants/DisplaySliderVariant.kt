@@ -10,11 +10,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.SliderWithBars
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 
 @Composable
 fun DisplaySliderVariant(
-    question: TestQuestion.DisplaySlider,
+    question: TestStimulationTestQuestion.DisplaySlider,
     viewModel: TestStimulationViewModel
 ) {
     Text(

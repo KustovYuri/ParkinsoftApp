@@ -11,11 +11,11 @@ import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.CommentTextField
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 
 @Composable
 fun SliderVariant(
-    question: TestQuestion.Slider,
+    question: TestStimulationTestQuestion.Slider,
     viewModel: TestStimulationViewModel
 ) {
     Text(

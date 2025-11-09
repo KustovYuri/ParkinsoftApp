@@ -1,4 +1,4 @@
-package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants
+package com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,11 +14,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 
 @Composable
 fun SingleAnswersVariant(
-    question: TestStimulationTestQuestion.SingleAnswer,
+    question: PainDetectedTestQuestions.SingleAnswer,
     isSending: Boolean,
     selectAnswer: (String) -> Unit
 ) {

@@ -17,10 +17,10 @@ import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.CommentTextField
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 
 @Composable
-fun HumanPointVariant(question: TestQuestion.HumanPoint, viewModel: TestStimulationViewModel) {
+fun HumanPointVariant(question: TestStimulationTestQuestion.HumanPoint, viewModel: TestStimulationViewModel) {
     Text(
         text = question.question,
         fontSize = 17.sp,

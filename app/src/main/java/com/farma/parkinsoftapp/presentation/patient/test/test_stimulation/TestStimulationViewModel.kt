@@ -10,7 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,12 +24,12 @@ class TestStimulationViewModel @Inject constructor(
 
     val enabledNextButton = derivedStateOf {
         when(val question = _uiState.value.data[_currentQuestionIndex.intValue]) {
-            is TestQuestion.Comment -> question.comment.isNotBlank()
-            is TestQuestion.DisplaySlider -> true
-            is TestQuestion.HumanPoint -> !(question.commentIsEnabled && question.comment.isNullOrBlank())
-            is TestQuestion.SingleAnswer -> question.selectedAnswer.isNotBlank()
-            is TestQuestion.Slider -> true
-            is TestQuestion.YesNo -> question.answers.all { it.second.isNotBlank() && question.comment.isNotBlank() }
+            is TestStimulationTestQuestion.Comment -> question.comment.isNotBlank()
+            is TestStimulationTestQuestion.DisplaySlider -> true
+            is TestStimulationTestQuestion.HumanPoint -> !(question.commentIsEnabled && question.comment.isNullOrBlank())
+            is TestStimulationTestQuestion.SingleAnswer -> question.selectedAnswer.isNotBlank()
+            is TestStimulationTestQuestion.Slider -> true
+            is TestStimulationTestQuestion.YesNo -> question.answers.all { it.second.isNotBlank() && question.comment.isNotBlank() }
         }
     }
 
@@ -56,11 +56,11 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun selectAnswerInSingleAnswer(selectedAnswer: String) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.SingleAnswer) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.SingleAnswer) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
-                    if (idx == _currentQuestionIndex.value) {
-                        (question as TestQuestion.SingleAnswer).copy(selectedAnswer = selectedAnswer)
+                    if (idx == _currentQuestionIndex.intValue) {
+                        (question as TestStimulationTestQuestion.SingleAnswer).copy(selectedAnswer = selectedAnswer)
                     } else {
                         question
                     }
@@ -70,11 +70,11 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun selectAnswerInYesNoAnswer(nameVariant: String, selectedAnswer: String) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.YesNo) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.YesNo) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as TestQuestion.YesNo).copy(
+                        (question as TestStimulationTestQuestion.YesNo).copy(
                             answers = question.answers.map { variant ->
                                 if (variant.first == nameVariant) {
                                     variant.copy(second = selectedAnswer)
@@ -92,11 +92,11 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun changeSliderValueInHumanPoint(value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.HumanPoint) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.HumanPoint) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as TestQuestion.HumanPoint).copy(sliderValue = value)
+                        (question as TestStimulationTestQuestion.HumanPoint).copy(sliderValue = value)
                     } else {
                         question
                     }
@@ -106,11 +106,11 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun changeSliderValueInSliderVariant(name: String, value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.Slider) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.Slider) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as TestQuestion.Slider).copy(
+                        (question as TestStimulationTestQuestion.Slider).copy(
                                 sliderAnswers = question.sliderAnswers.map { sliderPair ->
                                     if (sliderPair.first == name) {
                                         sliderPair.copy(second = value)
@@ -128,11 +128,11 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun changeSliderValueInDisplaySliderVariant(value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.DisplaySlider) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.DisplaySlider) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as TestQuestion.DisplaySlider).copy(sliderValue = value)
+                        (question as TestStimulationTestQuestion.DisplaySlider).copy(sliderValue = value)
                     } else {
                         question
                     }
@@ -144,18 +144,18 @@ class TestStimulationViewModel @Inject constructor(
     fun changeCommentValue(value: String) {
         val selectedAnswer = _uiState.value.data[_currentQuestionIndex.intValue]
 
-        if (selectedAnswer is TestQuestion.HumanPoint ||
-            selectedAnswer is TestQuestion.Slider ||
-            selectedAnswer is TestQuestion.YesNo ||
-            selectedAnswer is TestQuestion.Comment) {
+        if (selectedAnswer is TestStimulationTestQuestion.HumanPoint ||
+            selectedAnswer is TestStimulationTestQuestion.Slider ||
+            selectedAnswer is TestStimulationTestQuestion.YesNo ||
+            selectedAnswer is TestStimulationTestQuestion.Comment) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
                         when(question) {
-                            is TestQuestion.HumanPoint -> { question.copy(comment = value) }
-                            is TestQuestion.Slider -> { question.copy(comment = value) }
-                            is TestQuestion.YesNo -> { question.copy(comment = value) }
-                            is TestQuestion.Comment -> { question.copy(comment = value) }
+                            is TestStimulationTestQuestion.HumanPoint -> { question.copy(comment = value) }
+                            is TestStimulationTestQuestion.Slider -> { question.copy(comment = value) }
+                            is TestStimulationTestQuestion.YesNo -> { question.copy(comment = value) }
+                            is TestStimulationTestQuestion.Comment -> { question.copy(comment = value) }
                             else -> { question }
                         }
                     } else {
@@ -168,49 +168,49 @@ class TestStimulationViewModel @Inject constructor(
 }
 
 
-private fun getMocTestData(): List<TestQuestion> {
+private fun getMocTestData(): List<TestStimulationTestQuestion> {
     return listOf(
-        TestQuestion.SingleAnswer(
+        TestStimulationTestQuestion.SingleAnswer(
             question = "Какая программа была сегодня самой эффективной?",
             answers = listOf("Первая", "Вторая", "Третья", "Четвертая", "Пятая"),
         ),
-        TestQuestion.HumanPoint(
+        TestStimulationTestQuestion.HumanPoint(
             question = "Нажмите на рисунке на области стимуляции:"
         ),
-        TestQuestion.HumanPoint(
+        TestStimulationTestQuestion.HumanPoint(
             question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
         ),
-        TestQuestion.HumanPoint(
+        TestStimulationTestQuestion.HumanPoint(
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
-        TestQuestion.HumanPoint(
+        TestStimulationTestQuestion.HumanPoint(
             question = "На сколько в процентах снизилась боль в самой активной области?",
             sliderIsEnabled = true,
             commentIsEnabled = true,
             sliderValue = 0,
             comment = ""
         ),
-        TestQuestion.Slider(
+        TestStimulationTestQuestion.Slider(
             question = "Отметьте уровни боли при определенных видах деятельности из списка. (по шкале от 0 до 10, где 10 - самая сильная боль).",
             sliderAnswers = listOf("Сидя" to 0, "Стоя" to 0, "При ходьбе" to 0, "Во время сна" to 0),
             commentIsEnabled = true
         ),
-        TestQuestion.YesNo(
+        TestStimulationTestQuestion.YesNo(
             question = "Оцените, было улучшение во времся следующих ситуаций?",
             answers = listOf("Смогли ли Вы дольше сидеть?" to "", "Смогли ли Вы дольше идти или стоять?" to "", "Было улучшение при рутиных видах деятельности (например при готовке еды, во время работы или уборки по дому)?" to "",),
         ),
-        TestQuestion.DisplaySlider(
+        TestStimulationTestQuestion.DisplaySlider(
             question = "Сколько полос вы видите на дисплее во время наибольшего облегчения боли?"
         ),
-        TestQuestion.SingleAnswer(
+        TestStimulationTestQuestion.SingleAnswer(
             question = "Оцените ощущения от стимуляции:",
             answers = listOf("Приятные", "Комфортные", "Некомфортные", "Болезненные"),
         ),
-        TestQuestion.SingleAnswer(
+        TestStimulationTestQuestion.SingleAnswer(
             question = "Оцените общую эффективность программы:",
             answers = listOf("Превосходно", "Хорошо", "Удовлетворительно", "Неэффективно"),
         ),
-        TestQuestion.Comment(
+        TestStimulationTestQuestion.Comment(
             question = "Определите изменеия вашего физического и эмоционального состояния, которые заметны Вам и вашему окружению"
         )
     )

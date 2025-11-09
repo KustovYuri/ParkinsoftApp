@@ -1,9 +1,10 @@
-package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation
+package com.farma.parkinsoftapp.presentation.patient.test.pain_detected
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -20,28 +21,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.BottomBar
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
+import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SingleAnswersVariant
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SlidersVariant
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.CommentVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.DisplaySliderVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.HumanPointVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.SingleAnswersVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.SliderVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.YesNoVariant
 
 @Composable
-fun TestStimulationScreen(
-    viewModel: TestStimulationViewModel = hiltViewModel<TestStimulationViewModel>(),
-    closeTest: () -> Boolean,
-    finishTest: () -> Unit
+fun PainDetectedScreen(
+    viewModel: PainDetectedViewModel = hiltViewModel<PainDetectedViewModel>(),
+    finishTest: () -> Unit,
+    closeTest: () -> Boolean
 ) {
     val state by remember { viewModel.uiState }
     val currentQuestionIndex by remember { viewModel.currentQuestionIndex }
-    val enabledNextButton by remember { viewModel.enabledNextButton }
 
     Scaffold(
         topBar = { TopScreenBar(closeTest, viewModel.testType) },
@@ -52,7 +52,7 @@ fun TestStimulationScreen(
                 currentQuestionIndex = currentQuestionIndex,
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = {viewModel.nextQuestion()},
-                enabled = enabledNextButton,
+                enabled = true,
                 finishTest = finishTest,
             )
         },
@@ -96,10 +96,10 @@ fun TestStimulationScreen(
 
 @Composable
 private fun TestScreen(
-    data: List<TestStimulationTestQuestion>,
+    data: List<PainDetectedTestQuestions>,
     currentQuestionIndex: Int,
     isSending: Boolean,
-    viewModel: TestStimulationViewModel
+    viewModel: PainDetectedViewModel
 ) {
     Column(
         modifier = Modifier
@@ -114,26 +114,14 @@ private fun TestScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         when(val question = data[currentQuestionIndex]) {
-            is TestStimulationTestQuestion.Comment -> {
-                CommentVariant(question, viewModel)
-            }
-            is TestStimulationTestQuestion.DisplaySlider -> {
-                DisplaySliderVariant(question, viewModel)
-            }
-            is TestStimulationTestQuestion.HumanPoint -> {
-                HumanPointVariant(question, viewModel)
-            }
-            is TestStimulationTestQuestion.SingleAnswer -> {
-                SingleAnswersVariant(question, isSending) { selectedAnswer ->
-                    viewModel.selectAnswerInSingleAnswer(selectedAnswer)
+            is PainDetectedTestQuestions.Graphic -> TODO()
+            is PainDetectedTestQuestions.HumanPoint -> TODO()
+            is PainDetectedTestQuestions.SingleAnswer -> {
+                SingleAnswersVariant(question, isSending) {
+                    viewModel.selectAnswerInSingleAnswer(it)
                 }
             }
-            is TestStimulationTestQuestion.Slider -> {
-                SliderVariant(question, viewModel)
-            }
-            is TestStimulationTestQuestion.YesNo -> {
-                YesNoVariant(question, viewModel)
-            }
+            is PainDetectedTestQuestions.Slider -> { SlidersVariant(question, viewModel) }
         }
     }
 }

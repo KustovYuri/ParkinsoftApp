@@ -19,18 +19,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SliderWithBars(
-    question: TestQuestion.DisplaySlider,
+    question: TestStimulationTestQuestion.DisplaySlider,
     changeSliderValue: (Int) -> Unit,
 ) {
     val sliderValue = question.sliderValue
