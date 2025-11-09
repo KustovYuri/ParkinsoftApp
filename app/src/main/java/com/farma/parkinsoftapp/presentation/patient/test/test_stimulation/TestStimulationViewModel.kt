@@ -113,12 +113,27 @@ class TestStimulationViewModel @Inject constructor(
         }
     }
 
+    fun changeSliderValueInDisplaySliderVariant(value: Int) {
+        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.DisplaySlider) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.value) {
+                        (question as TestQuestion.DisplaySlider).copy(sliderValue = value)
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
+
     fun changeCommentValue(value: String) {
         val selectedAnswer = _uiState.value.data[_currentQuestionIndex.value]
 
         if (selectedAnswer is TestQuestion.HumanPoint ||
             selectedAnswer is TestQuestion.Slider ||
-            selectedAnswer is TestQuestion.YesNo) {
+            selectedAnswer is TestQuestion.YesNo ||
+            selectedAnswer is TestQuestion.Comment) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.value) {
@@ -126,6 +141,7 @@ class TestStimulationViewModel @Inject constructor(
                             is TestQuestion.HumanPoint -> { question.copy(comment = value) }
                             is TestQuestion.Slider -> { question.copy(comment = value) }
                             is TestQuestion.YesNo -> { question.copy(comment = value) }
+                            is TestQuestion.Comment -> { question.copy(comment = value) }
                             else -> { question }
                         }
                     } else {
@@ -140,13 +156,6 @@ class TestStimulationViewModel @Inject constructor(
 
 private fun getMocTestData(): List<TestQuestion> {
     return listOf(
-        TestQuestion.HumanPoint(
-            question = "На сколько в процентах снизилась боль в самой активной области?",
-            sliderIsEnabled = true,
-            commentIsEnabled = true,
-            sliderValue = 0,
-            comment = ""
-        ),
         TestQuestion.SingleAnswer(
             question = "Какая программа была сегодня самой эффективной?",
             answers = listOf("Первая", "Вторая", "Третья", "Четвертая", "Пятая"),
@@ -159,6 +168,13 @@ private fun getMocTestData(): List<TestQuestion> {
         ),
         TestQuestion.HumanPoint(
             question = "Нажмите на рисунке на область с самой сильной болью:"
+        ),
+        TestQuestion.HumanPoint(
+            question = "На сколько в процентах снизилась боль в самой активной области?",
+            sliderIsEnabled = true,
+            commentIsEnabled = true,
+            sliderValue = 0,
+            comment = ""
         ),
         TestQuestion.Slider(
             question = "Отметьте уровни боли при определенных видах деятельности из списка. (по шкале от 0 до 10, где 10 - самая сильная боль).",
@@ -178,7 +194,7 @@ private fun getMocTestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             question = "Оцените общую эффективность программы:",
-            answers = listOf("п=Превосходно", "Хорошо", "Удовлетворительно", "Неэффективно"),
+            answers = listOf("Превосходно", "Хорошо", "Удовлетворительно", "Неэффективно"),
         ),
         TestQuestion.Comment(
             question = "Определите изменеия вашего физического и эмоционального состояния, которые заметны Вам и вашему окружению"

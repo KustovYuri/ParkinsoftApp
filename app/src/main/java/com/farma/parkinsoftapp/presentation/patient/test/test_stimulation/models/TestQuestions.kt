@@ -23,19 +23,19 @@ sealed interface TestQuestion {
         val comment: String? = null
     ): TestQuestion
 
-    data class Numeric(
-        val question: String,
-        val answers: List<String>,
-        val comment: String
-    ): TestQuestion
-
     data class YesNo(
         val question: String,
         val answers: List<Pair<String, String>>,
         val comment: String = ""
     ): TestQuestion
 
-    data class DisplaySlider(val question: String): TestQuestion
+    data class DisplaySlider(
+        val question: String,
+        val sliderValue: Int = 0
+    ): TestQuestion
 
-    data class Comment(val question: String,): TestQuestion
+    data class Comment(
+        val question: String,
+        val comment: String = ""
+    ): TestQuestion
 }
