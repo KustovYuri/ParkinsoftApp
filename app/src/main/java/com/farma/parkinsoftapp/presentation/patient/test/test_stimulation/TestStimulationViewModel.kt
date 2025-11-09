@@ -55,6 +55,28 @@ class TestStimulationViewModel @Inject constructor(
         }
     }
 
+    fun selectAnswerInYesNoAnswer(nameVariant: String, selectedAnswer: String) {
+        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.YesNo) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.value) {
+                        (question as TestQuestion.YesNo).copy(
+                            answers = question.answers.map { variant ->
+                                if (variant.first == nameVariant) {
+                                    variant.copy(second = selectedAnswer)
+                                } else {
+                                    variant
+                                }
+                            }
+                        )
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
+
     fun changeSliderValueInHumanPoint(value: Int) {
         if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.HumanPoint) {
             _uiState.value = _uiState.value.copy(
@@ -69,12 +91,43 @@ class TestStimulationViewModel @Inject constructor(
         }
     }
 
-    fun changeCommentValueInHumanPoint(value: String) {
-        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.HumanPoint) {
+    fun changeSliderValueInSliderVariant(name: String, value: Int) {
+        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.Slider) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.value) {
-                        (question as TestQuestion.HumanPoint).copy(comment = value)
+                        (question as TestQuestion.Slider).copy(
+                                sliderAnswers = question.sliderAnswers.map { sliderPair ->
+                                    if (sliderPair.first == name) {
+                                        sliderPair.copy(second = value)
+                                    } else {
+                                        sliderPair
+                                    }
+                                }
+                            )
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
+
+    fun changeCommentValue(value: String) {
+        val selectedAnswer = _uiState.value.data[_currentQuestionIndex.value]
+
+        if (selectedAnswer is TestQuestion.HumanPoint ||
+            selectedAnswer is TestQuestion.Slider ||
+            selectedAnswer is TestQuestion.YesNo) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.value) {
+                        when(question) {
+                            is TestQuestion.HumanPoint -> { question.copy(comment = value) }
+                            is TestQuestion.Slider -> { question.copy(comment = value) }
+                            is TestQuestion.YesNo -> { question.copy(comment = value) }
+                            else -> { question }
+                        }
                     } else {
                         question
                     }
@@ -107,11 +160,14 @@ private fun getMocTestData(): List<TestQuestion> {
         TestQuestion.HumanPoint(
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
-
         TestQuestion.Slider(
-            question = "Отметьте уровни боли при определенных видах деятельности из списка.",
-            sliderAnswers = listOf("Сидя" to 0f, "Стоя" to 0f, "При ходьбе" to 0f, "Во время сна" to 0f),
-            comment = true
+            question = "Отметьте уровни боли при определенных видах деятельности из списка. (по шкале от 0 до 10, где 10 - самая сильная боль).",
+            sliderAnswers = listOf("Сидя" to 0, "Стоя" to 0, "При ходьбе" to 0, "Во время сна" to 0),
+            commentIsEnabled = true
+        ),
+        TestQuestion.YesNo(
+            question = "Оцените, было улучшение во времся следующих ситуаций?",
+            answers = listOf("Смогли ли Вы дольше сидеть?" to "", "Смогли ли Вы дольше идти или стоять?" to "", "Было улучшение при рутиных видах деятельности (например при готовке еды, во время работы или уборки по дому)?" to "",),
         ),
         TestQuestion.DisplaySlider(
             question = "Сколько полос вы видите на дисплее во время наибольшего облегчения боли?"

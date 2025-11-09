@@ -1,14 +1,18 @@
 package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -18,16 +22,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.BottomBar
+import com.farma.parkinsoftapp.presentation.patient.test.composable_common.CommentTextField
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
+import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.HumanPointVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.SingleAnswersVariant
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.SliderVariant
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.YesNoVariant
 
 @Composable
 fun TestStimulationScreen(
@@ -120,8 +130,12 @@ private fun TestScreen(
                     viewModel.selectAnswerInSingleAnswer(selectedAnswer)
                 }
             }
-            is TestQuestion.Slider -> TODO()
-            is TestQuestion.YesNo -> TODO()
+            is TestQuestion.Slider -> {
+                SliderVariant(question, viewModel)
+            }
+            is TestQuestion.YesNo -> {
+                YesNoVariant(question, viewModel)
+            }
         }
     }
 }

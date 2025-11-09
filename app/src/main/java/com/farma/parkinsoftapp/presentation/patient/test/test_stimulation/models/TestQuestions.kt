@@ -18,8 +18,9 @@ sealed interface TestQuestion {
 
     data class Slider(
         val question: String,
-        val sliderAnswers: List<Pair<String, Float>>,
-        val comment: Boolean = true,
+        val sliderAnswers: List<Pair<String, Int>>,
+        val commentIsEnabled: Boolean = true,
+        val comment: String? = null
     ): TestQuestion
 
     data class Numeric(
@@ -28,7 +29,11 @@ sealed interface TestQuestion {
         val comment: String
     ): TestQuestion
 
-    data class YesNo(val question: String,): TestQuestion
+    data class YesNo(
+        val question: String,
+        val answers: List<Pair<String, String>>,
+        val comment: String = ""
+    ): TestQuestion
 
     data class DisplaySlider(val question: String): TestQuestion
 
