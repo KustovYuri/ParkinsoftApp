@@ -1,6 +1,11 @@
 package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation
 
 
+import androidx.compose.runtime.IntState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
@@ -8,8 +13,6 @@ import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,30 +22,41 @@ class TestStimulationViewModel @Inject constructor(
     private val route: PatientTestRoute = savedStateHandle.toRoute()
     val testType = route.testType
 
-    private val _currentQuestionIndex = MutableStateFlow(0)
-    val currentQuestionIndex = _currentQuestionIndex.asStateFlow()
+    val enabledNextButton = derivedStateOf {
+        when(val question = _uiState.value.data[_currentQuestionIndex.intValue]) {
+            is TestQuestion.Comment -> question.comment.isNotBlank()
+            is TestQuestion.DisplaySlider -> true
+            is TestQuestion.HumanPoint -> !(question.commentIsEnabled && question.comment.isNullOrBlank())
+            is TestQuestion.SingleAnswer -> question.selectedAnswer.isNotBlank()
+            is TestQuestion.Slider -> true
+            is TestQuestion.YesNo -> question.answers.all { it.second.isNotBlank() && question.comment.isNotBlank() }
+        }
+    }
 
-    private val _uiState = MutableStateFlow(
+    private val _currentQuestionIndex = mutableIntStateOf(0)
+    val currentQuestionIndex: IntState = _currentQuestionIndex
+
+    private val _uiState = mutableStateOf(
         TestStimulationState(
             data = getMocTestData()
         )
     )
-    val uiState = _uiState.asStateFlow()
+    val uiState: State<TestStimulationState> = _uiState
 
     fun nextQuestion() {
-        if (_currentQuestionIndex.value < _uiState.value.data.size) {
-            _currentQuestionIndex.value++
+        if (_currentQuestionIndex.intValue < _uiState.value.data.size) {
+            _currentQuestionIndex.intValue++
         }
     }
 
     fun previousQuestion() {
-        if (_currentQuestionIndex.value > 0) {
-            _currentQuestionIndex.value--
+        if (_currentQuestionIndex.intValue > 0) {
+            _currentQuestionIndex.intValue--
         }
     }
 
     fun selectAnswerInSingleAnswer(selectedAnswer: String) {
-        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.SingleAnswer) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.SingleAnswer) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.value) {
@@ -56,10 +70,10 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun selectAnswerInYesNoAnswer(nameVariant: String, selectedAnswer: String) {
-        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.YesNo) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.YesNo) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
-                    if (idx == _currentQuestionIndex.value) {
+                    if (idx == _currentQuestionIndex.intValue) {
                         (question as TestQuestion.YesNo).copy(
                             answers = question.answers.map { variant ->
                                 if (variant.first == nameVariant) {
@@ -78,10 +92,10 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun changeSliderValueInHumanPoint(value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.HumanPoint) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.HumanPoint) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
-                    if (idx == _currentQuestionIndex.value) {
+                    if (idx == _currentQuestionIndex.intValue) {
                         (question as TestQuestion.HumanPoint).copy(sliderValue = value)
                     } else {
                         question
@@ -92,10 +106,10 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun changeSliderValueInSliderVariant(name: String, value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.Slider) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.Slider) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
-                    if (idx == _currentQuestionIndex.value) {
+                    if (idx == _currentQuestionIndex.intValue) {
                         (question as TestQuestion.Slider).copy(
                                 sliderAnswers = question.sliderAnswers.map { sliderPair ->
                                     if (sliderPair.first == name) {
@@ -114,10 +128,10 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun changeSliderValueInDisplaySliderVariant(value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.DisplaySlider) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.DisplaySlider) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
-                    if (idx == _currentQuestionIndex.value) {
+                    if (idx == _currentQuestionIndex.intValue) {
                         (question as TestQuestion.DisplaySlider).copy(sliderValue = value)
                     } else {
                         question
@@ -128,7 +142,7 @@ class TestStimulationViewModel @Inject constructor(
     }
 
     fun changeCommentValue(value: String) {
-        val selectedAnswer = _uiState.value.data[_currentQuestionIndex.value]
+        val selectedAnswer = _uiState.value.data[_currentQuestionIndex.intValue]
 
         if (selectedAnswer is TestQuestion.HumanPoint ||
             selectedAnswer is TestQuestion.Slider ||
@@ -136,7 +150,7 @@ class TestStimulationViewModel @Inject constructor(
             selectedAnswer is TestQuestion.Comment) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
-                    if (idx == _currentQuestionIndex.value) {
+                    if (idx == _currentQuestionIndex.intValue) {
                         when(question) {
                             is TestQuestion.HumanPoint -> { question.copy(comment = value) }
                             is TestQuestion.Slider -> { question.copy(comment = value) }

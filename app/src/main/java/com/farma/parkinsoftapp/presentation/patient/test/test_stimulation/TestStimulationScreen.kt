@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Slide
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.CommentVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.DisplaySliderVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.HumanPointVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.SingleAnswersVariant
@@ -41,8 +43,9 @@ fun TestStimulationScreen(
     closeTest: () -> Boolean,
     finishTest: () -> Unit
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val currentQuestionIndex by viewModel.currentQuestionIndex.collectAsState()
+    val state by remember { viewModel.uiState }
+    val currentQuestionIndex by remember { viewModel.currentQuestionIndex }
+    val enabledNextButton by remember { viewModel.enabledNextButton }
 
     Scaffold(
         topBar = { TopScreenBar(closeTest, viewModel.testType) },
@@ -53,7 +56,7 @@ fun TestStimulationScreen(
                 currentQuestionIndex = currentQuestionIndex,
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = {viewModel.nextQuestion()},
-                enabled = true,
+                enabled = enabledNextButton,
                 finishTest = finishTest,
             )
         },
@@ -116,17 +119,7 @@ private fun TestScreen(
         Spacer(modifier = Modifier.height(24.dp))
         when(val question = data[currentQuestionIndex]) {
             is TestQuestion.Comment -> {
-                Text(
-                    text = question.question,
-                    fontSize = 17.sp,
-                    color = Color(0xFF1C1B1F)
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                CommentTextField(
-                    question.comment,
-                    { viewModel.changeCommentValue(it) },
-                    "Ваши изменения"
-                )
+                CommentVariant(question, viewModel)
             }
             is TestQuestion.DisplaySlider -> {
                 DisplaySliderVariant(question, viewModel)
