@@ -55,11 +55,45 @@ class TestStimulationViewModel @Inject constructor(
         }
     }
 
+    fun changeSliderValueInHumanPoint(value: Int) {
+        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.HumanPoint) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.value) {
+                        (question as TestQuestion.HumanPoint).copy(sliderValue = value)
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
+
+    fun changeCommentValueInHumanPoint(value: String) {
+        if (_uiState.value.data[_currentQuestionIndex.value] is TestQuestion.HumanPoint) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.value) {
+                        (question as TestQuestion.HumanPoint).copy(comment = value)
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
 }
 
 
 private fun getMocTestData(): List<TestQuestion> {
     return listOf(
+        TestQuestion.HumanPoint(
+            question = "На сколько в процентах снизилась боль в самой активной области?",
+            sliderIsEnabled = true,
+            commentIsEnabled = true,
+            sliderValue = 0,
+            comment = ""
+        ),
         TestQuestion.SingleAnswer(
             question = "Какая программа была сегодня самой эффективной?",
             answers = listOf("Первая", "Вторая", "Третья", "Четвертая", "Пятая"),
@@ -73,16 +107,10 @@ private fun getMocTestData(): List<TestQuestion> {
         TestQuestion.HumanPoint(
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
-        TestQuestion.HumanPoint(
-            question = "На сколько в процентах снизилась боль в самой активной области?",
-            sliderIsEnabled = true,
-            commentIsEnabled = true,
-            sliderValue = 0,
-            comment = ""
-        ),
+
         TestQuestion.Slider(
             question = "Отметьте уровни боли при определенных видах деятельности из списка.",
-            sliderAnswers = listOf("Сидя", "Стоя", "При ходьбе", "Во время сна"),
+            sliderAnswers = listOf("Сидя" to 0f, "Стоя" to 0f, "При ходьбе" to 0f, "Во время сна" to 0f),
             comment = true
         ),
         TestQuestion.DisplaySlider(

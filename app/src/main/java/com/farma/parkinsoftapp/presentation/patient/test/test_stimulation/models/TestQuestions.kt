@@ -12,14 +12,14 @@ sealed interface TestQuestion {
         val question: String,
         val sliderIsEnabled: Boolean = false,
         val commentIsEnabled: Boolean = false,
-        val sliderValue: Long? = null,
+        val sliderValue: Int? = null,
         val comment: String? = null
     ): TestQuestion
 
     data class Slider(
         val question: String,
-        val sliderAnswers: List<String>,
-        val comment: Boolean = true
+        val sliderAnswers: List<Pair<String, Float>>,
+        val comment: Boolean = true,
     ): TestQuestion
 
     data class Numeric(
