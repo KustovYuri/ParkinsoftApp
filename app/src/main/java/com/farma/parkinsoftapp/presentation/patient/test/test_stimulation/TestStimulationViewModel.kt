@@ -141,6 +141,36 @@ class TestStimulationViewModel @Inject constructor(
         }
     }
 
+    fun changeHumanPointsInHumanPointsVariant(value: Int) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.HumanPoint) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.intValue) {
+                        (question as TestStimulationTestQuestion.HumanPoint)
+                            .copy(
+                                selectedPoints = if (value == 0) {
+                                    listOf(0)
+                                }
+                                else {
+                                    if (!question.selectedPoints.contains(value)) {
+                                        if (question.selectedPoints != listOf(0)) {
+                                            question.selectedPoints + value
+                                        } else {
+                                            listOf(value)
+                                        }
+                                    } else {
+                                        question.selectedPoints - value
+                                    }
+                                }
+                            )
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
+
     fun changeCommentValue(value: String) {
         val selectedAnswer = _uiState.value.data[_currentQuestionIndex.intValue]
 
@@ -175,15 +205,39 @@ private fun getMocTestData(): List<TestStimulationTestQuestion> {
             answers = listOf("Первая", "Вторая", "Третья", "Четвертая", "Пятая"),
         ),
         TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
             question = "Нажмите на рисунке на области стимуляции:"
         ),
         TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
+            question = "Нажмите на рисунке на области стимуляции:"
+        ),
+        TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
             question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
         ),
         TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
+            question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
+        ),
+        TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
         TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
+            question = "Нажмите на рисунке на область с самой сильной болью:"
+        ),
+        TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
+            question = "На сколько в процентах снизилась боль в самой активной области?",
+            sliderIsEnabled = true,
+            commentIsEnabled = true,
+            sliderValue = 0,
+            comment = ""
+        ),
+        TestStimulationTestQuestion.HumanPoint(
+            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
             question = "На сколько в процентах снизилась боль в самой активной области?",
             sliderIsEnabled = true,
             commentIsEnabled = true,

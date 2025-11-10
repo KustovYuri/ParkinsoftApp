@@ -21,6 +21,7 @@ import com.farma.parkinsoftapp.presentation.login.login_screen.LoginScreen
 import com.farma.parkinsoftapp.presentation.login.sms_screen.SmsScreen
 import com.farma.parkinsoftapp.presentation.patient.all_tests.PatientAllTestsScreen
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.PainDetectedScreen
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationScreen
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -92,19 +93,7 @@ fun AppNavHost(
             )
         }
         composable<PatientTestRoute> { backStackEntry ->
-            PainDetectedScreen (
-                closeTest = {
-                    navController.popBackStack()
-                },
-                finishTest = {
-                    navController.navigate(PatientAllTestsRoute) {
-                        popUpTo<PatientAllTestsRoute> {
-                            inclusive = true
-                        }
-                    }
-                },
-            )
-//            TestStimulationScreen(
+//            PainDetectedScreen (
 //                closeTest = {
 //                    navController.popBackStack()
 //                },
@@ -116,6 +105,18 @@ fun AppNavHost(
 //                    }
 //                },
 //            )
+            TestStimulationScreen(
+                closeTest = {
+                    navController.popBackStack()
+                },
+                finishTest = {
+                    navController.navigate(PatientAllTestsRoute) {
+                        popUpTo<PatientAllTestsRoute> {
+                            inclusive = true
+                        }
+                    }
+                },
+            )
 //            PatientTestScreen(
 //                closeTest = {
 //                    navController.popBackStack()

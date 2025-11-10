@@ -9,12 +9,19 @@ sealed interface TestStimulationTestQuestion {
     ): TestStimulationTestQuestion
 
     data class HumanPoint(
+        val type: HumanTestType,
         val question: String,
+        val humanIsActive: Boolean = true,
+        val selectedPoints: List<Int> = emptyList(),
         val sliderIsEnabled: Boolean = false,
         val commentIsEnabled: Boolean = false,
         val sliderValue: Int? = null,
         val comment: String? = null
-    ): TestStimulationTestQuestion
+    ): TestStimulationTestQuestion {
+        enum class HumanTestType {
+            HEAD, BACK
+        }
+    }
 
     data class Slider(
         val question: String,
