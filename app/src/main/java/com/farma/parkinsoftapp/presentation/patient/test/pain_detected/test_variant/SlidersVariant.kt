@@ -1,6 +1,9 @@
 package com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +28,14 @@ fun SlidersVariant(
         )
         Spacer(modifier = Modifier.height(8.dp))
         PercentSlider(slide.second) { viewModel.changeSliderValueInSliderVariant(slide.first, it) }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Боли не было", color = Color(0xFF555555), fontSize = 12.sp)
+            Text("Максимальная", color = Color(0xFF555555), fontSize = 12.sp)
+        }
         Spacer(modifier = Modifier.height(24.dp))
     }
 }

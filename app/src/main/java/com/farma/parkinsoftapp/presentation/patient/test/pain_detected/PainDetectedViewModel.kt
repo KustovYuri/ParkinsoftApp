@@ -2,12 +2,15 @@ package com.farma.parkinsoftapp.presentation.patient.test.pain_detected
 
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
+import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedState
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
@@ -23,6 +26,16 @@ class PainDetectedViewModel @Inject constructor(
 
     private val _currentQuestionIndex = mutableIntStateOf(0)
     val currentQuestionIndex: IntState = _currentQuestionIndex
+
+    val nextButtonIsActive = derivedStateOf {
+        val question = _uiState.value.data[_currentQuestionIndex.intValue]
+        when(question) {
+            is PainDetectedTestQuestions.Graphic -> question.selectedVariant.isNotBlank()
+            is PainDetectedTestQuestions.HumanPoint -> question.selectedPoints.isNotEmpty()
+            is PainDetectedTestQuestions.SingleAnswer -> question.selectedAnswer.isNotBlank()
+            is PainDetectedTestQuestions.Slider -> true
+        }
+    }
 
     private val _uiState = mutableStateOf(
         PainDetectedState(
@@ -42,6 +55,7 @@ class PainDetectedViewModel @Inject constructor(
             _currentQuestionIndex.intValue--
         }
     }
+
 
     fun changeSliderValueInSliderVariant(name: String, value: Int) {
         if (_uiState.value.data[_currentQuestionIndex.intValue] is PainDetectedTestQuestions.Slider) {
@@ -79,6 +93,50 @@ class PainDetectedViewModel @Inject constructor(
         }
     }
 
+    fun selectAnswerInGraphicAnswer(selectedAnswer: String) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is PainDetectedTestQuestions.Graphic) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.intValue) {
+                        (question as PainDetectedTestQuestions.Graphic).copy(selectedVariant = selectedAnswer)
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
+
+    fun changeHumanPointsInHumanPointsVariant(value: Int) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is PainDetectedTestQuestions.HumanPoint) {
+            _uiState.value = _uiState.value.copy(
+                data = _uiState.value.data.mapIndexed { idx, question ->
+                    if (idx == _currentQuestionIndex.intValue) {
+                        (question as PainDetectedTestQuestions.HumanPoint)
+                            .copy(
+                                selectedPoints = if (value == 0) {
+                                    listOf(0)
+                                }
+                                else {
+                                    if (!question.selectedPoints.contains(value)) {
+                                        if (question.selectedPoints != listOf(0)) {
+                                            question.selectedPoints + value
+                                        } else {
+                                            listOf(value)
+                                        }
+                                    } else {
+                                        question.selectedPoints - value
+                                    }
+                                }
+                            )
+                    } else {
+                        question
+                    }
+                }
+            )
+        }
+    }
+
     private fun getMockTestData(): List<PainDetectedTestQuestions> {
         return listOf(
             PainDetectedTestQuestions.Slider(
@@ -87,6 +145,31 @@ class PainDetectedViewModel @Inject constructor(
                     "Как бы вы оценили интенсивность наиболее сильного приступа боли за последние 4 нелели" to 0,
                     "В среднем, на сколько сильной была боль в течение последних 4 нелель" to 0
                 )
+            ),
+            PainDetectedTestQuestions.Graphic(
+                question = "Выберете картинку, которая наиболее точно отражает характер протекания боли в вашем случае:",
+                graphicVariant = listOf(
+                    R.drawable.pain_variant_1 to "Непрерывная боль, немного меняющаяся по интенсивности",
+                    R.drawable.pain_variant_2 to "Непрерывная боль с переодическими приступами",
+                    R.drawable.pain_variant_3 to "Приступы боли без болевых ощущений в промежутках между ними",
+                    R.drawable.pain_variant_4 to "Приступы боли, сопровождающиеся болевыми ощущениями в промежутках между ними"
+                )
+            ),
+            PainDetectedTestQuestions.HumanPoint(
+                type = HumanImageType.HEAD,
+                question = "Выберете те области, где вы испытываете наиболее сильную боль"
+            ),
+            PainDetectedTestQuestions.HumanPoint(
+                type = HumanImageType.BACK,
+                question = "Выберете те области, где вы испытываете наиболее сильную боль"
+            ),
+            PainDetectedTestQuestions.HumanPoint(
+                type = HumanImageType.HEAD,
+                question = "Выберете те области, в которые отдает боль"
+            ),
+            PainDetectedTestQuestions.HumanPoint(
+                type = HumanImageType.BACK,
+                question = "Выберете те области, в которые отдает боль"
             ),
             PainDetectedTestQuestions.SingleAnswer(
                 question = "Испытываете ли Вы ощущение жжения (например, как при ожоге крапивой) в области, которую отметили на рисунке?",

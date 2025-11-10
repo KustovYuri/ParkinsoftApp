@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.patient.test.pain_detected
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,9 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -21,18 +24,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.BottomBar
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
-import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.GraphicVariant
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.HumanPointVariant
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SingleAnswersVariant
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SlidersVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 
 @Composable
 fun PainDetectedScreen(
@@ -42,6 +43,7 @@ fun PainDetectedScreen(
 ) {
     val state by remember { viewModel.uiState }
     val currentQuestionIndex by remember { viewModel.currentQuestionIndex }
+    val nextButtonIsActive by remember { viewModel.nextButtonIsActive }
 
     Scaffold(
         topBar = { TopScreenBar(closeTest, viewModel.testType) },
@@ -52,7 +54,7 @@ fun PainDetectedScreen(
                 currentQuestionIndex = currentQuestionIndex,
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = {viewModel.nextQuestion()},
-                enabled = true,
+                enabled = nextButtonIsActive,
                 finishTest = finishTest,
             )
         },
@@ -114,8 +116,14 @@ private fun TestScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         when(val question = data[currentQuestionIndex]) {
-            is PainDetectedTestQuestions.Graphic -> TODO()
-            is PainDetectedTestQuestions.HumanPoint -> TODO()
+            is PainDetectedTestQuestions.Graphic -> {
+                GraphicVariant(question) {
+                    viewModel.selectAnswerInGraphicAnswer(it)
+                }
+            }
+            is PainDetectedTestQuestions.HumanPoint -> {
+                HumanPointVariant(question, viewModel)
+            }
             is PainDetectedTestQuestions.SingleAnswer -> {
                 SingleAnswersVariant(question, isSending) {
                     viewModel.selectAnswerInSingleAnswer(it)

@@ -1,5 +1,7 @@
 package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
+
 sealed interface TestStimulationTestQuestion {
 
     data class SingleAnswer(
@@ -9,19 +11,15 @@ sealed interface TestStimulationTestQuestion {
     ): TestStimulationTestQuestion
 
     data class HumanPoint(
-        val type: HumanTestType,
+        val type: HumanImageType,
         val question: String,
-        val humanIsActive: Boolean = true,
+        val humanIsEnabled: Boolean = true,
         val selectedPoints: List<Int> = emptyList(),
         val sliderIsEnabled: Boolean = false,
         val commentIsEnabled: Boolean = false,
         val sliderValue: Int? = null,
         val comment: String? = null
-    ): TestStimulationTestQuestion {
-        enum class HumanTestType {
-            HEAD, BACK
-        }
-    }
+    ): TestStimulationTestQuestion
 
     data class Slider(
         val question: String,

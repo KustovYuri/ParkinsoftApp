@@ -1,5 +1,7 @@
 package com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models
 
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
+
 sealed interface PainDetectedTestQuestions {
     data class SingleAnswer(
         val question: String,
@@ -8,11 +10,9 @@ sealed interface PainDetectedTestQuestions {
     ): PainDetectedTestQuestions
 
     data class HumanPoint(
+        val type: HumanImageType,
         val question: String,
-        val sliderIsEnabled: Boolean = false,
-        val commentIsEnabled: Boolean = false,
-        val sliderValue: Int? = null,
-        val comment: String? = null
+        val selectedPoints: List<Int> = emptyList(),
     ): PainDetectedTestQuestions
 
     data class Slider(
@@ -21,8 +21,7 @@ sealed interface PainDetectedTestQuestions {
 
     data class Graphic(
         val question: String,
-        val sliderAnswers: List<Pair<String, Int>>,
-        val commentIsEnabled: Boolean = true,
-        val comment: String? = null
+        val graphicVariant: List<Pair<Int, String>>,
+        val selectedVariant: String = ""
     ): PainDetectedTestQuestions
 }

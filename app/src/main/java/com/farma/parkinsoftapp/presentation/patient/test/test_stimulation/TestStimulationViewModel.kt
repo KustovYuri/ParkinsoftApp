@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,13 @@ class TestStimulationViewModel @Inject constructor(
         when(val question = _uiState.value.data[_currentQuestionIndex.intValue]) {
             is TestStimulationTestQuestion.Comment -> question.comment.isNotBlank()
             is TestStimulationTestQuestion.DisplaySlider -> true
-            is TestStimulationTestQuestion.HumanPoint -> !(question.commentIsEnabled && question.comment.isNullOrBlank())
+            is TestStimulationTestQuestion.HumanPoint -> {
+                if (question.humanIsEnabled) {
+                    question.selectedPoints.isNotEmpty()
+                } else {
+                    !(question.commentIsEnabled && question.comment.isNullOrBlank())
+                }
+            }
             is TestStimulationTestQuestion.SingleAnswer -> question.selectedAnswer.isNotBlank()
             is TestStimulationTestQuestion.Slider -> true
             is TestStimulationTestQuestion.YesNo -> question.answers.all { it.second.isNotBlank() && question.comment.isNotBlank() }
@@ -205,40 +212,33 @@ private fun getMocTestData(): List<TestStimulationTestQuestion> {
             answers = listOf("Первая", "Вторая", "Третья", "Четвертая", "Пятая"),
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
+            type = HumanImageType.HEAD,
             question = "Нажмите на рисунке на области стимуляции:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
+            type = HumanImageType.BACK,
             question = "Нажмите на рисунке на области стимуляции:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
+            type = HumanImageType.HEAD,
             question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
+            type = HumanImageType.BACK,
             question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
+            type = HumanImageType.HEAD,
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
+            type = HumanImageType.BACK,
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.HEAD,
+            type = HumanImageType.HEAD,
             question = "На сколько в процентах снизилась боль в самой активной области?",
-            sliderIsEnabled = true,
-            commentIsEnabled = true,
-            sliderValue = 0,
-            comment = ""
-        ),
-        TestStimulationTestQuestion.HumanPoint(
-            type = TestStimulationTestQuestion.HumanPoint.HumanTestType.BACK,
-            question = "На сколько в процентах снизилась боль в самой активной области?",
+            humanIsEnabled = false,
             sliderIsEnabled = true,
             commentIsEnabled = true,
             sliderValue = 0,

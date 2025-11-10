@@ -93,19 +93,7 @@ fun AppNavHost(
             )
         }
         composable<PatientTestRoute> { backStackEntry ->
-//            PainDetectedScreen (
-//                closeTest = {
-//                    navController.popBackStack()
-//                },
-//                finishTest = {
-//                    navController.navigate(PatientAllTestsRoute) {
-//                        popUpTo<PatientAllTestsRoute> {
-//                            inclusive = true
-//                        }
-//                    }
-//                },
-//            )
-            TestStimulationScreen(
+            PainDetectedScreen (
                 closeTest = {
                     navController.popBackStack()
                 },
@@ -117,6 +105,18 @@ fun AppNavHost(
                     }
                 },
             )
+//            TestStimulationScreen(
+//                closeTest = {
+//                    navController.popBackStack()
+//                },
+//                finishTest = {
+//                    navController.navigate(PatientAllTestsRoute) {
+//                        popUpTo<PatientAllTestsRoute> {
+//                            inclusive = true
+//                        }
+//                    }
+//                },
+//            )
 //            PatientTestScreen(
 //                closeTest = {
 //                    navController.popBackStack()
