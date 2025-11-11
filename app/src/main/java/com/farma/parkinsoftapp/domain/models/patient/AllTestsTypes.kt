@@ -5,7 +5,7 @@ enum class AllTestsTypes(val testName: String, val testType: String) {
     TEST_STIMULATION_DIARY("Дневник общего самочувствия", "state_of_health_diary"),
     HADS("HADS", "hads"),
     DN4("DN4", "dn4"),
-    OSVESTRY("Освестри", "osvestry"),
+    OSVESTRY("OSVESTRY", "osvestry"),
     SF36("SF-36", "sf36"),
     LANSS("LANSS", "lanss"),
     PAIN_DETECTED("PainDetect", "pain_detected");

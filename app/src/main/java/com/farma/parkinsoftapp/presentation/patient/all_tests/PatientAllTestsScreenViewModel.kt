@@ -90,6 +90,9 @@ class PatientAllTestsScreenViewModel @Inject constructor(
         return when (this.testType) {
             "test_stimulation_diary" -> "Дневник тестовой стимуляции"
             "state_of_health_diary" -> "Дневник общего самочувствия"
+            "hads" -> "HADS"
+            "osvestry" -> "Освестри"
+            "lanss" -> "LANSS"
             else -> "Неизвестный тест"
         }
     }

@@ -23,6 +23,9 @@ fun TopScreenBar(closeTest: () -> Boolean, testType: TestType) {
                 text = when(testType){
                     TestType.TEST_STIMULATION_DIARY -> "Дневник тестовой стимуляции"
                     TestType.STATE_OF_HEALTH_DIARY -> "Дневник общего самочувствия"
+                    TestType.HADS -> "HADS"
+                    TestType.OSVESTRY -> "Освестри"
+                    TestType.LANSS -> "LANSS"
                 },
                 fontSize = 17.sp,
                 color = Color(0xFF002A33)

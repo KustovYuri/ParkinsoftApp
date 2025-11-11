@@ -21,6 +21,7 @@ import com.farma.parkinsoftapp.presentation.login.login_screen.LoginScreen
 import com.farma.parkinsoftapp.presentation.login.sms_screen.SmsScreen
 import com.farma.parkinsoftapp.presentation.patient.all_tests.PatientAllTestsScreen
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.PainDetectedScreen
+import com.farma.parkinsoftapp.presentation.patient.test.single_answer.PatientTestScreen
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationScreen
 
 
@@ -32,12 +33,13 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = PatientTestRoute(1, TestType.TEST_STIMULATION_DIARY)
-//        when (userRole) {
-//            UserRoleValues.DOCTOR -> AllPatientsRoute
-//            UserRoleValues.PATIENT -> PatientAllTestsRoute
-//            UserRoleValues.UNAUTHORIZED -> LoginRoute
-//        }
+        startDestination =
+        //        PatientTestRoute(1, TestType.TEST_STIMULATION_DIARY)
+        when (userRole) {
+            UserRoleValues.DOCTOR -> AllPatientsRoute
+            UserRoleValues.PATIENT -> PatientAllTestsRoute
+            UserRoleValues.UNAUTHORIZED -> LoginRoute
+        }
     ) {
         composable<LoginRoute> {
             LoginScreen(
@@ -93,18 +95,18 @@ fun AppNavHost(
             )
         }
         composable<PatientTestRoute> { backStackEntry ->
-            PainDetectedScreen (
-                closeTest = {
-                    navController.popBackStack()
-                },
-                finishTest = {
-                    navController.navigate(PatientAllTestsRoute) {
-                        popUpTo<PatientAllTestsRoute> {
-                            inclusive = true
-                        }
-                    }
-                },
-            )
+//            PainDetectedScreen (
+//                closeTest = {
+//                    navController.popBackStack()
+//                },
+//                finishTest = {
+//                    navController.navigate(PatientAllTestsRoute) {
+//                        popUpTo<PatientAllTestsRoute> {
+//                            inclusive = true
+//                        }
+//                    }
+//                },
+//            )
 //            TestStimulationScreen(
 //                closeTest = {
 //                    navController.popBackStack()
@@ -117,18 +119,18 @@ fun AppNavHost(
 //                    }
 //                },
 //            )
-//            PatientTestScreen(
-//                closeTest = {
-//                    navController.popBackStack()
-//                },
-//                finishTest = {
-//                    navController.navigate(PatientAllTestsRoute) {
-//                        popUpTo<PatientAllTestsRoute> {
-//                            inclusive = true
-//                        }
-//                    }
-//                },
-//            )
+            PatientTestScreen(
+                closeTest = {
+                    navController.popBackStack()
+                },
+                finishTest = {
+                    navController.navigate(PatientAllTestsRoute) {
+                        popUpTo<PatientAllTestsRoute> {
+                            inclusive = true
+                        }
+                    }
+                },
+            )
         }
 
         //Врач
