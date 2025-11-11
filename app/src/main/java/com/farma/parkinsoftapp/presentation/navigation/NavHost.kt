@@ -95,42 +95,81 @@ fun AppNavHost(
             )
         }
         composable<PatientTestRoute> { backStackEntry ->
-//            PainDetectedScreen (
-//                closeTest = {
-//                    navController.popBackStack()
-//                },
-//                finishTest = {
-//                    navController.navigate(PatientAllTestsRoute) {
-//                        popUpTo<PatientAllTestsRoute> {
-//                            inclusive = true
-//                        }
-//                    }
-//                },
-//            )
-//            TestStimulationScreen(
-//                closeTest = {
-//                    navController.popBackStack()
-//                },
-//                finishTest = {
-//                    navController.navigate(PatientAllTestsRoute) {
-//                        popUpTo<PatientAllTestsRoute> {
-//                            inclusive = true
-//                        }
-//                    }
-//                },
-//            )
-            PatientTestScreen(
-                closeTest = {
-                    navController.popBackStack()
-                },
-                finishTest = {
-                    navController.navigate(PatientAllTestsRoute) {
-                        popUpTo<PatientAllTestsRoute> {
-                            inclusive = true
-                        }
-                    }
-                },
-            )
+            val testType = backStackEntry.toRoute<PatientTestRoute>().testType
+
+            when(testType) {
+                TestType.STATE_OF_HEALTH_DIARY,
+                TestType.HADS, TestType.OSVESTRY, TestType.LANSS -> {
+                    PatientTestScreen(
+                        closeTest = {
+                            navController.popBackStack()
+                        },
+                        finishTest = {
+                            navController.navigate(PatientAllTestsRoute) {
+                                popUpTo<PatientAllTestsRoute> {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                    )
+                }
+                TestType.DN4 -> {
+                    TestStimulationScreen(
+                        closeTest = {
+                            navController.popBackStack()
+                        },
+                        finishTest = {
+                            navController.navigate(PatientAllTestsRoute) {
+                                popUpTo<PatientAllTestsRoute> {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                    )
+                }
+                TestType.SF36 -> {
+                    TestStimulationScreen(
+                        closeTest = {
+                            navController.popBackStack()
+                        },
+                        finishTest = {
+                            navController.navigate(PatientAllTestsRoute) {
+                                popUpTo<PatientAllTestsRoute> {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                    )
+                }
+                TestType.TEST_STIMULATION_DIARY -> {
+                    TestStimulationScreen(
+                        closeTest = {
+                            navController.popBackStack()
+                        },
+                        finishTest = {
+                            navController.navigate(PatientAllTestsRoute) {
+                                popUpTo<PatientAllTestsRoute> {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                    )
+                }
+                TestType.PAIN_DETECTED -> {
+                    PainDetectedScreen (
+                        closeTest = {
+                            navController.popBackStack()
+                        },
+                        finishTest = {
+                            navController.navigate(PatientAllTestsRoute) {
+                                popUpTo<PatientAllTestsRoute> {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                    )
+                }
+            }
         }
 
         //Врач

@@ -17,7 +17,10 @@ enum class TestType(val value: String) {
     STATE_OF_HEALTH_DIARY("state_of_health_diary"),
     HADS("hads"),
     OSVESTRY("osvestry"),
-    LANSS("lanss");
+    LANSS("lanss"),
+    DN4("dn4"),
+    SF36("sf36"),
+    PAIN_DETECTED("pain_detected");
 
     companion object {
         fun fromString(value: String?): TestType? {

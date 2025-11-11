@@ -26,6 +26,9 @@ fun TopScreenBar(closeTest: () -> Boolean, testType: TestType) {
                     TestType.HADS -> "HADS"
                     TestType.OSVESTRY -> "Освестри"
                     TestType.LANSS -> "LANSS"
+                    TestType.DN4 -> "DN4"
+                    TestType.SF36 -> "SF36"
+                    TestType.PAIN_DETECTED -> "Pain Detected"
                 },
                 fontSize = 17.sp,
                 color = Color(0xFF002A33)

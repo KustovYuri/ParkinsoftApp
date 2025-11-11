@@ -93,6 +93,9 @@ class PatientAllTestsScreenViewModel @Inject constructor(
             "hads" -> "HADS"
             "osvestry" -> "Освестри"
             "lanss" -> "LANSS"
+            "dn4" -> "DN-4"
+            "sf36" -> "SF-36"
+            "pain_detected" -> "Pain Detected"
             else -> "Неизвестный тест"
         }
     }
