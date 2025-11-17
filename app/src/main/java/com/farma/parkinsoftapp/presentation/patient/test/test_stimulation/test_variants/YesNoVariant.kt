@@ -49,7 +49,7 @@ fun YesNoVariant(
 }
 
 @Composable
-private fun AnswersVariants(
+fun AnswersVariants(
     answer: Pair<String, String>,
     selectVariant: (String) -> Unit
 ) {

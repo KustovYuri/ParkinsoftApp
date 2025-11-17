@@ -20,6 +20,7 @@ import com.farma.parkinsoftapp.presentation.doctor.patient_info.PatientInfoScree
 import com.farma.parkinsoftapp.presentation.login.login_screen.LoginScreen
 import com.farma.parkinsoftapp.presentation.login.sms_screen.SmsScreen
 import com.farma.parkinsoftapp.presentation.patient.all_tests.PatientAllTestsScreen
+import com.farma.parkinsoftapp.presentation.patient.test.dn_4.Dn4Screen
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.PainDetectedScreen
 import com.farma.parkinsoftapp.presentation.patient.test.single_answer.PatientTestScreen
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationScreen
@@ -114,7 +115,7 @@ fun AppNavHost(
                     )
                 }
                 TestType.DN4 -> {
-                    TestStimulationScreen(
+                    Dn4Screen(
                         closeTest = {
                             navController.popBackStack()
                         },
