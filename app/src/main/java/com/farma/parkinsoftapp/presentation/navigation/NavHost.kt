@@ -22,6 +22,7 @@ import com.farma.parkinsoftapp.presentation.login.sms_screen.SmsScreen
 import com.farma.parkinsoftapp.presentation.patient.all_tests.PatientAllTestsScreen
 import com.farma.parkinsoftapp.presentation.patient.test.dn_4.Dn4Screen
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.PainDetectedScreen
+import com.farma.parkinsoftapp.presentation.patient.test.sf_36.Sf36Screen
 import com.farma.parkinsoftapp.presentation.patient.test.single_answer.PatientTestScreen
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationScreen
 
@@ -129,7 +130,7 @@ fun AppNavHost(
                     )
                 }
                 TestType.SF36 -> {
-                    TestStimulationScreen(
+                    Sf36Screen(
                         closeTest = {
                             navController.popBackStack()
                         },
