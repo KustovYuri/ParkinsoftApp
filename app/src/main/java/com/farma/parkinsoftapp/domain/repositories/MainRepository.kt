@@ -9,8 +9,8 @@ import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.data.network.models.TestResultModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
-import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.TestType
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
 import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
@@ -27,7 +27,13 @@ interface MainRepository {
     fun getUserRole(): Flow<Pair<Long?, UserRoleValues>>
 
     suspend fun setUserRole(userId: Long, newUserRole: UserRoleValues)
-    suspend fun finishTest(testAnswers: List<TestAnswer>)
+
+    suspend fun finishSingleAnswersTest(testAnswers: List<TestAnswer>)
+
+    suspend fun finishPainDetectedTest(
+        testPreviewId: Long,
+        test:  List<PainDetectedTestQuestions>
+    ): Flow<Result<Unit>>
 
     suspend fun getResultTests(testPreviewId: Long, testType: TestType): Flow<Result<List<TestResultModel>>>
 }

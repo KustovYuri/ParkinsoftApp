@@ -69,7 +69,7 @@ class PatientTestViewModel @Inject constructor(
     fun finishTest(navigation: () -> Unit) {
         _uiState.value = _uiState.value.copy(isSending = true)
         viewModelScope.launch {
-            mainRepository.finishTest(
+            mainRepository.finishSingleAnswersTest(
                 testAnswers = _selectedAnswers.value.values.toList().map {
                     it.copy(
                         isSelected = true,

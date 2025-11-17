@@ -55,7 +55,7 @@ fun PainDetectedScreen(
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = {viewModel.nextQuestion()},
                 enabled = nextButtonIsActive,
-                finishTest = finishTest,
+                finishTest = { viewModel.finishTest(finishTest) },
             )
         },
         containerColor = Color.White

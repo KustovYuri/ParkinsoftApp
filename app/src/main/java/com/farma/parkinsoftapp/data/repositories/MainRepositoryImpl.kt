@@ -4,10 +4,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
+import com.farma.parkinsoftapp.data.mappers.convertToPainDetectedRequest
 import com.farma.parkinsoftapp.data.network.httpExceptionHandler
 import com.farma.parkinsoftapp.data.network.retrofit.ApiService
 import com.farma.parkinsoftapp.data.network.ktor.KtorService
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
+import com.farma.parkinsoftapp.data.network.models.PainDetectedRequest
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
@@ -17,6 +19,7 @@ import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -59,10 +62,21 @@ class MainRepositoryImpl @Inject constructor(
         emit(result)
     }
 
-    override suspend fun finishTest(testAnswers: List<TestAnswer>) {
+    override suspend fun finishSingleAnswersTest(testAnswers: List<TestAnswer>) {
         withContext(Dispatchers.IO) {
             apiService.saveTestAnswers(testAnswers)
         }
+    }
+
+    override suspend fun finishPainDetectedTest(
+        testPreviewId: Long,
+        test: List<PainDetectedTestQuestions>
+    ): Flow<Result<Unit>> = flow {
+        emit(Result.Loading())
+        val result = httpExceptionHandler {
+            ktorService.savePainDetectedTestAnswers(test.convertToPainDetectedRequest(testPreviewId))
+        }
+        emit(result)
     }
 
     override suspend fun getResultTests(

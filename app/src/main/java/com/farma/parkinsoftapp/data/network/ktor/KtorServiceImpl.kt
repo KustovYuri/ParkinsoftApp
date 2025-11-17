@@ -3,10 +3,12 @@ package com.farma.parkinsoftapp.data.network.ktor
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.LoginModel
+import com.farma.parkinsoftapp.data.network.models.PainDetectedRequest
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.data.network.models.TestResultModel
+import com.farma.parkinsoftapp.data.repositories.MainRepositoryImpl
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -51,10 +53,19 @@ class KtorService(
         ).body<List<TestResultModel>>()
     }
 
-    override suspend fun saveTestAnswers(body: List<TestAnswer>) {
+    override suspend fun saveSingleAnswersTestAnswers(body: List<TestAnswer>) {
         return client.post(
             urlString = "$BASE_URL/test/saveTestAnswers"
         ){
+            contentType(ContentType.Application.Json)
+            setBody(body)
+        }.body()
+    }
+
+    override suspend fun savePainDetectedTestAnswers(body: PainDetectedRequest) {
+        return client.post(
+            urlString = "$BASE_URL/test/savePainDetectedTestAnswers"
+        ) {
             contentType(ContentType.Application.Json)
             setBody(body)
         }.body()
