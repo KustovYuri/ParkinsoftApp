@@ -66,8 +66,8 @@ fun ButtonsGrid(
     selectPoint: (Int) -> Unit
 ) {
     val buttonCount = when(humanImageType) {
-        HumanImageType.FRONT -> (1 .. 22).toList()
-        HumanImageType.BACK -> (23 .. 45).toList()
+        HumanImageType.FRONT -> (1 .. 18).toList()
+        HumanImageType.BACK -> (1 .. 17).toList()
     }
 
     LazyVerticalGrid(
@@ -75,7 +75,7 @@ fun ButtonsGrid(
         contentPadding = PaddingValues(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(456.dp),
+            .height(350.dp),
         userScrollEnabled = false,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)

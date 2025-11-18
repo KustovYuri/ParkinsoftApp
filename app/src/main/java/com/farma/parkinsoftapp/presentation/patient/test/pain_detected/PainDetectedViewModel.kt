@@ -183,10 +183,10 @@ class PainDetectedViewModel @Inject constructor(
                 id = 2,
                 question = "Выберете картинку, которая наиболее точно отражает характер протекания боли в вашем случае:",
                 graphicVariant = listOf(
-                    R.drawable.pain_variant_1 to "Непрерывная боль, немного меняющаяся по интенсивности",
-                    R.drawable.pain_variant_2 to "Непрерывная боль с переодическими приступами",
-                    R.drawable.pain_variant_3 to "Приступы боли без болевых ощущений в промежутках между ними",
-                    R.drawable.pain_variant_4 to "Приступы боли, сопровождающиеся болевыми ощущениями в промежутках между ними"
+                    R.drawable.thumbnail to "Непрерывная боль, немного меняющаяся по интенсивности",
+                    R.drawable.thumbnail_1 to "Непрерывная боль с переодическими приступами",
+                    R.drawable.thumbnail_2 to "Приступы боли без болевых ощущений в промежутках между ними",
+                    R.drawable.thumbnail_3 to "Приступы боли, сопровождающиеся болевыми ощущениями в промежутках между ними"
                 )
             ),
             PainDetectedTestQuestions.HumanPoint(
