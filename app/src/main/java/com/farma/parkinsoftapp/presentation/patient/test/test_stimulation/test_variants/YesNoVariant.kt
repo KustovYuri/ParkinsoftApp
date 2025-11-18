@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.CommentTextField
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
 
 @Composable
 fun YesNoVariant(
@@ -34,11 +35,11 @@ fun YesNoVariant(
     Spacer(modifier = Modifier.height(24.dp))
     question.answers.forEach { answer ->
         Text(
-            text = answer.first,
+            text = answer.question,
             fontSize = 14.sp,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        AnswersVariants(answer, ) { viewModel.selectAnswerInYesNoAnswer(answer.first, it) }
+        AnswersVariants(answer, ) { viewModel.selectAnswerInYesNoAnswer(answer.question, it) }
         Spacer(modifier = Modifier.height(24.dp))
     }
     CommentTextField(
@@ -70,6 +71,34 @@ fun AnswersVariants(
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = variant, fontSize = 16.sp)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+    }
+}
+
+@Composable
+fun AnswersVariants(
+    answer: YesNoAnswer,
+    selectVariant: (Boolean) -> Unit
+) {
+    Row {
+        listOf("Да" to true, "Нет" to false).forEach { variant ->
+            val isSelected = answer.answer == variant.second
+
+            Box(
+                modifier = Modifier
+                    .width(64.dp)
+                    .padding(vertical = 4.dp)
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(
+                        color = if (isSelected) Color(0xFFA9E0EB) else Color(0xFFEDF1F2),
+                    )
+                    .clickable { selectVariant(variant.second) }
+                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = variant.first, fontSize = 16.sp)
             }
             Spacer(modifier = Modifier.width(8.dp))
         }

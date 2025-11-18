@@ -191,7 +191,7 @@ class PainDetectedViewModel @Inject constructor(
             ),
             PainDetectedTestQuestions.HumanPoint(
                 id = 3,
-                type = HumanImageType.HEAD,
+                type = HumanImageType.FRONT,
                 question = "Выберете те области, где вы испытываете наиболее сильную боль"
             ),
             PainDetectedTestQuestions.HumanPoint(
@@ -201,7 +201,7 @@ class PainDetectedViewModel @Inject constructor(
             ),
             PainDetectedTestQuestions.HumanPoint(
                 id = 5,
-                type = HumanImageType.HEAD,
+                type = HumanImageType.FRONT,
                 question = "Выберете те области, в которые отдает боль"
             ),
             PainDetectedTestQuestions.HumanPoint(

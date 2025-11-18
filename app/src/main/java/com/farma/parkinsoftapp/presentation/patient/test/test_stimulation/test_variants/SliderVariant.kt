@@ -29,12 +29,12 @@ fun SliderVariant(
     Spacer(modifier = Modifier.height(24.dp))
     question.sliderAnswers.forEach { answer ->
         Text(
-            text = answer.first,
+            text = answer.question,
             fontSize = 16.sp,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        PercentSlider(answer.second) {
-            viewModel.changeSliderValueInSliderVariant(answer.first, it)
+        PercentSlider(answer.value) {
+            viewModel.changeSliderValueInSliderVariant(answer.question, it)
         }
         Row(
             modifier = Modifier

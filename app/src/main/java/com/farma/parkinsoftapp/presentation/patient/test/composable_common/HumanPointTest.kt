@@ -46,7 +46,7 @@ private fun HumanImage(humanImageType: HumanImageType) {
             .fillMaxWidth(0.5f),
         painter = painterResource(
             when (humanImageType) {
-                HumanImageType.HEAD -> R.drawable.human_face
+                HumanImageType.FRONT -> R.drawable.human_face
                 HumanImageType.BACK -> R.drawable.human_back
             }
         ),

@@ -66,7 +66,7 @@ fun ButtonsGrid(
     selectPoint: (Int) -> Unit
 ) {
     val buttonCount = when(humanImageType) {
-        HumanImageType.HEAD -> (1 .. 22).toList()
+        HumanImageType.FRONT -> (1 .. 22).toList()
         HumanImageType.BACK -> (23 .. 45).toList()
     }
 

@@ -11,8 +11,10 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.SliderAnswer
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -31,12 +33,12 @@ class TestStimulationViewModel @Inject constructor(
                 if (question.humanIsEnabled) {
                     question.selectedPoints.isNotEmpty()
                 } else {
-                    !(question.commentIsEnabled && question.comment.isNullOrBlank())
+                    true
                 }
             }
-            is TestStimulationTestQuestion.SingleAnswer -> question.selectedAnswer.isNotBlank()
+            is TestStimulationTestQuestion.SingleAnswer -> question.selectedAnswer != null
             is TestStimulationTestQuestion.Slider -> true
-            is TestStimulationTestQuestion.YesNo -> question.answers.all { it.second.isNotBlank() && question.comment.isNotBlank() }
+            is TestStimulationTestQuestion.YesNo -> question.answers.all { it.answer != null }
         }
     }
 
@@ -62,7 +64,7 @@ class TestStimulationViewModel @Inject constructor(
         }
     }
 
-    fun selectAnswerInSingleAnswer(selectedAnswer: String) {
+    fun selectAnswerInSingleAnswer(selectedAnswer: Pair<String, Int>) {
         if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.SingleAnswer) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
@@ -76,15 +78,22 @@ class TestStimulationViewModel @Inject constructor(
         }
     }
 
-    fun selectAnswerInYesNoAnswer(nameVariant: String, selectedAnswer: String) {
+    fun selectAnswerInYesNoAnswer(nameVariant: String, selectedAnswer: Boolean) {
         if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.YesNo) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
                         (question as TestStimulationTestQuestion.YesNo).copy(
                             answers = question.answers.map { variant ->
-                                if (variant.first == nameVariant) {
-                                    variant.copy(second = selectedAnswer)
+                                if (variant.question == nameVariant) {
+                                    variant.copy(
+                                        answer = selectedAnswer,
+                                        score = if (selectedAnswer) {
+                                            variant.yesScore
+                                        } else {
+                                            variant.noScore
+                                        }
+                                    )
                                 } else {
                                     variant
                                 }
@@ -118,11 +127,11 @@ class TestStimulationViewModel @Inject constructor(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
                         (question as TestStimulationTestQuestion.Slider).copy(
-                                sliderAnswers = question.sliderAnswers.map { sliderPair ->
-                                    if (sliderPair.first == name) {
-                                        sliderPair.copy(second = value)
+                                sliderAnswers = question.sliderAnswers.map { sliderAnswer ->
+                                    if (sliderAnswer.question == name) {
+                                        sliderAnswer.copy(value = value)
                                     } else {
-                                        sliderPair
+                                        sliderAnswer
                                     }
                                 }
                             )
@@ -208,35 +217,43 @@ class TestStimulationViewModel @Inject constructor(
 private fun getMocTestData(): List<TestStimulationTestQuestion> {
     return listOf(
         TestStimulationTestQuestion.SingleAnswer(
+            testId = 1,
             question = "Какая программа была сегодня самой эффективной?",
-            answers = listOf("Первая", "Вторая", "Третья", "Четвертая", "Пятая"),
+            answers = listOf("Первая" to 1, "Вторая" to 2, "Третья" to 3, "Четвертая" to 4, "Пятая" to 5),
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = HumanImageType.HEAD,
+            testId = 2,
+            type = HumanImageType.FRONT,
             question = "Нажмите на рисунке на области стимуляции:"
         ),
         TestStimulationTestQuestion.HumanPoint(
+            testId = 3,
             type = HumanImageType.BACK,
             question = "Нажмите на рисунке на области стимуляции:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = HumanImageType.HEAD,
+            testId = 4,
+            type = HumanImageType.FRONT,
             question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
         ),
         TestStimulationTestQuestion.HumanPoint(
+            testId = 5,
             type = HumanImageType.BACK,
             question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = HumanImageType.HEAD,
+            testId = 6,
+            type = HumanImageType.FRONT,
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
         TestStimulationTestQuestion.HumanPoint(
+            testId = 7,
             type = HumanImageType.BACK,
             question = "Нажмите на рисунке на область с самой сильной болью:"
         ),
         TestStimulationTestQuestion.HumanPoint(
-            type = HumanImageType.HEAD,
+            testId = 8,
+            type = HumanImageType.FRONT,
             question = "На сколько в процентах снизилась боль в самой активной области?",
             humanIsEnabled = false,
             sliderIsEnabled = true,
@@ -245,26 +262,68 @@ private fun getMocTestData(): List<TestStimulationTestQuestion> {
             comment = ""
         ),
         TestStimulationTestQuestion.Slider(
+            testId = 9,
             question = "Отметьте уровни боли при определенных видах деятельности из списка. (по шкале от 0 до 10, где 10 - самая сильная боль).",
-            sliderAnswers = listOf("Сидя" to 0, "Стоя" to 0, "При ходьбе" to 0, "Во время сна" to 0),
+            sliderAnswers = listOf(
+                SliderAnswer(
+                    questionId = 1,
+                    question = "Сидя",
+                ),
+                SliderAnswer(
+                    questionId = 1,
+                    question = "Стоя",
+                ),
+                SliderAnswer(
+                    questionId = 1,
+                    question = "При ходьбе",
+                ),
+                SliderAnswer(
+                    questionId = 1,
+                    question = "Во время сна",
+                ),
+            ),
             commentIsEnabled = true
         ),
         TestStimulationTestQuestion.YesNo(
+            testId = 10,
             question = "Оцените, было улучшение во времся следующих ситуаций?",
-            answers = listOf("Смогли ли Вы дольше сидеть?" to "", "Смогли ли Вы дольше идти или стоять?" to "", "Было улучшение при рутиных видах деятельности (например при готовке еды, во время работы или уборки по дому)?" to "",),
+            answers = listOf(
+                YesNoAnswer(
+                    questionId = 1,
+                    question = "Смогли ли Вы дольше сидеть?",
+                    yesScore = 1,
+                    noScore = 0,
+                ),
+                YesNoAnswer(
+                    questionId = 2,
+                    question = "Смогли ли Вы дольше идти или стоять?",
+                    yesScore = 1,
+                    noScore = 0,
+                ),
+                YesNoAnswer(
+                    questionId = 3,
+                    question = "Было улучшение при рутиных видах деятельности (например при готовке еды, во время работы или уборки по дому)?",
+                    yesScore = 1,
+                    noScore = 0,
+                )
+            ),
         ),
         TestStimulationTestQuestion.DisplaySlider(
+            testId = 11,
             question = "Сколько полос вы видите на дисплее во время наибольшего облегчения боли?"
         ),
         TestStimulationTestQuestion.SingleAnswer(
+            testId = 12,
             question = "Оцените ощущения от стимуляции:",
-            answers = listOf("Приятные", "Комфортные", "Некомфортные", "Болезненные"),
+            answers = listOf("Приятные" to 1, "Комфортные" to 2, "Некомфортные" to 3, "Болезненные" to 4),
         ),
         TestStimulationTestQuestion.SingleAnswer(
+            testId = 13,
             question = "Оцените общую эффективность программы:",
-            answers = listOf("Превосходно", "Хорошо", "Удовлетворительно", "Неэффективно"),
+            answers = listOf("Превосходно" to 1, "Хорошо" to 2, "Удовлетворительно" to 3, "Неэффективно" to 4),
         ),
         TestStimulationTestQuestion.Comment(
+            testId = 14,
             question = "Определите изменеия вашего физического и эмоционального состояния, которые заметны Вам и вашему окружению"
         )
     )

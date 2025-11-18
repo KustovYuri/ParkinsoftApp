@@ -20,7 +20,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 fun SingleAnswersVariant(
     question: TestStimulationTestQuestion.SingleAnswer,
     isSending: Boolean,
-    selectAnswer: (String) -> Unit
+    selectAnswer: (Pair<String, Int>) -> Unit
 ) {
     Text(
         text = question.question,
@@ -46,7 +46,7 @@ fun SingleAnswersVariant(
                     }
                     .padding(vertical = 12.dp, horizontal = 16.dp)
             ) {
-                Text(text = answer, fontSize = 16.sp)
+                Text(text = answer.first, fontSize = 16.sp)
             }
         }
     }
