@@ -15,7 +15,8 @@ data class PatientTestPreview(
 enum class TestType(val value: String) {
     TEST_STIMULATION_DIARY("test_stimulation_diary"),
     STATE_OF_HEALTH_DIARY("state_of_health_diary"),
-    HADS("hads"),
+    HADS1("hads1"),
+    HADS2("hads2"),
     OSVESTRY("osvestry"),
     LANSS("lanss"),
     DN4("dn4"),

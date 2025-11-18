@@ -23,7 +23,8 @@ fun TopScreenBar(closeTest: () -> Boolean, testType: TestType) {
                 text = when(testType){
                     TestType.TEST_STIMULATION_DIARY -> "Дневник тестовой стимуляции"
                     TestType.STATE_OF_HEALTH_DIARY -> "Дневник общего самочувствия"
-                    TestType.HADS -> "HADS"
+                    TestType.HADS1 -> "HADS 1"
+                    TestType.HADS2 -> "HADS 2"
                     TestType.OSVESTRY -> "Освестри"
                     TestType.LANSS -> "LANSS"
                     TestType.DN4 -> "DN4"

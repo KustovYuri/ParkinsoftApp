@@ -145,7 +145,7 @@ private fun Screen(
                     if (tab == TestsTabs.DAILY) {
                         AllTestsTypes.TEST_STIMULATION_DIARY
                     } else {
-                        AllTestsTypes.HADS
+                        AllTestsTypes.HADS1
                     }
                 selectedTab.value = tab
             }
@@ -179,7 +179,8 @@ private fun Screen(
             TestsTabs.CONTROL -> {
                 TestChips(
                     tests = listOf(
-                        AllTestsTypes.HADS,
+                        AllTestsTypes.HADS1,
+                        AllTestsTypes.HADS2,
                         AllTestsTypes.DN4,
                         AllTestsTypes.OSVESTRY,
                         AllTestsTypes.SF36,

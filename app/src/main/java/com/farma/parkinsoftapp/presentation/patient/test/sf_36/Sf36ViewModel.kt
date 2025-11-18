@@ -9,11 +9,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
 import com.farma.parkinsoftapp.presentation.patient.test.sf_36.models.Sf36State
 import com.farma.parkinsoftapp.presentation.patient.test.sf_36.models.Sf36TestQuestions
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

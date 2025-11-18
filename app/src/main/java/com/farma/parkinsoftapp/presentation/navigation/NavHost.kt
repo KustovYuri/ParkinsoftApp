@@ -101,7 +101,7 @@ fun AppNavHost(
 
             when(testType) {
                 TestType.STATE_OF_HEALTH_DIARY,
-                TestType.HADS, TestType.OSVESTRY, TestType.LANSS -> {
+                TestType.HADS1, TestType.HADS2, TestType.OSVESTRY, TestType.LANSS -> {
                     PatientTestScreen(
                         closeTest = {
                             navController.popBackStack()
