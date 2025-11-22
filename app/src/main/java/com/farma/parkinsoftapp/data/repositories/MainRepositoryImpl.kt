@@ -85,6 +85,16 @@ class MainRepositoryImpl @Inject constructor(
         emit(result)
     }
 
+    override suspend fun getResultNativeTests(
+        testPreviewId: Long,
+    ): Flow<Result<NativeTestRequest>> = flow {
+        emit(Result.Loading())
+        val result = httpExceptionHandler {
+            ktorService.getResultNativeTest(testPreviewId)
+        }
+        emit(result)
+    }
+
     override fun getDoctorWithPatients(): Flow<Result<DoctorWithPatientsModel>> = flow {
         emit(Result.Loading())
         val doctorId = sessionDataStore.getCurrentUserId().map { it ->

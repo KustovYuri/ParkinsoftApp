@@ -28,4 +28,5 @@ interface KtorApiService {
 
     suspend fun login(phoneNumber: String): LoginModel
     suspend fun sendNativeTest(body: NativeTestRequest)
+    suspend fun getResultNativeTest(testPreviewId: Long): NativeTestRequest
 }

@@ -38,4 +38,5 @@ interface MainRepository {
 
     suspend fun getResultTests(testPreviewId: Long, testType: TestType): Flow<Result<List<TestResultModel>>>
     fun sendNativeTest(nativeTestRequest: NativeTestRequest): Flow<Result<Unit>>
+    suspend fun getResultNativeTests(testPreviewId: Long): Flow<Result<NativeTestRequest>>
 }

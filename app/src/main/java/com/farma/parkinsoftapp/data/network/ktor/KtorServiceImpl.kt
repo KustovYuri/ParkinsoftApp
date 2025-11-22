@@ -54,6 +54,14 @@ class KtorService(
         ).body<List<TestResultModel>>()
     }
 
+    override suspend fun getResultNativeTest(
+        testPreviewId: Long,
+    ): NativeTestRequest {
+        return client.get(
+            urlString = "$BASE_URL/test/getResultNativeTests/$testPreviewId"
+        ).body<NativeTestRequest>()
+    }
+
     override suspend fun saveSingleAnswersTestAnswers(body: List<TestAnswer>) {
         return client.post(
             urlString = "$BASE_URL/test/saveTestAnswers"
