@@ -2,7 +2,7 @@ package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.model
 
 
 data class TestStimulationState(
-    val data: List<TestStimulationTestQuestion> = emptyList(),
+    val data: List<TestQuestion> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val isSending: Boolean = false

@@ -20,12 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.GraphicVariant
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
 @Composable
 fun GraphicVariant(
-    question: PainDetectedTestQuestions.Graphic,
-    selectVariant: (String) -> Unit
+    question: TestQuestion.Graphic,
+    selectVariant: (GraphicVariant) -> Unit
 ) {
     Text(
         text = question.question,
@@ -40,14 +41,14 @@ fun GraphicVariant(
                 .height(100.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(
-                    if (question.selectedVariant == variant.second) {
+                    if (question.selectedVariant == variant) {
                         Color(0xFFA9E0EB)
                     } else {
                         Color(0xFFEDF1F2)
                     },
 
                 )
-                .clickable{ selectVariant(variant.second) }
+                .clickable{ selectVariant(variant) }
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -56,12 +57,12 @@ fun GraphicVariant(
                 modifier = Modifier
                     .width(125.dp)
                     .clip(RoundedCornerShape(16.dp)),
-                painter = painterResource(variant.first),
+                painter = painterResource(variant.image),
                 contentDescription = null
             )
             Spacer(Modifier.width(16.dp))
             Text(
-                text = variant.second,
+                text = variant.question,
                 fontSize = 12.sp
             )
         }

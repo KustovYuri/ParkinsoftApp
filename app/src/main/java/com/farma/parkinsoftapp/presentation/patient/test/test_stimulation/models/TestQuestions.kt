@@ -1,16 +1,15 @@
 package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
-import com.farma.parkinsoftapp.presentation.patient.test.sf_36.models.Sf36TestQuestions
 
-sealed interface TestStimulationTestQuestion {
+sealed interface TestQuestion {
 
     data class SingleAnswer(
         val testId: Long,
         val question: String,
         val answers: List<Pair<String, Int>>,
         val selectedAnswer: Pair<String, Int>? = null,
-    ): TestStimulationTestQuestion
+    ): TestQuestion
 
     data class HumanPoint(
         val testId: Long,
@@ -23,7 +22,8 @@ sealed interface TestStimulationTestQuestion {
         val sliderValue: Int? = null,
         val comment: String? = null,
         val score: Int = 0,
-    ): TestStimulationTestQuestion
+        val sliderScore: Int = 0,
+    ): TestQuestion
 
     data class Slider(
         val testId: Long,
@@ -31,32 +31,47 @@ sealed interface TestStimulationTestQuestion {
         val sliderAnswers: List<SliderAnswer>,
         val commentIsEnabled: Boolean = true,
         val comment: String? = null,
-    ): TestStimulationTestQuestion
+    ): TestQuestion
 
     data class YesNo(
         val testId: Long,
         val question: String,
         val answers: List<YesNoAnswer>,
         val comment: String = ""
-    ): TestStimulationTestQuestion
+    ): TestQuestion
 
     data class DisplaySlider(
         val testId: Long,
         val question: String,
         val sliderValue: Int = 0,
         val score: Int = 0
-    ): TestStimulationTestQuestion
+    ): TestQuestion
 
     data class Comment(
         val testId: Long,
         val question: String,
         val comment: String = ""
-    ): TestStimulationTestQuestion
+    ): TestQuestion
 
     data class PreQuestion(
         val question: String
-    ): TestStimulationTestQuestion
+    ): TestQuestion
+
+    data class Graphic(
+        val testId: Long,
+        val question: String,
+        val graphicVariant: List<GraphicVariant>,
+        val selectedVariant: GraphicVariant? = null,
+        val score: Int
+    ): TestQuestion
+
 }
+
+data class GraphicVariant(
+    val image: Int,
+    val question: String,
+    val score: Int
+)
 data class YesNoAnswer(
     val questionId: Long,
     val question: String,

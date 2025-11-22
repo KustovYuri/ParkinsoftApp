@@ -12,10 +12,13 @@ import androidx.navigation.toRoute
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import com.farma.parkinsoftapp.presentation.mappers.convertToNativeTestRequest
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedState
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.GraphicVariant
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.SliderAnswer
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,10 +40,11 @@ class PainDetectedViewModel @Inject constructor(
     val nextButtonIsActive = derivedStateOf {
         val question = _uiState.value.data[_currentQuestionIndex.intValue]
         when(question) {
-            is PainDetectedTestQuestions.Graphic -> question.selectedVariant.isNotBlank()
-            is PainDetectedTestQuestions.HumanPoint -> question.selectedPoints.isNotEmpty()
-            is PainDetectedTestQuestions.SingleAnswer -> question.selectedAnswer.isNotBlank()
-            is PainDetectedTestQuestions.Slider -> true
+            is TestQuestion.Graphic -> question.selectedVariant != null
+            is TestQuestion.HumanPoint -> question.selectedPoints.isNotEmpty()
+            is TestQuestion.SingleAnswer -> question.selectedAnswer != null
+            is TestQuestion.Slider -> true
+            else -> true
         }
     }
 
@@ -65,16 +69,16 @@ class PainDetectedViewModel @Inject constructor(
 
 
     fun changeSliderValueInSliderVariant(name: String, value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is PainDetectedTestQuestions.Slider) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.Slider) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as PainDetectedTestQuestions.Slider).copy(
-                            sliderAnswers = question.sliderAnswers.map { sliderPair ->
-                                if (sliderPair.first == name) {
-                                    sliderPair.copy(second = value)
+                        (question as TestQuestion.Slider).copy(
+                            sliderAnswers = question.sliderAnswers.map { sliderAnswer ->
+                                if (sliderAnswer.question == name) {
+                                    sliderAnswer.copy(value = value)
                                 } else {
-                                    sliderPair
+                                    sliderAnswer
                                 }
                             }
                         )
@@ -86,12 +90,12 @@ class PainDetectedViewModel @Inject constructor(
         }
     }
 
-    fun selectAnswerInSingleAnswer(selectedAnswer: String) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is PainDetectedTestQuestions.SingleAnswer) {
+    fun selectAnswerInSingleAnswer(selectedAnswer:  Pair<String, Int>) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.SingleAnswer) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as PainDetectedTestQuestions.SingleAnswer).copy(selectedAnswer = selectedAnswer)
+                        (question as TestQuestion.SingleAnswer).copy(selectedAnswer = selectedAnswer)
                     } else {
                         question
                     }
@@ -100,12 +104,12 @@ class PainDetectedViewModel @Inject constructor(
         }
     }
 
-    fun selectAnswerInGraphicAnswer(selectedAnswer: String) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is PainDetectedTestQuestions.Graphic) {
+    fun selectAnswerInGraphicAnswer(selectedAnswer: GraphicVariant) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.Graphic) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as PainDetectedTestQuestions.Graphic).copy(selectedVariant = selectedAnswer)
+                        (question as TestQuestion.Graphic).copy(selectedVariant = selectedAnswer)
                     } else {
                         question
                     }
@@ -115,11 +119,11 @@ class PainDetectedViewModel @Inject constructor(
     }
 
     fun changeHumanPointsInHumanPointsVariant(value: Int) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is PainDetectedTestQuestions.HumanPoint) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.HumanPoint) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as PainDetectedTestQuestions.HumanPoint)
+                        (question as TestQuestion.HumanPoint)
                             .copy(
                                 selectedPoints = if (value == 0) {
                                     listOf(0)
@@ -146,7 +150,7 @@ class PainDetectedViewModel @Inject constructor(
 
     fun finishTest(mainNavigation: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            mainRepository.finishPainDetectedTest(testPreviewId,_uiState.value.data).collect {
+            mainRepository.sendNativeTest(_uiState.value.data.convertToNativeTestRequest(testPreviewId)).collect {
                 when(it) {
                     is Result.Error -> {
                         _uiState.value = _uiState.value.copy(
@@ -169,128 +173,155 @@ class PainDetectedViewModel @Inject constructor(
         }
     }
 
-    private fun getMockTestData(): List<PainDetectedTestQuestions> {
+    private fun getMockTestData(): List<TestQuestion> {
         return listOf(
-            PainDetectedTestQuestions.Slider(
-                id = 1,
+            TestQuestion.Slider(
+                testId = 1,
+                question = "",
                 sliderAnswers = listOf(
-                    "Как бы Вы оценили интенсивность боли, которую испытываете сейчас, в настоящий момент?" to 0,
-                    "Как бы вы оценили интенсивность наиболее сильного приступа боли за последние 4 нелели" to 0,
-                    "В среднем, на сколько сильной была боль в течение последних 4 нелель" to 0
+                    SliderAnswer(
+                        questionId = 1,
+                        question = "Как бы Вы оценили интенсивность боли, которую испытываете сейчас, в настоящий момент?",
+                    ),
+                    SliderAnswer(
+                        questionId = 2,
+                        question = "Как бы вы оценили интенсивность наиболее сильного приступа боли за последние 4 нелели",
+                    ),
+                    SliderAnswer(
+                        questionId = 3,
+                        question = "В среднем, на сколько сильной была боль в течение последних 4 нелель",
+                    ),
                 )
             ),
-            PainDetectedTestQuestions.Graphic(
-                id = 2,
+            TestQuestion.Graphic(
+                testId = 2,
                 question = "Выберете картинку, которая наиболее точно отражает характер протекания боли в вашем случае:",
                 graphicVariant = listOf(
-                    R.drawable.thumbnail to "Непрерывная боль, немного меняющаяся по интенсивности",
-                    R.drawable.thumbnail_1 to "Непрерывная боль с переодическими приступами",
-                    R.drawable.thumbnail_2 to "Приступы боли без болевых ощущений в промежутках между ними",
-                    R.drawable.thumbnail_3 to "Приступы боли, сопровождающиеся болевыми ощущениями в промежутках между ними"
-                )
+                    GraphicVariant(
+                        image = R.drawable.thumbnail,
+                        question = "Непрерывная боль, немного меняющаяся по интенсивности",
+                        score = 1,
+                    ),
+                    GraphicVariant(
+                        image = R.drawable.thumbnail_1,
+                        question = "Непрерывная боль с переодическими приступами",
+                        score = 2,
+                    ),
+                    GraphicVariant(
+                        image = R.drawable.thumbnail_2,
+                        question = "Приступы боли без болевых ощущений в промежутках между ними",
+                        score = 3,
+                    ),
+                    GraphicVariant(
+                        image = R.drawable.thumbnail_3,
+                        question = "Приступы боли, сопровождающиеся болевыми ощущениями в промежутках между ними",
+                        score = 4,
+                    ),
+                ),
+                score = 0
             ),
-            PainDetectedTestQuestions.HumanPoint(
-                id = 3,
+            TestQuestion.HumanPoint(
+                testId = 3,
                 type = HumanImageType.FRONT,
                 question = "Выберете те области, где вы испытываете наиболее сильную боль"
             ),
-            PainDetectedTestQuestions.HumanPoint(
-                id = 4,
+            TestQuestion.HumanPoint(
+                testId = 4,
                 type = HumanImageType.BACK,
                 question = "Выберете те области, где вы испытываете наиболее сильную боль"
             ),
-            PainDetectedTestQuestions.HumanPoint(
-                id = 5,
+            TestQuestion.HumanPoint(
+                testId = 5,
                 type = HumanImageType.FRONT,
                 question = "Выберете те области, в которые отдает боль"
             ),
-            PainDetectedTestQuestions.HumanPoint(
-                id = 6,
+            TestQuestion.HumanPoint(
+                testId = 6,
                 type = HumanImageType.BACK,
                 question = "Выберете те области, в которые отдает боль"
             ),
-            PainDetectedTestQuestions.SingleAnswer(
-                id = 7,
+            TestQuestion.SingleAnswer(
+                testId = 7,
                 question = "Испытываете ли Вы ощущение жжения (например, как при ожоге крапивой) в области, которую отметили на рисунке?",
                 answers = listOf(
-                    "Совсем нет",
-                    "Едва заметное",
-                    "Незначительное",
-                    "Умеренное",
-                    "Сильное",
-                    "Очень сильное",
+                    "Совсем нет" to 1,
+                    "Едва заметное" to 2,
+                    "Незначительное" to 3,
+                    "Умеренное" to 4,
+                    "Сильное" to 5,
+                    "Очень сильное" to 6,
                 )
             ),
-            PainDetectedTestQuestions.SingleAnswer(
-                id = 8,
+            TestQuestion.SingleAnswer(
+                testId = 8,
                 question = "Ощущете ли Вы покалывание или пощипывание в области боли (как покалывание от онимения или слабого электрического тока?)",
                 answers = listOf(
-                    "Совсем нет",
-                    "Едва заметное",
-                    "Незначительное",
-                    "Умеренное",
-                    "Сильное",
-                    "Очень сильное",
+                    "Совсем нет" to 1,
+                    "Едва заметное" to 2,
+                    "Незначительное" to 3,
+                    "Умеренное" to 4,
+                    "Сильное" to 5,
+                    "Очень сильное" to 6,
                 )
             ),
-            PainDetectedTestQuestions.SingleAnswer(
-                id = 9,
+            TestQuestion.SingleAnswer(
+                testId = 9,
                 question = "Возникает ли у Вас болезненные ощущения в указанной области при легком соприкосновении (с одеждой, одеялом)",
                 answers = listOf(
-                    "Совсем нет",
-                    "Едва заметное",
-                    "Незначительное",
-                    "Умеренное",
-                    "Сильное",
-                    "Очень сильное",
+                    "Совсем нет" to 1,
+                    "Едва заметное" to 2,
+                    "Незначительное" to 3,
+                    "Умеренное" to 4,
+                    "Сильное" to 5,
+                    "Очень сильное" to 6,
                 )
             ),
-            PainDetectedTestQuestions.SingleAnswer(
-                id = 10,
+            TestQuestion.SingleAnswer(
+                testId = 10,
                 question = "Возникают ли у Вас резкие приступы боли в указанной области, как удар током?",
                 answers = listOf(
-                    "Совсем нет",
-                    "Едва заметное",
-                    "Незначительное",
-                    "Умеренное",
-                    "Сильное",
-                    "Очень сильное",
+                    "Совсем нет" to 1,
+                    "Едва заметное" to 2,
+                    "Незначительное" to 3,
+                    "Умеренное" to 4,
+                    "Сильное" to 5,
+                    "Очень сильное" to 6,
                 )
             ),
-            PainDetectedTestQuestions.SingleAnswer(
-                id = 11,
+            TestQuestion.SingleAnswer(
+                testId = 11,
                 question = "Возникают ли у Вас иногда болезненные ощущения в указанной области при воздействии холодного или горячего (например, воды, когда Вы моетесь)?",
                 answers = listOf(
-                    "Совсем нет",
-                    "Едва заметное",
-                    "Незначительное",
-                    "Умеренное",
-                    "Сильное",
-                    "Очень сильное",
+                    "Совсем нет" to 1,
+                    "Едва заметное" to 2,
+                    "Незначительное" to 3,
+                    "Умеренное" to 4,
+                    "Сильное" to 5,
+                    "Очень сильное" to 6,
                 )
             ),
-            PainDetectedTestQuestions.SingleAnswer(
-                id = 12,
+            TestQuestion.SingleAnswer(
+                testId = 12,
                 question = "Ощущаете ли вы онемение в указанной области?",
                 answers = listOf(
-                    "Совсем нет",
-                    "Едва заметное",
-                    "Незначительное",
-                    "Умеренное",
-                    "Сильное",
-                    "Очень сильное",
+                    "Совсем нет" to 1,
+                    "Едва заметное" to 2,
+                    "Незначительное" to 3,
+                    "Умеренное" to 4,
+                    "Сильное" to 5,
+                    "Очень сильное" to 6,
                 )
             ),
-            PainDetectedTestQuestions.SingleAnswer(
-                id = 13,
+            TestQuestion.SingleAnswer(
+                testId = 13,
                 question = "Вызывает ли боль легкое нажатие на указанную область, например, нажатие пальцем?",
                 answers = listOf(
-                    "Совсем нет",
-                    "Едва заметное",
-                    "Незначительное",
-                    "Умеренное",
-                    "Сильное",
-                    "Очень сильное",
+                    "Совсем нет" to 1,
+                    "Едва заметное" to 2,
+                    "Незначительное" to 3,
+                    "Умеренное" to 4,
+                    "Сильное" to 5,
+                    "Очень сильное" to 6,
                 )
             ),
         )

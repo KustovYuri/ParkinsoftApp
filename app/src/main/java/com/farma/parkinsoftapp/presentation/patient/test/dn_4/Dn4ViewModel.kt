@@ -14,7 +14,7 @@ import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.presentation.mappers.convertToNativeTestRequest
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +43,7 @@ class Dn4ViewModel @Inject constructor(
 
     val enabledNextButton = derivedStateOf {
         val question = _uiState.value.data[_currentQuestionIndex.intValue]
-        if (question is TestStimulationTestQuestion.YesNo) {
+        if (question is TestQuestion.YesNo) {
             question.answers.all { it.answer != null }
         } else {
             false
@@ -89,11 +89,11 @@ class Dn4ViewModel @Inject constructor(
     }
 
     fun selectAnswerInYesNoAnswer(nameVariant: String, selectedAnswer: Boolean) {
-        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestStimulationTestQuestion.YesNo) {
+        if (_uiState.value.data[_currentQuestionIndex.intValue] is TestQuestion.YesNo) {
             _uiState.value = _uiState.value.copy(
                 data = _uiState.value.data.mapIndexed { idx, question ->
                     if (idx == _currentQuestionIndex.intValue) {
-                        (question as TestStimulationTestQuestion.YesNo).copy(
+                        (question as TestQuestion.YesNo).copy(
                             answers = question.answers.map { variant ->
                                 if (variant.question == nameVariant) {
                                     variant.copy(
@@ -117,9 +117,9 @@ class Dn4ViewModel @Inject constructor(
         }
     }
 
-    fun getTestData(): List<TestStimulationTestQuestion> {
+    fun getTestData(): List<TestQuestion> {
         return listOf(
-            TestStimulationTestQuestion.YesNo(
+            TestQuestion.YesNo(
                 testId = 1,
                 question = "Соответсвует ли боль, которую испытывает пациент, одному или нескольким из следующих определений?",
                 answers = listOf(
@@ -143,7 +143,7 @@ class Dn4ViewModel @Inject constructor(
                     )
                 ),
             ),
-            TestStimulationTestQuestion.YesNo(
+            TestQuestion.YesNo(
                 testId = 2,
                 question = "Сопровождается ли боль одним или несколькими из следующих симптомов в области ее локализации?",
                 answers = listOf(
@@ -167,7 +167,7 @@ class Dn4ViewModel @Inject constructor(
                     )
                 ),
             ),
-            TestStimulationTestQuestion.YesNo(
+            TestQuestion.YesNo(
                 testId = 3,
                 question = "Локализована ли боль в той же области, где осмотр выявляет один или оба следующих симптома:",
                 answers = listOf(
@@ -185,7 +185,7 @@ class Dn4ViewModel @Inject constructor(
                     ),
                 ),
             ),
-            TestStimulationTestQuestion.YesNo(
+            TestQuestion.YesNo(
                 testId = 4,
                 question = "Можно ли вызвать или усилить боль в области ее локализации:",
                 answers = listOf(

@@ -29,7 +29,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Botto
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.AnswersVariants
 
 @Composable
@@ -95,7 +95,7 @@ fun Sf36Screen(
 
 @Composable
 private fun TestScreen(
-    data: List<TestStimulationTestQuestion>,
+    data: List<TestQuestion>,
     currentQuestionIndex: Int,
     isSending: Boolean,
     viewModel: Sf36ViewModel
@@ -113,19 +113,19 @@ private fun TestScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         when(val question = data[currentQuestionIndex]) {
-            is TestStimulationTestQuestion.PreQuestion -> {
+            is TestQuestion.PreQuestion -> {
                 Text(
                     text = question.question,
                     fontSize = 18.sp,
                     color = Color(0xFF1C1B1F)
                 )
             }
-            is TestStimulationTestQuestion.SingleAnswer -> {
+            is TestQuestion.SingleAnswer -> {
                 SingleAnswersVariant(question, isSending) {
                     viewModel.selectAnswerInSingleAnswer(it)
                 }
             }
-            is TestStimulationTestQuestion.YesNo -> { YesNoVariant(question, viewModel) }
+            is TestQuestion.YesNo -> { YesNoVariant(question, viewModel) }
             else -> {}
         }
     }
@@ -133,7 +133,7 @@ private fun TestScreen(
 
 @Composable
 fun SingleAnswersVariant(
-    question: TestStimulationTestQuestion.SingleAnswer,
+    question: TestQuestion.SingleAnswer,
     isSending: Boolean,
     selectAnswer: (Pair<String, Int>) -> Unit
 ) {
@@ -169,7 +169,7 @@ fun SingleAnswersVariant(
 
 @Composable
 private fun YesNoVariant(
-    question: TestStimulationTestQuestion.YesNo,
+    question: TestQuestion.YesNo,
     viewModel: Sf36ViewModel
 ) {
     Text(

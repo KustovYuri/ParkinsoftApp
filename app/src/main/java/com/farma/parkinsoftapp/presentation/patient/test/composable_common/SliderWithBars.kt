@@ -24,12 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SliderWithBars(
-    question: TestStimulationTestQuestion.DisplaySlider,
+    question: TestQuestion.DisplaySlider,
     changeSliderValue: (Int) -> Unit,
 ) {
     val sliderValue = question.sliderValue

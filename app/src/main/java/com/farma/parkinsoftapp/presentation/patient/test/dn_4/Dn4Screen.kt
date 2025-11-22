@@ -1,18 +1,14 @@
 package com.farma.parkinsoftapp.presentation.patient.test.dn_4
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -22,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,8 +26,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Botto
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.AnswersVariants
 
 @Composable
@@ -97,11 +91,11 @@ fun Dn4Screen(
 
 @Composable
 private fun TestScreen(
-    data: List<TestStimulationTestQuestion>,
+    data: List<TestQuestion>,
     currentQuestionIndex: Int,
     viewModel: Dn4ViewModel
 ) {
-    val question = data[currentQuestionIndex] as? TestStimulationTestQuestion.YesNo
+    val question = data[currentQuestionIndex] as? TestQuestion.YesNo
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,7 +116,7 @@ private fun TestScreen(
 
 @Composable
 private fun YesNoVariant(
-    question: TestStimulationTestQuestion.YesNo,
+    question: TestQuestion.YesNo,
     viewModel: Dn4ViewModel
 ) {
     Text(

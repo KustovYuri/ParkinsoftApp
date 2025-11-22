@@ -25,7 +25,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Botto
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.CommentVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.DisplaySliderVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.HumanPointVariant
@@ -96,7 +96,7 @@ fun TestStimulationScreen(
 
 @Composable
 private fun TestScreen(
-    data: List<TestStimulationTestQuestion>,
+    data: List<TestQuestion>,
     currentQuestionIndex: Int,
     isSending: Boolean,
     viewModel: TestStimulationViewModel
@@ -114,27 +114,27 @@ private fun TestScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         when(val question = data[currentQuestionIndex]) {
-            is TestStimulationTestQuestion.Comment -> {
+            is TestQuestion.Comment -> {
                 CommentVariant(question, viewModel)
             }
-            is TestStimulationTestQuestion.DisplaySlider -> {
+            is TestQuestion.DisplaySlider -> {
                 DisplaySliderVariant(question, viewModel)
             }
-            is TestStimulationTestQuestion.HumanPoint -> {
+            is TestQuestion.HumanPoint -> {
                 HumanPointVariant(question, viewModel)
             }
-            is TestStimulationTestQuestion.SingleAnswer -> {
+            is TestQuestion.SingleAnswer -> {
                 SingleAnswersVariant(question, isSending) { selectedAnswer ->
                     viewModel.selectAnswerInSingleAnswer(selectedAnswer)
                 }
             }
-            is TestStimulationTestQuestion.Slider -> {
+            is TestQuestion.Slider -> {
                 SliderVariant(question, viewModel)
             }
-            is TestStimulationTestQuestion.YesNo -> {
+            is TestQuestion.YesNo -> {
                 YesNoVariant(question, viewModel)
             }
-            is TestStimulationTestQuestion.PreQuestion -> {}
+            else -> {}
         }
     }
 }

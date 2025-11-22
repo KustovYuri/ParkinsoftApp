@@ -13,21 +13,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.PainDetectedViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
 @Composable
 fun SlidersVariant(
-    question: PainDetectedTestQuestions.Slider,
+    question: TestQuestion.Slider,
     viewModel: PainDetectedViewModel
 ) {
     question.sliderAnswers.forEach { slide ->
         Text(
-            text = slide.first,
+            text = slide.question,
             fontSize = 14.sp,
             color = Color(0xFF1C1B1F)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        PercentSlider(slide.second) { viewModel.changeSliderValueInSliderVariant(slide.first, it) }
+        PercentSlider(slide.value) { viewModel.changeSliderValueInSliderVariant(slide.question, it) }
         Row(
             modifier = Modifier
                 .fillMaxWidth(),

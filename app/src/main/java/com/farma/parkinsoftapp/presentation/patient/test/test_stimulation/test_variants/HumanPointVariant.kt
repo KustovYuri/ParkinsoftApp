@@ -27,11 +27,11 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Human
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
 @Composable
 fun HumanPointVariant(
-    question: TestStimulationTestQuestion.HumanPoint,
+    question: TestQuestion.HumanPoint,
     viewModel: TestStimulationViewModel
 ) {
     Text(

@@ -2,18 +2,19 @@ package com.farma.parkinsoftapp.presentation.mappers
 
 import com.farma.parkinsoftapp.data.network.models.CommentAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.DisplaySliderAnswerRequest
+import com.farma.parkinsoftapp.data.network.models.GraphicAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.HumanPointsRequest
 import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
 import com.farma.parkinsoftapp.data.network.models.SingleAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.SliderAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.YesNoAnswerRequest
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
-fun List<TestStimulationTestQuestion>.convertToNativeTestRequest(testPreviewId: Long): NativeTestRequest {
+fun List<TestQuestion>.convertToNativeTestRequest(testPreviewId: Long): NativeTestRequest {
     var nativeTestRequest = NativeTestRequest(testPreviewId)
     this.map {
         when (val test = it) {
-            is TestStimulationTestQuestion.Comment -> {
+            is TestQuestion.Comment -> {
                 val convertedTest = test.convertToAnswerRequest()
                 nativeTestRequest = nativeTestRequest.copy(
                     commentAnswers = nativeTestRequest.commentAnswers?.plus(convertedTest)
@@ -21,7 +22,7 @@ fun List<TestStimulationTestQuestion>.convertToNativeTestRequest(testPreviewId: 
                 )
             }
 
-            is TestStimulationTestQuestion.DisplaySlider -> {
+            is TestQuestion.DisplaySlider -> {
                 val convertedTest = test.convertToAnswerRequest()
                 nativeTestRequest = nativeTestRequest.copy(
                     displaySliderAnswers = nativeTestRequest.displaySliderAnswers?.plus(
@@ -31,7 +32,7 @@ fun List<TestStimulationTestQuestion>.convertToNativeTestRequest(testPreviewId: 
                 )
             }
 
-            is TestStimulationTestQuestion.HumanPoint -> {
+            is TestQuestion.HumanPoint -> {
                 val convertedTest = test.convertToAnswerRequest()
                 nativeTestRequest = nativeTestRequest.copy(
                     humanPoints = nativeTestRequest.humanPoints?.plus(convertedTest)
@@ -50,11 +51,30 @@ fun List<TestStimulationTestQuestion>.convertToNativeTestRequest(testPreviewId: 
                         )
                     } else {
                         nativeTestRequest.commentAnswers
+                    },
+                    sliderAnswers = if (test.sliderIsEnabled) {
+                        nativeTestRequest.sliderAnswers?.plus(
+                            SliderAnswerRequest(
+                                testId = test.testId,
+                                questionId = 0,
+                                sliderValue = test.sliderValue ?: 0,
+                                score = test.sliderScore
+                            )
+                        ) ?: listOf(
+                            SliderAnswerRequest(
+                                testId = test.testId,
+                                questionId = 0,
+                                sliderValue = test.sliderValue ?: 0,
+                                score = test.sliderScore
+                            )
+                        )
+                    } else {
+                        nativeTestRequest.sliderAnswers
                     }
                 )
             }
 
-            is TestStimulationTestQuestion.SingleAnswer -> {
+            is TestQuestion.SingleAnswer -> {
                 val convertedTest = test.convertToAnswerRequest()
                 nativeTestRequest = nativeTestRequest.copy(
                     singleAnswers = nativeTestRequest.singleAnswers?.plus(
@@ -63,7 +83,7 @@ fun List<TestStimulationTestQuestion>.convertToNativeTestRequest(testPreviewId: 
                 )
             }
 
-            is TestStimulationTestQuestion.Slider -> {
+            is TestQuestion.Slider -> {
                 val convertedTest = test.convertToAnswerRequest()
                 nativeTestRequest = nativeTestRequest.copy(
                     sliderAnswers = nativeTestRequest.sliderAnswers?.plus(
@@ -87,7 +107,7 @@ fun List<TestStimulationTestQuestion>.convertToNativeTestRequest(testPreviewId: 
                 )
             }
 
-            is TestStimulationTestQuestion.YesNo -> {
+            is TestQuestion.YesNo -> {
                 val convertedTest = test.convertToAnswerRequest()
                 nativeTestRequest = nativeTestRequest.copy(
                     yesNoAnswers = nativeTestRequest.yesNoAnswers?.plus(
@@ -111,21 +131,30 @@ fun List<TestStimulationTestQuestion>.convertToNativeTestRequest(testPreviewId: 
                 )
             }
 
-            is TestStimulationTestQuestion.PreQuestion -> {}
+            is TestQuestion.Graphic -> {
+                val convertedTest = test.convertToAnswerRequest()
+                nativeTestRequest = nativeTestRequest.copy(
+                    graphicAnswers = nativeTestRequest.graphicAnswers?.plus(
+                        convertedTest
+                    ) ?: listOf(convertedTest)
+                )
+            }
+
+            is TestQuestion.PreQuestion -> {}
         }
     }
 
     return nativeTestRequest
 }
 
-private fun TestStimulationTestQuestion.Comment.convertToAnswerRequest(): CommentAnswerRequest {
+private fun TestQuestion.Comment.convertToAnswerRequest(): CommentAnswerRequest {
     return CommentAnswerRequest(
         testId = this.testId,
         comment = this.comment
     )
 }
 
-private fun TestStimulationTestQuestion.DisplaySlider.convertToAnswerRequest(): DisplaySliderAnswerRequest {
+private fun TestQuestion.DisplaySlider.convertToAnswerRequest(): DisplaySliderAnswerRequest {
     return DisplaySliderAnswerRequest(
         testId = this.testId,
         sliderValue = this.sliderValue,
@@ -133,7 +162,7 @@ private fun TestStimulationTestQuestion.DisplaySlider.convertToAnswerRequest(): 
     )
 }
 
-private fun TestStimulationTestQuestion.SingleAnswer.convertToAnswerRequest(): SingleAnswerRequest {
+private fun TestQuestion.SingleAnswer.convertToAnswerRequest(): SingleAnswerRequest {
     return SingleAnswerRequest(
         testId = this.testId,
         selectedAnswer = this.selectedAnswer?.first ?: "",
@@ -141,7 +170,7 @@ private fun TestStimulationTestQuestion.SingleAnswer.convertToAnswerRequest(): S
     )
 }
 
-private fun TestStimulationTestQuestion.HumanPoint.convertToAnswerRequest(): HumanPointsRequest {
+private fun TestQuestion.HumanPoint.convertToAnswerRequest(): HumanPointsRequest {
     return HumanPointsRequest(
         testId = this.testId,
         type = this.type,
@@ -150,7 +179,15 @@ private fun TestStimulationTestQuestion.HumanPoint.convertToAnswerRequest(): Hum
     )
 }
 
-private fun TestStimulationTestQuestion.YesNo.convertToAnswerRequest(): List<YesNoAnswerRequest> {
+private fun TestQuestion.Graphic.convertToAnswerRequest(): GraphicAnswerRequest {
+    return GraphicAnswerRequest(
+        testId = this.testId,
+        selectedVariant = selectedVariant?.question ?: "",
+        score = selectedVariant?.score ?: 0,
+    )
+}
+
+private fun TestQuestion.YesNo.convertToAnswerRequest(): List<YesNoAnswerRequest> {
     return buildList {
         this@convertToAnswerRequest.answers.forEach {
             add(
@@ -165,7 +202,7 @@ private fun TestStimulationTestQuestion.YesNo.convertToAnswerRequest(): List<Yes
     }
 }
 
-private fun TestStimulationTestQuestion.Slider.convertToAnswerRequest(): List<SliderAnswerRequest> {
+private fun TestQuestion.Slider.convertToAnswerRequest(): List<SliderAnswerRequest> {
     return buildList {
         this@convertToAnswerRequest.sliderAnswers.forEach {
             add(
