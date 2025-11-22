@@ -19,7 +19,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun SingleAnswersVariant(
     question: TestQuestion.SingleAnswer,
-    isSending: Boolean,
+    isSending: Boolean = false,
     selectAnswer: (Pair<String, Int>) -> Unit
 ) {
     Text(

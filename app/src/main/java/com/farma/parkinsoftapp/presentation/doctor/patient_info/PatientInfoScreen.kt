@@ -61,7 +61,7 @@ private enum class TestsTabs {
 fun PatientInfoScreen(
     viewModel: PatientInfoViewModel = hiltViewModel<PatientInfoViewModel>(),
     backNavigation: () -> Unit,
-    navigateToTestInfo: (String, String, TestType, Long) -> Unit
+    navigateToTestInfo: (String, String, TestType, Long, Boolean) -> Unit
 ) {
     val selectedTab = remember { mutableStateOf(TestsTabs.DAILY) }
     val selectedTestChip = remember { mutableStateOf(AllTestsTypes.TEST_STIMULATION_DIARY) }
@@ -114,7 +114,7 @@ private fun Screen(
     paddingValues: PaddingValues,
     selectedTab: MutableState<TestsTabs>,
     selectedTestChip: MutableState<AllTestsTypes>,
-    navigateToTestInfo: (String, String, TestType, Long) -> Unit,
+    navigateToTestInfo: (String, String, TestType, Long, Boolean) -> Unit,
     calculateAge: (String) -> Int
 ) {
     Column(
@@ -209,23 +209,39 @@ private fun Screen(
     }
 }
 
+private fun isNativeTest(testType: TestType): Boolean {
+    return when(testType) {
+        TestType.TEST_STIMULATION_DIARY -> true
+        TestType.STATE_OF_HEALTH_DIARY -> false
+        TestType.HADS1 -> false
+        TestType.HADS2 -> false
+        TestType.OSVESTRY -> false
+        TestType.LANSS -> false
+        TestType.DN4 -> true
+        TestType.SF36 -> true
+        TestType.PAIN_DETECTED -> true
+    }
+}
+
 @Composable
 private fun TestItem(
     secondNameWithInitials: String,
     testPreviewInfo: TestPreviewModel,
-    click: (String, String, TestType, Long) -> Unit,
+    click: (String, String, TestType, Long, Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .clickable {
+                val testType = TestType.fromString(testPreviewInfo.testType)
+                    ?: TestType.TEST_STIMULATION_DIARY
                 click(
                     secondNameWithInitials,
                     testPreviewInfo.testDate,
-                    TestType.fromString(testPreviewInfo.testType)
-                        ?: TestType.TEST_STIMULATION_DIARY,
-                    testPreviewInfo.id ?: -1
+                    testType,
+                    testPreviewInfo.id ?: -1,
+                    isNativeTest(testType)
                 )
             },
         verticalAlignment = Alignment.CenterVertically

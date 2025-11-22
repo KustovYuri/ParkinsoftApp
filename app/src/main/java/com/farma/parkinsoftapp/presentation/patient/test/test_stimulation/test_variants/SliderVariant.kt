@@ -19,7 +19,8 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun SliderVariant(
     question: TestQuestion.Slider,
-    viewModel: TestStimulationViewModel
+    onValueChange: (String, Int) -> Unit,
+    changeCommentValue: (String) -> Unit
 ) {
     Text(
         text = question.question,
@@ -34,7 +35,7 @@ fun SliderVariant(
         )
         Spacer(modifier = Modifier.height(8.dp))
         PercentSlider(answer.value) {
-            viewModel.changeSliderValueInSliderVariant(answer.question, it)
+            onValueChange(answer.question, it)
         }
         Row(
             modifier = Modifier
@@ -49,7 +50,7 @@ fun SliderVariant(
     if (question.commentIsEnabled) {
         CommentTextField(
             question.comment ?: "",
-            { viewModel.changeCommentValue(it) },
+            { changeCommentValue(it) },
             "Комментарий"
         )
     }

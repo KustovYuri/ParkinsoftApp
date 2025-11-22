@@ -15,6 +15,7 @@ import com.farma.parkinsoftapp.domain.models.user.UserRole
 import com.farma.parkinsoftapp.presentation.doctor.all_patients.AllPatientsScreen
 import com.farma.parkinsoftapp.presentation.doctor.new_pacient.NewPatientScreen
 import com.farma.parkinsoftapp.presentation.doctor.new_patient_tests.NewPatientsTestScreen
+import com.farma.parkinsoftapp.presentation.doctor.patient_current_test.native_test.PatientCurrentNativeTestScreen
 import com.farma.parkinsoftapp.presentation.doctor.patient_current_test.PatientCurrentTestScreen
 import com.farma.parkinsoftapp.presentation.doctor.patient_info.PatientInfoScreen
 import com.farma.parkinsoftapp.presentation.login.login_screen.LoginScreen
@@ -36,12 +37,12 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination =
-        //        PatientTestRoute(1, TestType.TEST_STIMULATION_DIARY)
-        when (userRole) {
-            UserRoleValues.DOCTOR -> AllPatientsRoute
-            UserRoleValues.PATIENT -> PatientAllTestsRoute
-            UserRoleValues.UNAUTHORIZED -> LoginRoute
-        }
+            //        PatientTestRoute(1, TestType.TEST_STIMULATION_DIARY)
+            when (userRole) {
+                UserRoleValues.DOCTOR -> AllPatientsRoute
+                UserRoleValues.PATIENT -> PatientAllTestsRoute
+                UserRoleValues.UNAUTHORIZED -> LoginRoute
+            }
     ) {
         composable<LoginRoute> {
             LoginScreen(
@@ -64,12 +65,12 @@ fun AppNavHost(
                     navController.popBackStack()
                 },
                 navigationToDoctor = {
-                    navController.navigate(AllPatientsRoute){
+                    navController.navigate(AllPatientsRoute) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
                 navigationToPatient = {
-                    navController.navigate(PatientAllTestsRoute){
+                    navController.navigate(PatientAllTestsRoute) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
@@ -99,7 +100,7 @@ fun AppNavHost(
         composable<PatientTestRoute> { backStackEntry ->
             val testType = backStackEntry.toRoute<PatientTestRoute>().testType
 
-            when(testType) {
+            when (testType) {
                 TestType.STATE_OF_HEALTH_DIARY,
                 TestType.HADS1, TestType.HADS2, TestType.OSVESTRY, TestType.LANSS -> {
                     PatientTestScreen(
@@ -115,6 +116,7 @@ fun AppNavHost(
                         },
                     )
                 }
+
                 TestType.DN4 -> {
                     Dn4Screen(
                         closeTest = {
@@ -129,6 +131,7 @@ fun AppNavHost(
                         },
                     )
                 }
+
                 TestType.SF36 -> {
                     Sf36Screen(
                         closeTest = {
@@ -143,6 +146,7 @@ fun AppNavHost(
                         },
                     )
                 }
+
                 TestType.TEST_STIMULATION_DIARY -> {
                     TestStimulationScreen(
                         closeTest = {
@@ -157,8 +161,9 @@ fun AppNavHost(
                         },
                     )
                 }
+
                 TestType.PAIN_DETECTED -> {
-                    PainDetectedScreen (
+                    PainDetectedScreen(
                         closeTest = {
                             navController.popBackStack()
                         },
@@ -246,13 +251,14 @@ fun AppNavHost(
                         popUpTo(0)
                     }
                 },
-                navigateToTestInfo = { initials: String, testDate: String, testType: TestType, testPreviewId: Long ->
+                navigateToTestInfo = { initials: String, testDate: String, testType: TestType, testPreviewId: Long, isNativeTest: Boolean ->
                     navController.navigate(
                         PatientCurrentTestRoute(
                             initials,
                             testDate,
                             testType,
-                            testPreviewId
+                            testPreviewId,
+                            isNativeTest
                         )
                     )
                 }
@@ -262,13 +268,23 @@ fun AppNavHost(
         composable<PatientCurrentTestRoute> { backStackEntry ->
             val args = backStackEntry.toRoute<PatientCurrentTestRoute>()
 
-            PatientCurrentTestScreen(
-                patientInitials = args.initials,
-                backNavigation = {
-                    navController.popBackStack()
-                },
-                testDate = args.testDate
-            )
+            if (args.isNativeTest) {
+                PatientCurrentNativeTestScreen(
+                    patientInitials = args.initials,
+                    backNavigation = {
+                        navController.popBackStack()
+                    },
+                    testDate = args.testDate
+                )
+            } else {
+                PatientCurrentTestScreen(
+                    patientInitials = args.initials,
+                    backNavigation = {
+                        navController.popBackStack()
+                    },
+                    testDate = args.testDate
+                )
+            }
         }
     }
 }

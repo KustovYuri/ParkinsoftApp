@@ -15,7 +15,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun DisplaySliderVariant(
     question: TestQuestion.DisplaySlider,
-    viewModel: TestStimulationViewModel
+    changeSliderValue: (Int) -> Unit
 ) {
     Text(
         text = question.question,
@@ -23,5 +23,5 @@ fun DisplaySliderVariant(
         color = Color(0xFF1C1B1F)
     )
     Spacer(modifier = Modifier.height(24.dp))
-    SliderWithBars(question) { viewModel.changeSliderValueInDisplaySliderVariant(it) }
+    SliderWithBars(question) { changeSliderValue(it) }
 }

@@ -25,7 +25,9 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun YesNoVariant(
     question: TestQuestion.YesNo,
-    viewModel: TestStimulationViewModel
+    selectVariant: (String, Boolean) -> Unit,
+    onTextChanged: (String) -> Unit,
+    isComment: Boolean = true
 ) {
     Text(
         text = question.question,
@@ -39,14 +41,16 @@ fun YesNoVariant(
             fontSize = 14.sp,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        AnswersVariants(answer, ) { viewModel.selectAnswerInYesNoAnswer(answer.question, it) }
+        AnswersVariants(answer, ) { selectVariant(answer.question, it) }
         Spacer(modifier = Modifier.height(24.dp))
     }
-    CommentTextField(
-        question.comment,
-        { viewModel.changeCommentValue(it) },
-        "Комментарий"
-    )
+    if (isComment) {
+        CommentTextField(
+            question.comment,
+            { onTextChanged(it) },
+            "Комментарий"
+        )
+    }
 }
 
 @Composable

@@ -15,7 +15,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun CommentVariant(
     question: TestQuestion.Comment,
-    viewModel: TestStimulationViewModel
+    onTextChanged: (String) -> Unit,
 ) {
     Text(
         text = question.question,
@@ -25,7 +25,7 @@ fun CommentVariant(
     Spacer(modifier = Modifier.height(24.dp))
     CommentTextField(
         question.comment,
-        { viewModel.changeCommentValue(it) },
+        { onTextChanged(it) },
         "Ваши изменения"
     )
 }

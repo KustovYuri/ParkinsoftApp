@@ -51,9 +51,9 @@ fun TestStimulationScreen(
                 questionSize = state.data.size,
                 currentQuestionIndex = currentQuestionIndex,
                 previousQuestion = { viewModel.previousQuestion() },
-                nextQuestion = {viewModel.nextQuestion()},
+                nextQuestion = { viewModel.nextQuestion() },
                 enabled = enabledNextButton,
-                finishTest = {viewModel.finishTest(finishTest)},
+                finishTest = { viewModel.finishTest(finishTest) },
             )
         },
         containerColor = Color.White
@@ -70,7 +70,7 @@ fun TestStimulationScreen(
                 CircularProgressIndicator(
                     color = Color(0xFF178399)
                 )
-            } else if (state.error != null){
+            } else if (state.error != null) {
                 Text(
                     text = state.error ?: "Неизвестная ошибка"
                 )
@@ -113,27 +113,42 @@ private fun TestScreen(
             questionsCount = data.size
         )
         Spacer(modifier = Modifier.height(24.dp))
-        when(val question = data[currentQuestionIndex]) {
+        when (val question = data[currentQuestionIndex]) {
             is TestQuestion.Comment -> {
-                CommentVariant(question, viewModel)
+                CommentVariant(question, { viewModel.changeCommentValue(it) })
             }
+
             is TestQuestion.DisplaySlider -> {
-                DisplaySliderVariant(question, viewModel)
+                DisplaySliderVariant(
+                    question,
+                    { viewModel.changeSliderValueInDisplaySliderVariant(it) })
             }
+
             is TestQuestion.HumanPoint -> {
                 HumanPointVariant(question, viewModel)
             }
+
             is TestQuestion.SingleAnswer -> {
                 SingleAnswersVariant(question, isSending) { selectedAnswer ->
                     viewModel.selectAnswerInSingleAnswer(selectedAnswer)
                 }
             }
+
             is TestQuestion.Slider -> {
-                SliderVariant(question, viewModel)
+                SliderVariant(
+                    question,
+                    { name, value -> viewModel.changeSliderValueInSliderVariant(name, value) },
+                    { viewModel.changeCommentValue(it) })
             }
+
             is TestQuestion.YesNo -> {
-                YesNoVariant(question, viewModel)
+                YesNoVariant(
+                    question,
+                    { str, bl -> viewModel.selectAnswerInYesNoAnswer(str, bl) },
+                    {}
+                )
             }
+
             else -> {}
         }
     }

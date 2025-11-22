@@ -15,7 +15,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun HumanPointVariant(
     question: TestQuestion.HumanPoint,
-    viewModel: PainDetectedViewModel
+    clickPoint: (Int) -> Unit
 ) {
     Text(
         text = question.question,
@@ -24,6 +24,6 @@ fun HumanPointVariant(
     )
     Spacer(modifier = Modifier.height(24.dp))
     HumanPointTest(question.selectedPoints, question.type) {
-        viewModel.changeHumanPointsInHumanPointsVariant(it)
+        clickPoint(it)
     }
 }
