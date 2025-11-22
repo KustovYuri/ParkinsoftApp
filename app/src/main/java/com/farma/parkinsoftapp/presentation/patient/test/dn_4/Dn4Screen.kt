@@ -55,7 +55,7 @@ fun Dn4Screen(
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = { viewModel.nextQuestion() },
                 enabled = enabledNextButton,
-                finishTest = finishTest,
+                finishTest = {viewModel.finishTest(finishTest)},
             )
         },
         containerColor = Color.White

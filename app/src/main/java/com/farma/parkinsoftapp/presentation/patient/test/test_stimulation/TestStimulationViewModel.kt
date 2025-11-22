@@ -8,7 +8,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.farma.parkinsoftapp.domain.models.Result
+import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import com.farma.parkinsoftapp.presentation.mappers.convertToNativeTestRequest
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.SliderAnswer
@@ -16,14 +20,19 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class TestStimulationViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val mainRepository: MainRepository
 ): ViewModel() {
     private val route: PatientTestRoute = savedStateHandle.toRoute()
     val testType = route.testType
+    private val testPreviewId = route.testId
 
     val enabledNextButton = derivedStateOf {
         when(val question = _uiState.value.data[_currentQuestionIndex.intValue]) {
@@ -39,6 +48,7 @@ class TestStimulationViewModel @Inject constructor(
             is TestStimulationTestQuestion.SingleAnswer -> question.selectedAnswer != null
             is TestStimulationTestQuestion.Slider -> true
             is TestStimulationTestQuestion.YesNo -> question.answers.all { it.answer != null }
+            is TestStimulationTestQuestion.PreQuestion -> true
         }
     }
 
@@ -209,6 +219,32 @@ class TestStimulationViewModel @Inject constructor(
                     }
                 }
             )
+        }
+    }
+
+    fun finishTest(navigation: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepository.sendNativeTest(_uiState.value.data.convertToNativeTestRequest(testPreviewId)).collect {
+                when(it) {
+                    is Result.Error -> {
+                        _uiState.value = _uiState.value.copy(
+                            isSending = false,
+                            error = it.message
+                        )
+                    }
+                    is Result.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            isSending = true,
+                            error = null
+                        )
+                    }
+                    is Result.Success -> {
+                        withContext(Dispatchers.Main) {
+                            navigation()
+                        }
+                    }
+                }
+            }
         }
     }
 }

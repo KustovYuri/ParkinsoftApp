@@ -1,6 +1,7 @@
 package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
+import com.farma.parkinsoftapp.presentation.patient.test.sf_36.models.Sf36TestQuestions
 
 sealed interface TestStimulationTestQuestion {
 
@@ -50,6 +51,10 @@ sealed interface TestStimulationTestQuestion {
         val testId: Long,
         val question: String,
         val comment: String = ""
+    ): TestStimulationTestQuestion
+
+    data class PreQuestion(
+        val question: String
     ): TestStimulationTestQuestion
 }
 data class YesNoAnswer(

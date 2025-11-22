@@ -3,6 +3,7 @@ package com.farma.parkinsoftapp.data.network.ktor
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.LoginModel
+import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
 import com.farma.parkinsoftapp.data.network.models.PainDetectedRequest
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
@@ -18,7 +19,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
-private const val BASE_URL = "http://192.168.1.10:8080"
+private const val BASE_URL = "http://192.168.1.12:8080"
 class KtorService(
     private val client: HttpClient
 ): KtorApiService {
@@ -62,9 +63,9 @@ class KtorService(
         }.body()
     }
 
-    override suspend fun savePainDetectedTestAnswers(body: PainDetectedRequest) {
+    override suspend fun sendNativeTest(body: NativeTestRequest) {
         return client.post(
-            urlString = "$BASE_URL/test/savePainDetectedTestAnswers"
+            urlString = "$BASE_URL/test/saveNativeTest"
         ) {
             contentType(ContentType.Application.Json)
             setBody(body)

@@ -29,14 +29,6 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Botto
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
-import com.farma.parkinsoftapp.presentation.patient.test.dn_4.Dn4ViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.PainDetectedViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.GraphicVariant
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.HumanPointVariant
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SingleAnswersVariant
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SlidersVariant
-import com.farma.parkinsoftapp.presentation.patient.test.sf_36.models.Sf36TestQuestions
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.AnswersVariants
 
@@ -60,7 +52,7 @@ fun Sf36Screen(
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = {viewModel.nextQuestion()},
                 enabled = nextButtonIsActive,
-                finishTest = { finishTest },
+                finishTest = { viewModel.finishTest(finishTest) },
             )
         },
         containerColor = Color.White
@@ -103,7 +95,7 @@ fun Sf36Screen(
 
 @Composable
 private fun TestScreen(
-    data: List<Sf36TestQuestions>,
+    data: List<TestStimulationTestQuestion>,
     currentQuestionIndex: Int,
     isSending: Boolean,
     viewModel: Sf36ViewModel
@@ -121,28 +113,29 @@ private fun TestScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         when(val question = data[currentQuestionIndex]) {
-            is Sf36TestQuestions.PreQuestion -> {
+            is TestStimulationTestQuestion.PreQuestion -> {
                 Text(
                     text = question.question,
                     fontSize = 18.sp,
                     color = Color(0xFF1C1B1F)
                 )
             }
-            is Sf36TestQuestions.SingleAnswer -> {
+            is TestStimulationTestQuestion.SingleAnswer -> {
                 SingleAnswersVariant(question, isSending) {
                     viewModel.selectAnswerInSingleAnswer(it)
                 }
             }
-            is Sf36TestQuestions.YesNo -> { YesNoVariant(question, viewModel) }
+            is TestStimulationTestQuestion.YesNo -> { YesNoVariant(question, viewModel) }
+            else -> {}
         }
     }
 }
 
 @Composable
 fun SingleAnswersVariant(
-    question: Sf36TestQuestions.SingleAnswer,
+    question: TestStimulationTestQuestion.SingleAnswer,
     isSending: Boolean,
-    selectAnswer: (String) -> Unit
+    selectAnswer: (Pair<String, Int>) -> Unit
 ) {
     Text(
         text = question.question,
@@ -168,7 +161,7 @@ fun SingleAnswersVariant(
                     }
                     .padding(vertical = 12.dp, horizontal = 16.dp)
             ) {
-                Text(text = answer, fontSize = 16.sp)
+                Text(text = answer.first, fontSize = 16.sp)
             }
         }
     }
@@ -176,7 +169,7 @@ fun SingleAnswersVariant(
 
 @Composable
 private fun YesNoVariant(
-    question: Sf36TestQuestions.YesNo,
+    question: TestStimulationTestQuestion.YesNo,
     viewModel: Sf36ViewModel
 ) {
     Text(
@@ -187,11 +180,11 @@ private fun YesNoVariant(
     Spacer(modifier = Modifier.height(24.dp))
     question.answers.forEach { answer ->
         Text(
-            text = answer.first,
+            text = answer.question,
             fontSize = 14.sp,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        AnswersVariants(answer) { viewModel.selectAnswerInYesNoAnswer(answer.first, it) }
+        AnswersVariants(answer) { viewModel.selectAnswerInYesNoAnswer(answer.question, it) }
         Spacer(modifier = Modifier.height(24.dp))
     }
 }

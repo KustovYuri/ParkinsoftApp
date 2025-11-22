@@ -7,27 +7,36 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.farma.parkinsoftapp.domain.models.Result
+import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import com.farma.parkinsoftapp.presentation.mappers.convertToNativeTestRequest
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationTestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class Dn4ViewModel @Inject constructor(
+    private val mainRepository: MainRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val route: PatientTestRoute = savedStateHandle.toRoute()
     val testType = route.testType
+    private val testPreviewId = route.testId
 
     private val _currentQuestionIndex = mutableIntStateOf(0)
     val currentQuestionIndex: IntState = _currentQuestionIndex
 
     private val _uiState = mutableStateOf(
         TestStimulationState(
-            data = getMockData()
+            data = getTestData()
         )
     )
     val uiState: State<TestStimulationState> = _uiState
@@ -50,6 +59,32 @@ class Dn4ViewModel @Inject constructor(
     fun previousQuestion() {
         if (_currentQuestionIndex.intValue > 0) {
             _currentQuestionIndex.intValue--
+        }
+    }
+
+    fun finishTest(navigation: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepository.sendNativeTest(_uiState.value.data.convertToNativeTestRequest(testPreviewId)).collect {
+                when(it) {
+                    is Result.Error -> {
+                        _uiState.value = _uiState.value.copy(
+                            isSending = false,
+                            error = it.message
+                        )
+                    }
+                    is Result.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            isSending = true,
+                            error = null
+                        )
+                    }
+                    is Result.Success -> {
+                        withContext(Dispatchers.Main) {
+                            navigation()
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -82,7 +117,7 @@ class Dn4ViewModel @Inject constructor(
         }
     }
 
-    fun getMockData(): List<TestStimulationTestQuestion> {
+    fun getTestData(): List<TestStimulationTestQuestion> {
         return listOf(
             TestStimulationTestQuestion.YesNo(
                 testId = 1,

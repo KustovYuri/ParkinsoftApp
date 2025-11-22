@@ -3,12 +3,11 @@ package com.farma.parkinsoftapp.data.network.ktor
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.LoginModel
-import com.farma.parkinsoftapp.data.network.models.PainDetectedRequest
+import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.data.network.models.TestResultModel
-import com.farma.parkinsoftapp.data.repositories.MainRepositoryImpl
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 
 interface KtorApiService {
@@ -28,5 +27,5 @@ interface KtorApiService {
     suspend fun getDoctorPatientInfo(patientId: Long): LargePatientModel
 
     suspend fun login(phoneNumber: String): LoginModel
-    suspend fun savePainDetectedTestAnswers(body: PainDetectedRequest)
+    suspend fun sendNativeTest(body: NativeTestRequest)
 }

@@ -53,7 +53,7 @@ fun TestStimulationScreen(
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = {viewModel.nextQuestion()},
                 enabled = enabledNextButton,
-                finishTest = finishTest,
+                finishTest = {viewModel.finishTest(finishTest)},
             )
         },
         containerColor = Color.White
@@ -134,6 +134,7 @@ private fun TestScreen(
             is TestStimulationTestQuestion.YesNo -> {
                 YesNoVariant(question, viewModel)
             }
+            is TestStimulationTestQuestion.PreQuestion -> {}
         }
     }
 }

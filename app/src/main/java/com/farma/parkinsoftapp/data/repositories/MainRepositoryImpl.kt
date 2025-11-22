@@ -1,7 +1,5 @@
 package com.farma.parkinsoftapp.data.repositories
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.data.mappers.convertToPainDetectedRequest
@@ -9,14 +7,13 @@ import com.farma.parkinsoftapp.data.network.httpExceptionHandler
 import com.farma.parkinsoftapp.data.network.retrofit.ApiService
 import com.farma.parkinsoftapp.data.network.ktor.KtorService
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
-import com.farma.parkinsoftapp.data.network.models.PainDetectedRequest
+import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.data.network.models.TestResultModel
 import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
-import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
@@ -27,8 +24,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import okio.IOException
-import java.time.LocalDate
 import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor(
@@ -72,11 +67,11 @@ class MainRepositoryImpl @Inject constructor(
         testPreviewId: Long,
         test: List<PainDetectedTestQuestions>
     ): Flow<Result<Unit>> = flow {
-        emit(Result.Loading())
-        val result = httpExceptionHandler {
-            ktorService.savePainDetectedTestAnswers(test.convertToPainDetectedRequest(testPreviewId))
-        }
-        emit(result)
+//        emit(Result.Loading())
+//        val result = httpExceptionHandler {
+//            ktorService.sendNativeTest(test.convertToPainDetectedRequest(testPreviewId))
+//        }
+//        emit(result)
     }
 
     override suspend fun getResultTests(
@@ -138,6 +133,14 @@ class MainRepositoryImpl @Inject constructor(
         return userRole.combine(userId) { role, id ->
             Pair(id, role)
         }
+    }
+
+    override fun sendNativeTest(nativeTestRequest: NativeTestRequest): Flow<Result<Unit>> = flow {
+        emit(Result.Loading())
+        val result = httpExceptionHandler {
+            ktorService.sendNativeTest(nativeTestRequest)
+        }
+        emit(result)
     }
 
     override suspend fun setUserRole(userId: Long, newUserRole: UserRoleValues) {
