@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun PercentSlider(value: Int, onValueChange: (Int) -> Unit) {
+fun PercentSlider(value: Int, readOnly: Boolean = false, onValueChange: (Int) -> Unit) {
     var sliderPos by remember { mutableFloatStateOf(value.toFloat()) }
 
     Slider(
@@ -31,9 +31,11 @@ fun PercentSlider(value: Int, onValueChange: (Int) -> Unit) {
             .fillMaxWidth(),
         value = value.toFloat(),
         onValueChange = {
-            val stepped = (it / 5).roundToInt() * 5
-            sliderPos = stepped.toFloat()
-            onValueChange(stepped)
+            if (!readOnly) {
+                val stepped = (it / 5).roundToInt() * 5
+                sliderPos = stepped.toFloat()
+                onValueChange(stepped)
+            }
         },
         valueRange = 0f..100f,
         thumb = {

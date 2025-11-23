@@ -20,7 +20,8 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 fun SingleAnswersVariant(
     question: TestQuestion.SingleAnswer,
     isSending: Boolean = false,
-    selectAnswer: (Pair<String, Int>) -> Unit
+    selectAnswer: (Pair<String, Int>) -> Unit,
+    readOnly: Boolean = false
 ) {
     Text(
         text = question.question,
@@ -31,22 +32,24 @@ fun SingleAnswersVariant(
     if (question.answers.isNotEmpty()) {
         question.answers.forEach { answer ->
             val isSelected = question.selectedAnswer == answer
-            Box(
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .background(
-                        color = if (isSelected) Color(0xFFA9E0EB) else Color(0xFFEDF1F2),
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .clip(RoundedCornerShape(20.dp))
-                    .clickable {
-                        if (!isSending) {
-                            selectAnswer(answer)
+            if (!readOnly || isSelected) {
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .background(
+                            color = if (isSelected) Color(0xFFA9E0EB) else Color(0xFFEDF1F2),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable {
+                            if (!isSending) {
+                                selectAnswer(answer)
+                            }
                         }
-                    }
-                    .padding(vertical = 12.dp, horizontal = 16.dp)
-            ) {
-                Text(text = answer.first, fontSize = 16.sp)
+                        .padding(vertical = 12.dp, horizontal = 16.dp)
+                ) {
+                    Text(text = answer.first, fontSize = 16.sp)
+                }
             }
         }
     }

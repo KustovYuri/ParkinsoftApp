@@ -27,7 +27,9 @@ fun SlidersVariant(
             color = Color(0xFF1C1B1F)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        PercentSlider(slide.value) { viewModel.changeSliderValueInSliderVariant(slide.question, it) }
+        PercentSlider(
+            slide.value,
+        ) { viewModel.changeSliderValueInSliderVariant(slide.question, it) }
         Row(
             modifier = Modifier
                 .fillMaxWidth(),

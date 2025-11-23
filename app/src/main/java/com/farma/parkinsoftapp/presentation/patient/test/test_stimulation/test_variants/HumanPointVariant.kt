@@ -26,7 +26,6 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Comme
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.HumanPointTest
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
 @Composable
@@ -35,6 +34,7 @@ fun HumanPointVariant(
     changeValuePoints: (Int) -> Unit = {},
     changeValueSlider: (Int) -> Unit = {},
     onTextChanged: (String) -> Unit = {},
+    readOnly: Boolean = false,
 ) {
     Text(
         text = question.question,
@@ -48,14 +48,15 @@ fun HumanPointVariant(
         }
     }
     if (question.sliderIsEnabled) {
-        Slider(question.sliderValue ?: 0) { changeValueSlider(it) }
+        Slider(question.sliderValue ?: 0, readOnly) { changeValueSlider(it) }
     }
     Spacer(modifier = Modifier.height(24.dp))
-    if (question.commentIsEnabled) {
+    if (question.commentIsEnabled && (!readOnly || question.comment != null)) {
         CommentTextField(
             question.comment ?: "",
             { onTextChanged(it) },
-            "Комментарий"
+            "Комментарий",
+            readOnly
         )
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -104,8 +105,8 @@ fun ButtonsGrid(
 }
 
 @Composable
-private fun Slider(value: Int, changeValue: (Int) -> Unit) {
-    PercentSlider(value) { changeValue(it) }
+private fun Slider(value: Int, readOnly: Boolean, changeValue: (Int) -> Unit) {
+    PercentSlider(value, readOnly) { changeValue(it) }
     Row(
         modifier = Modifier
             .fillMaxWidth(),

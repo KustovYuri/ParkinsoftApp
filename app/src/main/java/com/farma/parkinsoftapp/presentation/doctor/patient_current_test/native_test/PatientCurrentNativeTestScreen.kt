@@ -1,7 +1,6 @@
 package com.farma.parkinsoftapp.presentation.doctor.patient_current_test.native_test
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -108,24 +107,37 @@ private fun Screen(
         ) {
             items(testAnswers) { testAnswer ->
                 when (testAnswer) {
-                    is TestQuestion.Comment -> CommentVariant(testAnswer, {})
-                    is TestQuestion.DisplaySlider -> DisplaySliderVariant(testAnswer, {})
-                    is TestQuestion.Graphic -> GraphicVariant(testAnswer) { }
-                    is TestQuestion.HumanPoint -> HumanPointVariant(testAnswer)
+                    is TestQuestion.Comment -> CommentVariant(testAnswer, {}, readOnly = true)
+                    is TestQuestion.DisplaySlider -> DisplaySliderVariant(
+                        testAnswer,
+                        {},
+                        readOnly = true
+                    )
+
+                    is TestQuestion.Graphic -> GraphicVariant(testAnswer, { }, readOnly = true)
+                    is TestQuestion.HumanPoint -> HumanPointVariant(testAnswer, readOnly = true)
                     is TestQuestion.PreQuestion -> {}
-                    is TestQuestion.SingleAnswer -> SingleAnswersVariant(testAnswer) { }
+                    is TestQuestion.SingleAnswer -> SingleAnswersVariant(
+                        testAnswer,
+                        selectAnswer = { },
+                        readOnly = true
+                    )
+
                     is TestQuestion.Slider -> SliderVariant(
                         testAnswer,
-                        { a, b -> }, {})
+                        { a, b -> }, {},
+                        readOnly = true
+                    )
 
                     is TestQuestion.YesNo -> YesNoVariant(
                         testAnswer,
                         { a, b -> },
                         {},
-                        isComment = testAnswer.comment.isNotBlank()
+                        isComment = testAnswer.comment.isNotBlank(),
+                        readOnly = true
                     )
                 }
-                Spacer(Modifier.height(100.dp))
+                Spacer(Modifier.height(55.dp))
             }
         }
         Spacer(Modifier.height(24.dp))

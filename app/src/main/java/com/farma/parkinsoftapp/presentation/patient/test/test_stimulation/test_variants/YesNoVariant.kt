@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.CommentTextField
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
 
@@ -27,7 +26,8 @@ fun YesNoVariant(
     question: TestQuestion.YesNo,
     selectVariant: (String, Boolean) -> Unit,
     onTextChanged: (String) -> Unit,
-    isComment: Boolean = true
+    isComment: Boolean = true,
+    readOnly: Boolean = false
 ) {
     Text(
         text = question.question,
@@ -44,11 +44,12 @@ fun YesNoVariant(
         AnswersVariants(answer, ) { selectVariant(answer.question, it) }
         Spacer(modifier = Modifier.height(24.dp))
     }
-    if (isComment) {
+    if (isComment && (!readOnly || question.comment.isNotBlank())) {
         CommentTextField(
             question.comment,
             { onTextChanged(it) },
-            "Комментарий"
+            "Комментарий",
+            readOnly
         )
     }
 }

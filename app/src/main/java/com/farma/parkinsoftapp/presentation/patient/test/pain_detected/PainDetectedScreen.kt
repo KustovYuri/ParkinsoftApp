@@ -113,17 +113,23 @@ private fun TestScreen(
         Spacer(modifier = Modifier.height(24.dp))
         when(val question = data[currentQuestionIndex]) {
             is TestQuestion.Graphic -> {
-                GraphicVariant(question) {
-                    viewModel.selectAnswerInGraphicAnswer(it)
-                }
+                GraphicVariant(
+                    question,
+                    {
+                        viewModel.selectAnswerInGraphicAnswer(it)
+                    },
+                )
             }
             is TestQuestion.HumanPoint -> {
                 HumanPointVariant(question, {viewModel.changeHumanPointsInHumanPointsVariant(it)})
             }
             is TestQuestion.SingleAnswer -> {
-                SingleAnswersVariant(question, isSending) {
-                    viewModel.selectAnswerInSingleAnswer(it)
-                }
+                SingleAnswersVariant(
+                    question, isSending,
+                    {
+                        viewModel.selectAnswerInSingleAnswer(it)
+                    },
+                )
             }
             is TestQuestion.Slider -> { SlidersVariant(question, viewModel) }
             else -> {}

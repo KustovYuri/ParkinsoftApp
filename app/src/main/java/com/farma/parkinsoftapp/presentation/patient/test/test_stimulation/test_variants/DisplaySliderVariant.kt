@@ -9,13 +9,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.SliderWithBars
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
 @Composable
 fun DisplaySliderVariant(
     question: TestQuestion.DisplaySlider,
-    changeSliderValue: (Int) -> Unit
+    changeSliderValue: (Int) -> Unit,
+    readOnly: Boolean = false
 ) {
     Text(
         text = question.question,
@@ -23,5 +23,5 @@ fun DisplaySliderVariant(
         color = Color(0xFF1C1B1F)
     )
     Spacer(modifier = Modifier.height(24.dp))
-    SliderWithBars(question) { changeSliderValue(it) }
+    SliderWithBars(question, readOnly) { changeSliderValue(it) }
 }

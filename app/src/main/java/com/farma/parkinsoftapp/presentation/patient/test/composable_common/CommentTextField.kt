@@ -19,7 +19,8 @@ import androidx.compose.ui.unit.sp
 fun CommentTextField(
     textValue: String,
     onTextChanged: (String) -> Unit,
-    placeholder: String
+    placeholder: String,
+    readOnly: Boolean
 ) {
     Text(
         text = placeholder,
@@ -27,6 +28,7 @@ fun CommentTextField(
     )
     Spacer(Modifier.height(8.dp))
     OutlinedTextField(
+        enabled = !readOnly,
         modifier = Modifier
             .fillMaxWidth(),
         value = textValue,
@@ -42,7 +44,10 @@ fun CommentTextField(
             unfocusedContainerColor = Color(0xFFEDF1F2),
             unfocusedIndicatorColor = Color(0xFFEDF1F2),
             focusedIndicatorColor = Color(0xFF62767A),
-            focusedTextColor = Color(0xFF002A33)
+            focusedTextColor = Color(0xFF002A33),
+            disabledContainerColor = Color(0xFFEDF1F2),
+            disabledIndicatorColor = Color(0xFFEDF1F2),
+            disabledTextColor = Color(0xFF002A33)
         ),
     )
 }

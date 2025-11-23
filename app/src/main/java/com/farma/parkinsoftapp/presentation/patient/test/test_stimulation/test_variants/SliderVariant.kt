@@ -13,14 +13,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.CommentTextField
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.TestStimulationViewModel
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 
 @Composable
 fun SliderVariant(
     question: TestQuestion.Slider,
     onValueChange: (String, Int) -> Unit,
-    changeCommentValue: (String) -> Unit
+    changeCommentValue: (String) -> Unit,
+    readOnly: Boolean = false
 ) {
     Text(
         text = question.question,
@@ -34,7 +34,7 @@ fun SliderVariant(
             fontSize = 16.sp,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        PercentSlider(answer.value) {
+        PercentSlider(answer.value, readOnly) {
             onValueChange(answer.question, it)
         }
         Row(
@@ -47,11 +47,12 @@ fun SliderVariant(
         }
         Spacer(modifier = Modifier.height(24.dp))
     }
-    if (question.commentIsEnabled) {
+    if (question.commentIsEnabled && (!readOnly || question.comment != null)) {
         CommentTextField(
             question.comment ?: "",
             { changeCommentValue(it) },
-            "Комментарий"
+            "Комментарий",
+            readOnly
         )
     }
 }

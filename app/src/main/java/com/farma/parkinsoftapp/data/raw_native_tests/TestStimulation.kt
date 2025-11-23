@@ -77,7 +77,7 @@ fun getTestStimulationTestData(): List<TestQuestion> {
         ),
         TestQuestion.YesNo(
             testId = 10,
-            question = "Оцените, было улучшение во времся следующих ситуаций?",
+            question = "Оцените, было улучшение во время следующих ситуаций?",
             answers = listOf(
                 YesNoAnswer(
                     questionId = 1,
@@ -93,7 +93,7 @@ fun getTestStimulationTestData(): List<TestQuestion> {
                 ),
                 YesNoAnswer(
                     questionId = 3,
-                    question = "Было улучшение при рутиных видах деятельности (например при готовке еды, во время работы или уборки по дому)?",
+                    question = "Было улучшение при рутинных видах деятельности (например при готовке еды, во время работы или уборки по дому)?",
                     yesScore = 1,
                     noScore = 0,
                 )
@@ -115,7 +115,7 @@ fun getTestStimulationTestData(): List<TestQuestion> {
         ),
         TestQuestion.Comment(
             testId = 14,
-            question = "Определите изменеия вашего физического и эмоционального состояния, которые заметны Вам и вашему окружению"
+            question = "Определите изменения вашего физического и эмоционального состояния, которые заметны Вам и вашему окружению"
         )
     )
 }

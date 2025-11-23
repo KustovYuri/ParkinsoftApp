@@ -115,13 +115,14 @@ private fun TestScreen(
         Spacer(modifier = Modifier.height(24.dp))
         when (val question = data[currentQuestionIndex]) {
             is TestQuestion.Comment -> {
-                CommentVariant(question, { viewModel.changeCommentValue(it) })
+                CommentVariant(question, { viewModel.changeCommentValue(it) },)
             }
 
             is TestQuestion.DisplaySlider -> {
                 DisplaySliderVariant(
                     question,
-                    { viewModel.changeSliderValueInDisplaySliderVariant(it) })
+                    { viewModel.changeSliderValueInDisplaySliderVariant(it) },
+                )
             }
 
             is TestQuestion.HumanPoint -> {
@@ -129,7 +130,7 @@ private fun TestScreen(
                     question,
                     {viewModel.changeHumanPointsInHumanPointsVariant(it)},
                     {viewModel.changeSliderValueInHumanPoint(it)},
-                    {viewModel.changeCommentValue(it)}
+                    {viewModel.changeCommentValue(it)},
                 )
             }
 
@@ -143,14 +144,15 @@ private fun TestScreen(
                 SliderVariant(
                     question,
                     { name, value -> viewModel.changeSliderValueInSliderVariant(name, value) },
-                    { viewModel.changeCommentValue(it) })
+                    { viewModel.changeCommentValue(it) },
+                )
             }
 
             is TestQuestion.YesNo -> {
                 YesNoVariant(
                     question,
                     { str, bl -> viewModel.selectAnswerInYesNoAnswer(str, bl) },
-                    {}
+                    {},
                 )
             }
 

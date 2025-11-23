@@ -7,7 +7,7 @@ fun getDN4TestData(): List<TestQuestion> {
     return listOf(
         TestQuestion.YesNo(
             testId = 1,
-            question = "Соответсвует ли боль, которую испытывает пациент, одному или нескольким из следующих определений?",
+            question = "Соответствует ли боль, которую испытывает пациент, одному или нескольким из следующих определений?",
             answers = listOf(
                 YesNoAnswer(
                     questionId = 1,

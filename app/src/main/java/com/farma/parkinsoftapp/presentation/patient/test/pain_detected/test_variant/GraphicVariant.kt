@@ -26,7 +26,8 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun GraphicVariant(
     question: TestQuestion.Graphic,
-    selectVariant: (GraphicVariant) -> Unit
+    selectVariant: (GraphicVariant) -> Unit,
+    readOnly: Boolean = false
 ) {
     Text(
         text = question.question,
@@ -35,38 +36,39 @@ fun GraphicVariant(
     )
     Spacer(modifier = Modifier.height(24.dp))
     question.graphicVariant.forEach { variant ->
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(
-                    if (question.selectedVariant == variant) {
-                        Color(0xFFA9E0EB)
-                    } else {
-                        Color(0xFFEDF1F2)
-                    },
-
-                )
-                .clickable{ selectVariant(variant) }
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Image(
+        if (!readOnly || question.selectedVariant == variant) {
+            Row(
                 modifier = Modifier
-                    .width(125.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                painter = painterResource(variant.image),
-                contentDescription = null
-            )
-            Spacer(Modifier.width(16.dp))
-            Text(
-                text = variant.question,
-                fontSize = 12.sp
-            )
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        if (question.selectedVariant == variant) {
+                            Color(0xFFA9E0EB)
+                        } else {
+                            Color(0xFFEDF1F2)
+                        },
+                    )
+                    .clickable{ selectVariant(variant) }
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Image(
+                    modifier = Modifier
+                        .width(125.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    painter = painterResource(variant.image),
+                    contentDescription = null
+                )
+                Spacer(Modifier.width(16.dp))
+                Text(
+                    text = variant.question,
+                    fontSize = 12.sp
+                )
+            }
+            Spacer(Modifier.height(16.dp))
         }
-        Spacer(Modifier.height(16.dp))
     }
 
 }

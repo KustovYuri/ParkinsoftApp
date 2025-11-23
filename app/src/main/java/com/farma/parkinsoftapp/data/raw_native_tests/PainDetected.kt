@@ -18,17 +18,17 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 ),
                 SliderAnswer(
                     questionId = 2,
-                    question = "Как бы вы оценили интенсивность наиболее сильного приступа боли за последние 4 нелели",
+                    question = "Как бы вы оценили интенсивность наиболее сильного приступа боли за последние 4 недели",
                 ),
                 SliderAnswer(
                     questionId = 3,
-                    question = "В среднем, на сколько сильной была боль в течение последних 4 нелель",
+                    question = "В среднем, на сколько сильной была боль в течение последних 4 недель",
                 ),
             )
         ),
         TestQuestion.Graphic(
             testId = 2,
-            question = "Выберете картинку, которая наиболее точно отражает характер протекания боли в вашем случае:",
+            question = "Выберите картинку, которая наиболее точно отражает характер протекания боли в вашем случае:",
             graphicVariant = listOf(
                 GraphicVariant(
                     image = R.drawable.thumbnail,
@@ -56,22 +56,22 @@ fun getPainDetectedTestData(): List<TestQuestion> {
         TestQuestion.HumanPoint(
             testId = 3,
             type = HumanImageType.FRONT,
-            question = "Выберете те области, где вы испытываете наиболее сильную боль"
+            question = "Выберите те области, где вы испытываете наиболее сильную боль"
         ),
         TestQuestion.HumanPoint(
             testId = 4,
             type = HumanImageType.BACK,
-            question = "Выберете те области, где вы испытываете наиболее сильную боль"
+            question = "Выберите те области, где вы испытываете наиболее сильную боль"
         ),
         TestQuestion.HumanPoint(
             testId = 5,
             type = HumanImageType.FRONT,
-            question = "Выберете те области, в которые отдает боль"
+            question = "Выберите те области, в которые отдает боль"
         ),
         TestQuestion.HumanPoint(
             testId = 6,
             type = HumanImageType.BACK,
-            question = "Выберете те области, в которые отдает боль"
+            question = "Выберите те области, в которые отдает боль"
         ),
         TestQuestion.SingleAnswer(
             testId = 7,
@@ -87,7 +87,7 @@ fun getPainDetectedTestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 8,
-            question = "Ощущете ли Вы покалывание или пощипывание в области боли (как покалывание от онимения или слабого электрического тока?)",
+            question = "Ощущаете ли Вы покалывание или пощипывание в области боли (как покалывание от онемения или слабого электрического тока?)",
             answers = listOf(
                 "Совсем нет" to 1,
                 "Едва заметное" to 2,

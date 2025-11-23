@@ -30,6 +30,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun SliderWithBars(
     question: TestQuestion.DisplaySlider,
+    readOnly: Boolean,
     changeSliderValue: (Int) -> Unit,
 ) {
     val sliderValue = question.sliderValue
@@ -65,47 +66,48 @@ fun SliderWithBars(
                 )
             }
         }
-
-        Spacer(Modifier.height(16.dp))
-        Slider(
-            modifier = Modifier.fillMaxWidth(),
-            value = sliderValue.toFloat(),
-            onValueChange = {
-                changeSliderValue((it / step).toInt() * step)
-            },
-            valueRange = 0f..max.toFloat(),
-            steps = (max / step),
-            thumb = {
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .background(Color(0xFF038F8F), shape = CircleShape),
-                )
-            },
-            track = { sliderState ->
-                val fraction by remember {
-                    derivedStateOf {
-                        (sliderState.value - sliderState.valueRange.start) / (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
-                    }
-                }
-
-                Box(Modifier.fillMaxWidth()) {
+        if (!readOnly) {
+            Spacer(Modifier.height(16.dp))
+            Slider(
+                modifier = Modifier.fillMaxWidth(),
+                value = sliderValue.toFloat(),
+                onValueChange = {
+                    changeSliderValue((it / step).toInt() * step)
+                },
+                valueRange = 0f..max.toFloat(),
+                steps = (max / step),
+                thumb = {
                     Box(
-                        Modifier
-                            .fillMaxWidth(fraction)
-                            .align(Alignment.CenterStart)
-                            .height(6.dp)
+                        modifier = Modifier
+                            .size(24.dp)
                             .background(Color(0xFF038F8F), shape = CircleShape),
                     )
-                    Box(
-                        Modifier
-                            .fillMaxWidth(1f - fraction)
-                            .align(Alignment.CenterEnd)
-                            .height(4.dp)
-                            .background(Color(0xFF768080), CircleShape)
-                    )
+                },
+                track = { sliderState ->
+                    val fraction by remember {
+                        derivedStateOf {
+                            (sliderState.value - sliderState.valueRange.start) / (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
+                        }
+                    }
+
+                    Box(Modifier.fillMaxWidth()) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth(fraction)
+                                .align(Alignment.CenterStart)
+                                .height(6.dp)
+                                .background(Color(0xFF038F8F), shape = CircleShape),
+                        )
+                        Box(
+                            Modifier
+                                .fillMaxWidth(1f - fraction)
+                                .align(Alignment.CenterEnd)
+                                .height(4.dp)
+                                .background(Color(0xFF768080), CircleShape)
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
