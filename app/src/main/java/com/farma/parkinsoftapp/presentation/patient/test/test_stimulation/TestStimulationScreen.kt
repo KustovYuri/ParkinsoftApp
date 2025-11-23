@@ -125,7 +125,12 @@ private fun TestScreen(
             }
 
             is TestQuestion.HumanPoint -> {
-                HumanPointVariant(question, viewModel)
+                HumanPointVariant(
+                    question,
+                    {viewModel.changeHumanPointsInHumanPointsVariant(it)},
+                    {viewModel.changeSliderValueInHumanPoint(it)},
+                    {viewModel.changeCommentValue(it)}
+                )
             }
 
             is TestQuestion.SingleAnswer -> {

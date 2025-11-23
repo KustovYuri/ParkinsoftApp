@@ -32,7 +32,9 @@ import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
 @Composable
 fun HumanPointVariant(
     question: TestQuestion.HumanPoint,
-    viewModel: TestStimulationViewModel
+    changeValuePoints: (Int) -> Unit = {},
+    changeValueSlider: (Int) -> Unit = {},
+    onTextChanged: (String) -> Unit = {},
 ) {
     Text(
         text = question.question,
@@ -42,17 +44,17 @@ fun HumanPointVariant(
     Spacer(modifier = Modifier.height(24.dp))
     if (question.humanIsEnabled) {
         HumanPointTest(question.selectedPoints, question.type) {
-            viewModel.changeHumanPointsInHumanPointsVariant(it)
+            changeValuePoints(it)
         }
     }
     if (question.sliderIsEnabled) {
-        Slider(question.sliderValue ?: 0) { viewModel.changeSliderValueInHumanPoint(it) }
+        Slider(question.sliderValue ?: 0) { changeValueSlider(it) }
     }
     Spacer(modifier = Modifier.height(24.dp))
     if (question.commentIsEnabled) {
         CommentTextField(
             question.comment ?: "",
-            { viewModel.changeCommentValue(it) },
+            { onTextChanged(it) },
             "Комментарий"
         )
         Spacer(modifier = Modifier.height(24.dp))

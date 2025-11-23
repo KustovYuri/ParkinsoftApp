@@ -2,14 +2,14 @@ package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.model
 
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
 
-sealed interface TestQuestion {
+sealed class TestQuestion(val id: Long) {
 
     data class SingleAnswer(
         val testId: Long,
         val question: String,
         val answers: List<Pair<String, Int>>,
         val selectedAnswer: Pair<String, Int>? = null,
-    ): TestQuestion
+    ): TestQuestion(testId)
 
     data class HumanPoint(
         val testId: Long,
@@ -23,7 +23,7 @@ sealed interface TestQuestion {
         val comment: String? = null,
         val score: Int = 0,
         val sliderScore: Int = 0,
-    ): TestQuestion
+    ): TestQuestion(testId)
 
     data class Slider(
         val testId: Long,
@@ -31,31 +31,31 @@ sealed interface TestQuestion {
         val sliderAnswers: List<SliderAnswer>,
         val commentIsEnabled: Boolean = true,
         val comment: String? = null,
-    ): TestQuestion
+    ): TestQuestion(testId)
 
     data class YesNo(
         val testId: Long,
         val question: String,
         val answers: List<YesNoAnswer>,
         val comment: String = ""
-    ): TestQuestion
+    ): TestQuestion(testId)
 
     data class DisplaySlider(
         val testId: Long,
         val question: String,
         val sliderValue: Int = 0,
         val score: Int = 0
-    ): TestQuestion
+    ): TestQuestion(testId)
 
     data class Comment(
         val testId: Long,
         val question: String,
         val comment: String = ""
-    ): TestQuestion
+    ): TestQuestion(testId)
 
     data class PreQuestion(
         val question: String
-    ): TestQuestion
+    ): TestQuestion(id = -1)
 
     data class Graphic(
         val testId: Long,
@@ -63,7 +63,7 @@ sealed interface TestQuestion {
         val graphicVariant: List<GraphicVariant>,
         val selectedVariant: GraphicVariant? = null,
         val score: Int
-    ): TestQuestion
+    ): TestQuestion(testId)
 
 }
 

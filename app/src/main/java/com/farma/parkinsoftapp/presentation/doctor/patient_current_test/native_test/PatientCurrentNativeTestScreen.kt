@@ -33,10 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
-import com.farma.parkinsoftapp.data.network.models.TestResultModel
 import com.farma.parkinsoftapp.presentation.common.ScreenState
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.GraphicVariant
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.HumanPointVariant
+import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.HumanPointVariant
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SingleAnswersVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.CommentVariant
@@ -63,7 +62,7 @@ fun PatientCurrentNativeTestScreen(
                 .background(Color(0xFFFFFFFF)),
             contentAlignment = Alignment.Center
         ) {
-            when(uiState) {
+            when (uiState) {
                 is ScreenState.Error -> {
                     Text((uiState as ScreenState.Error).message)
                 }
@@ -73,6 +72,7 @@ fun PatientCurrentNativeTestScreen(
                         color = Color(0xFF178399)
                     )
                 }
+
                 is ScreenState.Success -> {
                     Screen(paddingValues, testDate, (uiState as ScreenState.Success).data)
                 }
@@ -107,16 +107,23 @@ private fun Screen(
             modifier = Modifier.weight(1f),
         ) {
             items(testAnswers) { testAnswer ->
-                when(testAnswer) {
+                when (testAnswer) {
                     is TestQuestion.Comment -> CommentVariant(testAnswer, {})
                     is TestQuestion.DisplaySlider -> DisplaySliderVariant(testAnswer, {})
                     is TestQuestion.Graphic -> GraphicVariant(testAnswer) { }
-                    is TestQuestion.HumanPoint -> HumanPointVariant(testAnswer) {}
+                    is TestQuestion.HumanPoint -> HumanPointVariant(testAnswer)
                     is TestQuestion.PreQuestion -> {}
                     is TestQuestion.SingleAnswer -> SingleAnswersVariant(testAnswer) { }
-                    is TestQuestion.Slider -> SliderVariant(testAnswer,
-                        {a, b -> }, {})
-                    is TestQuestion.YesNo -> YesNoVariant(testAnswer, {a, b ->}, {}, isComment = testAnswer.comment.isNotBlank())
+                    is TestQuestion.Slider -> SliderVariant(
+                        testAnswer,
+                        { a, b -> }, {})
+
+                    is TestQuestion.YesNo -> YesNoVariant(
+                        testAnswer,
+                        { a, b -> },
+                        {},
+                        isComment = testAnswer.comment.isNotBlank()
+                    )
                 }
                 Spacer(Modifier.height(100.dp))
             }
