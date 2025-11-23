@@ -1,7 +1,7 @@
 package com.farma.parkinsoftapp.data.raw_native_tests
 
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.YesNoAnswer
 
 fun getDN4TestData(): List<TestQuestion> {
     return listOf(
@@ -28,6 +28,7 @@ fun getDN4TestData(): List<TestQuestion> {
                     noScore = 0,
                 )
             ),
+            maxScore = 3
         ),
         TestQuestion.YesNo(
             testId = 2,
@@ -52,6 +53,7 @@ fun getDN4TestData(): List<TestQuestion> {
                     noScore = 0,
                 )
             ),
+            maxScore = 3
         ),
         TestQuestion.YesNo(
             testId = 3,
@@ -70,6 +72,7 @@ fun getDN4TestData(): List<TestQuestion> {
                     noScore = 0,
                 ),
             ),
+            maxScore = 2
         ),
         TestQuestion.YesNo(
             testId = 4,
@@ -82,6 +85,7 @@ fun getDN4TestData(): List<TestQuestion> {
                     noScore = 0,
                 ),
             ),
+            maxScore = 1
         ),
     )
 }

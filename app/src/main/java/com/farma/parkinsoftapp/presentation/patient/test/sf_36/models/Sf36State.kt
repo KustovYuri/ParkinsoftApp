@@ -1,6 +1,6 @@
 package com.farma.parkinsoftapp.presentation.patient.test.sf_36.models
 
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
 
 data class Sf36State(

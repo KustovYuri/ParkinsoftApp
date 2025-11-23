@@ -22,8 +22,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.GraphicVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.GraphicVariant
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
 @Composable
 fun GraphicVariant(

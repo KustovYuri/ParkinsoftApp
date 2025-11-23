@@ -29,7 +29,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_vari
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.HumanPointVariant
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SingleAnswersVariant
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SlidersVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
 @Composable
 fun PainDetectedScreen(

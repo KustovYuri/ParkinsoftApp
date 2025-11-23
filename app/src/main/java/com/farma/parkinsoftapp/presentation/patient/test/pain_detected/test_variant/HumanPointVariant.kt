@@ -9,8 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.HumanPointTest
-import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.PainDetectedViewModel
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
 @Composable
 fun HumanPointVariant(

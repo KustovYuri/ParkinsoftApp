@@ -6,7 +6,7 @@ import com.farma.parkinsoftapp.data.raw_native_tests.getPainDetectedTestData
 import com.farma.parkinsoftapp.data.raw_native_tests.getSF36TestData
 import com.farma.parkinsoftapp.data.raw_native_tests.getTestStimulationTestData
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import com.farma.parkinsoftapp.domain.models.Result

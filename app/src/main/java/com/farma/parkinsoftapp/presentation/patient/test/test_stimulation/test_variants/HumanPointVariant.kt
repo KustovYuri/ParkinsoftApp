@@ -26,7 +26,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Comme
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.HumanPointTest
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.PercentSlider
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
 @Composable
 fun HumanPointVariant(

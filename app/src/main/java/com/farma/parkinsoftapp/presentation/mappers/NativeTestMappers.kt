@@ -8,10 +8,10 @@ import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
 import com.farma.parkinsoftapp.data.network.models.SingleAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.SliderAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.YesNoAnswerRequest
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
 fun List<TestQuestion>.convertToNativeTestRequest(testPreviewId: Long): NativeTestRequest {
-    var nativeTestRequest = NativeTestRequest(testPreviewId)
+    var nativeTestRequest = NativeTestRequest(testPreviewId, this.getSummaryPoints(),this.getMaxPoints())
     this.map {
         when (val test = it) {
             is TestQuestion.Comment -> {
@@ -215,4 +215,40 @@ private fun TestQuestion.Slider.convertToAnswerRequest(): List<SliderAnswerReque
             )
         }
     }
+}
+
+private fun List<TestQuestion>.getMaxPoints(): Int {
+    var maxPoints = 0
+    this.forEach {
+        when(val test = it) {
+            is TestQuestion.Comment -> {}
+            is TestQuestion.DisplaySlider -> { maxPoints += test.maxScore }
+            is TestQuestion.Graphic -> { maxPoints += test.maxScore }
+            is TestQuestion.HumanPoint -> { maxPoints += test.maxScore }
+            is TestQuestion.PreQuestion -> {}
+            is TestQuestion.SingleAnswer -> { maxPoints += test.maxScore }
+            is TestQuestion.Slider -> { maxPoints += test.maxScore }
+            is TestQuestion.YesNo -> { maxPoints += test.maxScore }
+        }
+    }
+
+    return maxPoints
+}
+
+private fun List<TestQuestion>.getSummaryPoints(): Int {
+    var summaryPoints = 0
+    this.forEach { it ->
+        when(val test = it) {
+            is TestQuestion.Comment -> {}
+            is TestQuestion.DisplaySlider -> { summaryPoints += test.score }
+            is TestQuestion.Graphic -> { summaryPoints += test.score }
+            is TestQuestion.HumanPoint -> { summaryPoints += test.score }
+            is TestQuestion.PreQuestion -> {}
+            is TestQuestion.SingleAnswer -> { summaryPoints += test.selectedAnswer?.second ?: 0 }
+            is TestQuestion.Slider -> { summaryPoints += test.maxScore }
+            is TestQuestion.YesNo -> { summaryPoints += test.answers.sumOf { it.score } }
+        }
+    }
+
+    return summaryPoints
 }

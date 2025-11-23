@@ -2,9 +2,9 @@ package com.farma.parkinsoftapp.data.raw_native_tests
 
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.GraphicVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.SliderAnswer
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.GraphicVariant
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.SliderAnswer
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
 fun getPainDetectedTestData(): List<TestQuestion> {
     return listOf(
@@ -24,7 +24,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                     questionId = 3,
                     question = "В среднем, на сколько сильной была боль в течение последних 4 недель",
                 ),
-            )
+            ),
+            maxScore = 0
         ),
         TestQuestion.Graphic(
             testId = 2,
@@ -51,27 +52,32 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                     score = 4,
                 ),
             ),
-            score = 0
+            score = 0,
+            maxScore = 1
         ),
         TestQuestion.HumanPoint(
             testId = 3,
             type = HumanImageType.FRONT,
-            question = "Выберите те области, где вы испытываете наиболее сильную боль"
+            question = "Выберите те области, где вы испытываете наиболее сильную боль",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 4,
             type = HumanImageType.BACK,
-            question = "Выберите те области, где вы испытываете наиболее сильную боль"
+            question = "Выберите те области, где вы испытываете наиболее сильную боль",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 5,
             type = HumanImageType.FRONT,
-            question = "Выберите те области, в которые отдает боль"
+            question = "Выберите те области, в которые отдает боль",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 6,
             type = HumanImageType.BACK,
-            question = "Выберите те области, в которые отдает боль"
+            question = "Выберите те области, в которые отдает боль",
+            maxScore = 2
         ),
         TestQuestion.SingleAnswer(
             testId = 7,
@@ -83,7 +89,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 "Умеренное" to 4,
                 "Сильное" to 5,
                 "Очень сильное" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 8,
@@ -95,7 +102,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 "Умеренное" to 4,
                 "Сильное" to 5,
                 "Очень сильное" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 9,
@@ -107,7 +115,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 "Умеренное" to 4,
                 "Сильное" to 5,
                 "Очень сильное" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 10,
@@ -119,7 +128,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 "Умеренное" to 4,
                 "Сильное" to 5,
                 "Очень сильное" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 11,
@@ -131,7 +141,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 "Умеренное" to 4,
                 "Сильное" to 5,
                 "Очень сильное" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 12,
@@ -143,7 +154,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 "Умеренное" to 4,
                 "Сильное" to 5,
                 "Очень сильное" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 13,
@@ -155,7 +167,8 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 "Умеренное" to 4,
                 "Сильное" to 5,
                 "Очень сильное" to 6,
-            )
+            ),
+            maxScore = 6
         ),
     )
 }

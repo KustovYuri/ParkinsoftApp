@@ -1,6 +1,4 @@
-package com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models
-
-import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
+package com.farma.parkinsoftapp.presentation.patient.test.models_common
 
 sealed class TestQuestion(val id: Long) {
 
@@ -9,6 +7,7 @@ sealed class TestQuestion(val id: Long) {
         val question: String,
         val answers: List<Pair<String, Int>>,
         val selectedAnswer: Pair<String, Int>? = null,
+        val maxScore: Int
     ): TestQuestion(testId)
 
     data class HumanPoint(
@@ -23,6 +22,7 @@ sealed class TestQuestion(val id: Long) {
         val comment: String? = null,
         val score: Int = 0,
         val sliderScore: Int = 0,
+        val maxScore: Int
     ): TestQuestion(testId)
 
     data class Slider(
@@ -31,12 +31,14 @@ sealed class TestQuestion(val id: Long) {
         val sliderAnswers: List<SliderAnswer>,
         val commentIsEnabled: Boolean = true,
         val comment: String? = null,
+        val maxScore: Int,
     ): TestQuestion(testId)
 
     data class YesNo(
         val testId: Long,
         val question: String,
         val answers: List<YesNoAnswer>,
+        val maxScore: Int,
         val comment: String = ""
     ): TestQuestion(testId)
 
@@ -44,7 +46,8 @@ sealed class TestQuestion(val id: Long) {
         val testId: Long,
         val question: String,
         val sliderValue: Int = 0,
-        val score: Int = 0
+        val score: Int = 0,
+        val maxScore: Int,
     ): TestQuestion(testId)
 
     data class Comment(
@@ -62,7 +65,8 @@ sealed class TestQuestion(val id: Long) {
         val question: String,
         val graphicVariant: List<GraphicVariant>,
         val selectedVariant: GraphicVariant? = null,
-        val score: Int
+        val score: Int,
+        val maxScore: Int,
     ): TestQuestion(testId)
 
 }

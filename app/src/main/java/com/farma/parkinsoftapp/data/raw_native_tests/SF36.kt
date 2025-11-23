@@ -1,7 +1,7 @@
 package com.farma.parkinsoftapp.data.raw_native_tests
 
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.YesNoAnswer
 
 fun getSF36TestData(): List<TestQuestion> {
     return listOf(
@@ -14,7 +14,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Хорошее" to 3,
                 "Посредственное" to 4,
                 "Плохое" to 5
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 2,
@@ -25,7 +26,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Примерно так же, как год назад" to 3,
                 "Несколько хуже, чем год назад" to 4,
                 "Гораздо хуже, чем год назад" to 5
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.PreQuestion(
             question = "3. Следующие вопросы касаются физических нагрузок, с которыми Вы, возможно, сталкиваетесь в течение своего обычного дня.\n\nОграничивает ли Вас состояние Вашего" +
@@ -39,7 +41,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 4,
@@ -49,7 +52,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 5,
@@ -59,7 +63,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 6,
@@ -69,7 +74,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 7,
@@ -79,7 +85,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 8,
@@ -89,7 +96,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает"  to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 9,
@@ -99,7 +107,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 10,
@@ -109,7 +118,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 11,
@@ -119,7 +129,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает"  to 2,
                 "Хорошее"  to 3,
                 "Нет, совсем не ограничивает"  to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 12,
@@ -129,7 +140,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Да, немного ограничивает" to 2,
                 "Хорошее" to 3,
                 "Нет, совсем не ограничивает" to 4
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.YesNo(
             testId = 13,
@@ -159,7 +171,8 @@ fun getSF36TestData(): List<TestQuestion> {
                     yesScore = 1,
                     noScore = 0,
                 ),
-            )
+            ),
+            maxScore = 4
         ),
         TestQuestion.YesNo(
             testId = 14,
@@ -183,7 +196,8 @@ fun getSF36TestData(): List<TestQuestion> {
                     yesScore = 1,
                     noScore = 0,
                 ),
-            )
+            ),
+            maxScore = 3
         ),
         TestQuestion.SingleAnswer(
             testId = 15,
@@ -194,7 +208,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Умеренно" to 3,
                 "Сильно" to 4,
                 "Очень сильно" to 5,
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 16,
@@ -206,7 +221,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Умеренную" to 4,
                 "Сильную" to 5,
                 "Очень сильную" to 6
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 17,
@@ -217,7 +233,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Умеренно" to 3,
                 "Сильно" to 4,
                 "Очень сильно" to 5,
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.PreQuestion(
             question = "9. Следующие вопросы касаются того, как Вы себя чувствовали, и каким было Ваше настроение в течение последних 4 недель."
@@ -232,7 +249,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 19,
@@ -244,7 +262,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 20,
@@ -256,7 +275,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 21,
@@ -268,7 +288,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 22,
@@ -280,7 +301,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 23,
@@ -292,7 +314,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 24,
@@ -304,7 +327,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 25,
@@ -316,7 +340,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 26,
@@ -328,7 +353,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 4,
                 "Редко" to 5,
                 "Ни разу" to 6,
-            )
+            ),
+            maxScore = 6
         ),
         TestQuestion.SingleAnswer(
             testId = 27,
@@ -339,7 +365,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Иногда" to 3,
                 "Редко" to 4,
                 "Ни разу" to 5,
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.PreQuestion(
             question = "11. Насколько ВЕРНЫМ или НЕВЕРНЫМ представляются по отношению к Вам каждое из следующих утверждений?"
@@ -353,7 +380,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Не знаю" to 3,
                 "В основном неверно" to 4,
                 "Определенно неверно" to 5,
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 29,
@@ -364,7 +392,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Не знаю" to 3,
                 "В основном неверно" to 4,
                 "Определенно неверно" to 5,
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 30,
@@ -375,7 +404,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Не знаю" to 3,
                 "В основном неверно" to 4,
                 "Определенно неверно" to 5,
-            )
+            ),
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 31,
@@ -386,7 +416,8 @@ fun getSF36TestData(): List<TestQuestion> {
                 "Не знаю" to 3,
                 "В основном неверно" to 4,
                 "Определенно неверно" to 5,
-            )
+            ),
+            maxScore = 5
         ),
     )
 }

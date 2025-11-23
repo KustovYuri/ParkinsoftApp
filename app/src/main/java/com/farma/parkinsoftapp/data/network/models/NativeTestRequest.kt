@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NativeTestRequest(
     val testPreviewId: Long,
+    val summaryCount: Int,
+    val maxPoints: Int,
     val singleAnswers: List<SingleAnswerRequest>? = emptyList(),
     val humanPoints: List<HumanPointsRequest>? = emptyList(),
     val sliderAnswers: List<SliderAnswerRequest>? = emptyList(),

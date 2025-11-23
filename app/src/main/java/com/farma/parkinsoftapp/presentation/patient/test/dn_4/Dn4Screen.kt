@@ -26,7 +26,7 @@ import com.farma.parkinsoftapp.presentation.patient.test.composable_common.Botto
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.LoadingScreen
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TestHeader
 import com.farma.parkinsoftapp.presentation.patient.test.composable_common.TopScreenBar
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.AnswersVariants
 
 @Composable

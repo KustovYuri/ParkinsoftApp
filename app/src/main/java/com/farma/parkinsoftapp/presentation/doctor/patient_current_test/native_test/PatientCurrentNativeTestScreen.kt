@@ -36,7 +36,7 @@ import com.farma.parkinsoftapp.presentation.common.ScreenState
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.GraphicVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.HumanPointVariant
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SingleAnswersVariant
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.CommentVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.DisplaySliderVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.SliderVariant

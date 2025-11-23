@@ -15,11 +15,8 @@ import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import com.farma.parkinsoftapp.presentation.mappers.convertToNativeTestRequest
 import com.farma.parkinsoftapp.presentation.navigation.PatientTestRoute
-import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.SliderAnswer
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestStimulationState
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

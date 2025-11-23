@@ -1,9 +1,9 @@
 package com.farma.parkinsoftapp.data.raw_native_tests
 
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.HumanImageType
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.SliderAnswer
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.TestQuestion
-import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.models.YesNoAnswer
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.SliderAnswer
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
+import com.farma.parkinsoftapp.presentation.patient.test.models_common.YesNoAnswer
 
 fun getTestStimulationTestData(): List<TestQuestion> {
     return listOf(
@@ -11,36 +11,43 @@ fun getTestStimulationTestData(): List<TestQuestion> {
             testId = 1,
             question = "Какая программа была сегодня самой эффективной?",
             answers = listOf("Первая" to 1, "Вторая" to 2, "Третья" to 3, "Четвертая" to 4, "Пятая" to 5),
+            maxScore = 5
         ),
         TestQuestion.HumanPoint(
             testId = 2,
             type = HumanImageType.FRONT,
-            question = "Нажмите на рисунке на области стимуляции:"
+            question = "Нажмите на рисунке на области стимуляции:",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 3,
             type = HumanImageType.BACK,
-            question = "Нажмите на рисунке на области стимуляции:"
+            question = "Нажмите на рисунке на области стимуляции:",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 4,
             type = HumanImageType.FRONT,
-            question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
+            question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 5,
             type = HumanImageType.BACK,
-            question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:"
+            question = "Нажмите на рисунке на области, где стимуляция не перекрывала боль:",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 6,
             type = HumanImageType.FRONT,
-            question = "Нажмите на рисунке на область с самой сильной болью:"
+            question = "Нажмите на рисунке на область с самой сильной болью:",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 7,
             type = HumanImageType.BACK,
-            question = "Нажмите на рисунке на область с самой сильной болью:"
+            question = "Нажмите на рисунке на область с самой сильной болью:",
+            maxScore = 0
         ),
         TestQuestion.HumanPoint(
             testId = 8,
@@ -50,7 +57,8 @@ fun getTestStimulationTestData(): List<TestQuestion> {
             sliderIsEnabled = true,
             commentIsEnabled = true,
             sliderValue = 0,
-            comment = ""
+            comment = "",
+            maxScore = 0
         ),
         TestQuestion.Slider(
             testId = 9,
@@ -73,7 +81,8 @@ fun getTestStimulationTestData(): List<TestQuestion> {
                     question = "Во время сна",
                 ),
             ),
-            commentIsEnabled = true
+            commentIsEnabled = true,
+            maxScore = 0
         ),
         TestQuestion.YesNo(
             testId = 10,
@@ -98,20 +107,24 @@ fun getTestStimulationTestData(): List<TestQuestion> {
                     noScore = 0,
                 )
             ),
+            maxScore = 3
         ),
         TestQuestion.DisplaySlider(
             testId = 11,
-            question = "Сколько полос вы видите на дисплее во время наибольшего облегчения боли?"
+            question = "Сколько полос вы видите на дисплее во время наибольшего облегчения боли?",
+            maxScore = 0
         ),
         TestQuestion.SingleAnswer(
             testId = 12,
             question = "Оцените ощущения от стимуляции:",
             answers = listOf("Приятные" to 1, "Комфортные" to 2, "Некомфортные" to 3, "Болезненные" to 4),
+            maxScore = 4
         ),
         TestQuestion.SingleAnswer(
             testId = 13,
             question = "Оцените общую эффективность программы:",
             answers = listOf("Превосходно" to 1, "Хорошо" to 2, "Удовлетворительно" to 3, "Неэффективно" to 4),
+            maxScore = 4
         ),
         TestQuestion.Comment(
             testId = 14,
