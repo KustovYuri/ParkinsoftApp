@@ -31,22 +31,22 @@ fun getPainDetectedTestData(): List<TestQuestion> {
             question = "Выберите картинку, которая наиболее точно отражает характер протекания боли в вашем случае:",
             graphicVariant = listOf(
                 GraphicVariant(
-                    image = R.drawable.thumbnail,
+                    image = R.drawable.thumbnail__1_,
                     question = "Непрерывная боль, немного меняющаяся по интенсивности",
                     score = 1,
                 ),
                 GraphicVariant(
-                    image = R.drawable.thumbnail_1,
+                    image = R.drawable.thumbnail__2_,
                     question = "Непрерывная боль с переодическими приступами",
                     score = 2,
                 ),
                 GraphicVariant(
-                    image = R.drawable.thumbnail_2,
+                    image = R.drawable.thumbnail__3_,
                     question = "Приступы боли без болевых ощущений в промежутках между ними",
                     score = 3,
                 ),
                 GraphicVariant(
-                    image = R.drawable.thumbnail_3,
+                    image = R.drawable.thumbnail__4_,
                     question = "Приступы боли, сопровождающиеся болевыми ощущениями в промежутках между ними",
                     score = 4,
                 ),
