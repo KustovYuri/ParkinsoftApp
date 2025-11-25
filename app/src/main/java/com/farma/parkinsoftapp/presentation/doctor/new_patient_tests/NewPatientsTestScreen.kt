@@ -98,21 +98,21 @@ fun NewPatientsTestScreen(
                 ControlTestsChips(controlTests, selectedControlItems) {item: AllTestsTypes, isSelected: Boolean ->
                     viewModel.setSelectedControlItem(item, isSelected)
                 }
-                Spacer(Modifier.height(32.dp))
-                Text(
-                    text = "Ежедневные опросники",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = "Для пациента",
-                    fontSize = 17.sp,
-                )
-                Spacer(Modifier.height(24.dp))
-                DailyTestsChips(dailyTests, selectedDailyItems) {item: AllTestsTypes, isSelected: Boolean ->
-                    viewModel.setSelectedDailyItem(item, isSelected)
-                }
+//                Spacer(Modifier.height(32.dp))
+//                Text(
+//                    text = "Ежедневные опросники",
+//                    fontSize = 24.sp,
+//                    fontWeight = FontWeight.Bold
+//                )
+//                Spacer(Modifier.height(8.dp))
+//                Text(
+//                    text = "Для пациента",
+//                    fontSize = 17.sp,
+//                )
+//                Spacer(Modifier.height(24.dp))
+//                DailyTestsChips(dailyTests, selectedDailyItems) {item: AllTestsTypes, isSelected: Boolean ->
+//                    viewModel.setSelectedDailyItem(item, isSelected)
+//                }
                 Spacer(Modifier.weight(1f))
                 NextButton(
                     isActive = viewModel.createButtonIsActive.value,

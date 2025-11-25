@@ -153,16 +153,7 @@ private fun Screen(
         Spacer(Modifier.height(12.dp))
         when (selectedTab.value) {
             TestsTabs.DAILY -> {
-                TestChips(
-                    tests = listOf(
-                        AllTestsTypes.TEST_STIMULATION_DIARY,
-                    ),
-                    selectedTestChip = selectedTestChip.value,
-                    onChipSelected = { selectedChip: AllTestsTypes ->
-                        selectedTestChip.value = selectedChip
-                    }
-                )
-                Spacer(Modifier.height(28.dp))
+                selectedTestChip.value = AllTestsTypes.TEST_STIMULATION_DIARY
                 patientInfo.testsPreview
                     .filter {
                         it.testType == selectedTestChip.value.testType
