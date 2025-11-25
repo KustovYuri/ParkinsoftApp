@@ -16,7 +16,7 @@ interface KtorApiService {
 
     suspend fun getShortPatientById(userId: Long): ShortPatient
 
-    suspend fun getShortPatientById(testPreviewId: Long, testType: String): List<TestModel>
+    suspend fun getAllTestByTestPreviewId(testPreviewId: Long, testType: String): List<TestModel>
 
     suspend fun getResultTest(testPreviewId: Long, testType: String): List<TestResultModel>
 

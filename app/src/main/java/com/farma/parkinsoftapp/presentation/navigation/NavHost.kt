@@ -101,7 +101,6 @@ fun AppNavHost(
             val testType = backStackEntry.toRoute<PatientTestRoute>().testType
 
             when (testType) {
-                TestType.STATE_OF_HEALTH_DIARY,
                 TestType.HADS1, TestType.HADS2, TestType.OSVESTRY, TestType.LANSS -> {
                     PatientTestScreen(
                         closeTest = {

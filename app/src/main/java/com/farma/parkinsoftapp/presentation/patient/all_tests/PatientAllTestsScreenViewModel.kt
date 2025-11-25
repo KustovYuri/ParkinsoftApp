@@ -89,7 +89,6 @@ class PatientAllTestsScreenViewModel @Inject constructor(
     private fun TestPreview.getTestName(): String {
         return when (this.testType) {
             "test_stimulation_diary" -> "Дневник тестовой стимуляции"
-            "state_of_health_diary" -> "Дневник общего самочувствия"
             "hads1" -> "HADS 1"
             "hads2" -> "HADS 2"
             "osvestry" -> "Освестри"

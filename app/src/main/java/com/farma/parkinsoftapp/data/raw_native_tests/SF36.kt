@@ -145,7 +145,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.YesNo(
             testId = 13,
-            question = "4. Бывало ли за последние 4 недели так, что Ваше физическое состояние вызывало затруднения в Вашей работе или другой обычной повседневной деятельности, вследствие чего:",
+            question = "4. Бывало ли за последние 2 недели так, что Ваше физическое состояние вызывало затруднения в Вашей работе или другой обычной повседневной деятельности, вследствие чего:",
             answers = listOf(
                 YesNoAnswer(
                     questionId = 1,
@@ -176,7 +176,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.YesNo(
             testId = 14,
-            question = "5. Бывало ли за последние 4 недели, что Ваше эмоциональное состояние вызывало затруднения в Вашей работе или другой обычной повседневной деятельности, вследствие чего:",
+            question = "5. Бывало ли за последние 2 недели, что Ваше эмоциональное состояние вызывало затруднения в Вашей работе или другой обычной повседневной деятельности, вследствие чего:",
             answers = listOf(
                 YesNoAnswer(
                     questionId = 1,
@@ -213,7 +213,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 16,
-            question = "7. Насколько сильную физическую боль Вы испытывали за последние 4 недели?",
+            question = "7. Насколько сильную физическую боль Вы испытывали за последние 2 недели?",
             answers = listOf(
                 "Совсем не испытывал(а)" to 1,
                 "Очень слабую" to 2,
@@ -241,7 +241,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 18,
-            question = "Вы чувствовали себя бодрым (ой)?",
+            question = "Вы чувствовали себя бодрым(ой)?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -267,7 +267,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 20,
-            question = "Вы чувствовали себя таким(ой) подавленным (ой), что ничто не могло Вас взбодрить?",
+            question = "Вы чувствовали себя таким(ой) подавленным(ой), что ничто не могло Вас взбодрить?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -280,7 +280,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 21,
-            question = "Вы чувствовали себя спокойным (ой) и умиротворенным (ой)?",
+            question = "Вы чувствовали себя спокойным(ой) и умиротворенным(ой)?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -293,7 +293,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 22,
-            question = "Вы чувствовали себя полным (ой) сил и энергии?",
+            question = "Вы чувствовали себя полным(ой) сил и энергии?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -306,7 +306,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 23,
-            question = "Вы чувствовали себя упавшим(ой) духом и печальным (ой)?",
+            question = "Вы чувствовали себя упавшим(ой) духом и печальным(ой)?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -319,7 +319,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 24,
-            question = "Вы чувствовали себя измученным (ой)?",
+            question = "Вы чувствовали себя измученным(ой)?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -332,7 +332,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 25,
-            question = "Вы чувствовали себя счастливым (ой)?",
+            question = "Вы чувствовали себя счастливым(ой)?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -345,7 +345,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 26,
-            question = "Вы чувствовали себя уставшим (ей)?",
+            question = "Вы чувствовали себя уставшим(ей)?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,
@@ -358,7 +358,7 @@ fun getSF36TestData(): List<TestQuestion> {
         ),
         TestQuestion.SingleAnswer(
             testId = 27,
-            question = "10. Как часто за последние 4 недели Ваше физическое или эмоциональное состояние мешало Вам активно общаться с людьми (навещать друзей, родственников и т. п.)?",
+            question = "10. Как часто за последние 2 недели Ваше физическое или эмоциональное состояние мешало Вам активно общаться с людьми (навещать друзей, родственников и т. п.)?",
             answers = listOf(
                 "Все время" to 1,
                 "Большую часть времени" to 2,

@@ -1,8 +1,9 @@
 package com.farma.parkinsoftapp.data.repositories
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.farma.parkinsoftapp.data.local.data_store.SessionDataStore
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
-import com.farma.parkinsoftapp.data.mappers.convertToPainDetectedRequest
 import com.farma.parkinsoftapp.data.network.httpExceptionHandler
 import com.farma.parkinsoftapp.data.network.retrofit.ApiService
 import com.farma.parkinsoftapp.data.network.ktor.KtorService
@@ -16,6 +17,7 @@ import com.farma.parkinsoftapp.domain.models.Result
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.repositories.MainRepository
+import com.farma.parkinsoftapp.domain.utils.convertToString
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.models.PainDetectedTestQuestions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor(
@@ -36,7 +39,7 @@ class MainRepositoryImpl @Inject constructor(
     flow {
         emit(Result.Loading())
         val result = httpExceptionHandler {
-            ktorService.getShortPatientById(testId, testType.value)
+            ktorService.getAllTestByTestPreviewId(testId, testType.value)
         }
         emit(result)
     }

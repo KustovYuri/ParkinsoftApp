@@ -4,12 +4,10 @@ import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.LoginModel
 import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
-import com.farma.parkinsoftapp.data.network.models.PainDetectedRequest
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.data.network.models.TestAnswer
 import com.farma.parkinsoftapp.data.network.models.TestModel
 import com.farma.parkinsoftapp.data.network.models.TestResultModel
-import com.farma.parkinsoftapp.data.repositories.MainRepositoryImpl
 import com.farma.parkinsoftapp.domain.models.patient.Patient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -30,13 +28,13 @@ class KtorService(
         ).body<DoctorWithPatientsModel>()
     }
 
-    override suspend fun getShortPatientById(userId: Long): ShortPatient {
+    override suspend fun getShortPatientById(userId: Long, currentDate: String): ShortPatient {
         return client.get(
-            urlString = "$BASE_URL/patient/short/$userId"
+            urlString = "$BASE_URL/patient/short/$userId/$currentDate"
         ).body<ShortPatient>()
     }
 
-    override suspend fun getShortPatientById(
+    override suspend fun getAllTestByTestPreviewId(
         testPreviewId: Long,
         testType: String
     ): List<TestModel> {

@@ -156,7 +156,6 @@ private fun Screen(
                 TestChips(
                     tests = listOf(
                         AllTestsTypes.TEST_STIMULATION_DIARY,
-                        AllTestsTypes.STATE_OF_HEALTH_DIARY
                     ),
                     selectedTestChip = selectedTestChip.value,
                     onChipSelected = { selectedChip: AllTestsTypes ->
@@ -212,7 +211,6 @@ private fun Screen(
 private fun isNativeTest(testType: TestType): Boolean {
     return when(testType) {
         TestType.TEST_STIMULATION_DIARY -> true
-        TestType.STATE_OF_HEALTH_DIARY -> false
         TestType.HADS1 -> false
         TestType.HADS2 -> false
         TestType.OSVESTRY -> false
