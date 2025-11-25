@@ -28,9 +28,9 @@ class KtorService(
         ).body<DoctorWithPatientsModel>()
     }
 
-    override suspend fun getShortPatientById(userId: Long, currentDate: String): ShortPatient {
+    override suspend fun getShortPatientById(userId: Long): ShortPatient {
         return client.get(
-            urlString = "$BASE_URL/patient/short/$userId/$currentDate"
+            urlString = "$BASE_URL/patient/short/$userId"
         ).body<ShortPatient>()
     }
 
