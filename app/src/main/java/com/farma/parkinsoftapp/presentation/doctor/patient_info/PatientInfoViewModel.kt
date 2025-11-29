@@ -15,7 +15,9 @@ import com.farma.parkinsoftapp.presentation.navigation.PatientInfoRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +29,9 @@ class PatientInfoViewModel @Inject constructor(
     private val route: PatientInfoRoute = savedStateHandle.toRoute()
     val patientId = route.patientId
 
+    private var _dischargeDateTime: MutableStateFlow<LocalDateTime?> = MutableStateFlow(null)
+    val dischargeDateTime = _dischargeDateTime.asStateFlow()
+
     private val _patientState: MutableStateFlow<ScreenState<LargePatientModel>> =
         MutableStateFlow(ScreenState.Loading())
     val patientState: StateFlow<ScreenState<LargePatientModel>> = _patientState
@@ -37,6 +42,10 @@ class PatientInfoViewModel @Inject constructor(
                 _patientState.value = result.convertToScreenState()
             }
         }
+    }
+
+    fun changeDischargeDateTime(dateTime: LocalDateTime) {
+        _dischargeDateTime.value = dateTime
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.doctor.patient_info
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -20,14 +21,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -35,11 +45,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,6 +64,13 @@ import com.farma.parkinsoftapp.data.network.models.TestPreviewModel
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.models.patient.AllTestsTypes
 import com.farma.parkinsoftapp.presentation.common.ScreenState
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 private enum class TestsTabs {
     DAILY, CONTROL
@@ -66,13 +86,20 @@ fun PatientInfoScreen(
     val selectedTab = remember { mutableStateOf(TestsTabs.DAILY) }
     val selectedTestChip = remember { mutableStateOf(AllTestsTypes.TEST_STIMULATION_DIARY) }
     val patientState by viewModel.patientState.collectAsState()
+    val context = LocalContext.current
+    val dischargeDateTime by viewModel.dischargeDateTime.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getPatientInfo()
     }
 
     Scaffold(
-        topBar = { TopScreenBar { backNavigation() } }
+        topBar = {
+            TopScreenBar(
+                context,
+                { viewModel.changeDischargeDateTime(it) }
+            ) { backNavigation() }
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -98,6 +125,7 @@ fun PatientInfoScreen(
                         selectedTab,
                         selectedTestChip,
                         navigateToTestInfo,
+                        dischargeDateTime,
                         calculateAge = { date: String ->
                             viewModel.calculateAge(date)
                         }
@@ -108,6 +136,7 @@ fun PatientInfoScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Screen(
     patientInfo: LargePatientModel,
@@ -115,6 +144,7 @@ private fun Screen(
     selectedTab: MutableState<TestsTabs>,
     selectedTestChip: MutableState<AllTestsTypes>,
     navigateToTestInfo: (String, String, TestType, Long, Boolean) -> Unit,
+    dischargeDateTime: LocalDateTime?,
     calculateAge: (String) -> Int
 ) {
     Column(
@@ -129,7 +159,9 @@ private fun Screen(
         Spacer(Modifier.height(24.dp))
         TherapyDate()
         Spacer(Modifier.height(12.dp))
-        TherapyResult()
+        if (dischargeDateTime != null) {
+            Discharge(dischargeDateTime)
+        }
         Spacer(Modifier.height(28.dp))
         Text(
             modifier = Modifier.padding(horizontal = 20.dp),
@@ -200,7 +232,7 @@ private fun Screen(
 }
 
 private fun isNativeTest(testType: TestType): Boolean {
-    return when(testType) {
+    return when (testType) {
         TestType.TEST_STIMULATION_DIARY -> true
         TestType.HADS1 -> false
         TestType.HADS2 -> false
@@ -396,24 +428,74 @@ private fun TabButton(text: String, selected: Boolean, onClick: () -> Unit, modi
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun TherapyResult() {
+private fun Discharge(dischargeDateTime: LocalDateTime) {
+    var expanded by remember { mutableStateOf(false) }
+
     Row(
-        modifier = Modifier.padding(horizontal = 20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .padding(horizontal = 20.dp)
+            .background(
+                color = Color(0xFFEDF1F2),
+                shape = RoundedCornerShape(8.dp)
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Spacer(modifier = Modifier.width(12.dp))
         Icon(
-            painter = painterResource(R.drawable.icon__4_),
+            painter = painterResource(R.drawable.calendar),
             contentDescription = null,
-            tint = Color(0xFF459C62)
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = "Идет на поправку",
-            color = Color(0xFF459C62),
-            fontSize = 15.sp
+            text = "Выписка назначена\nна ${dischargeDateTime.formatRu()}",
+            fontSize = 15.sp,
+            style = TextStyle(
+                lineHeight = 16.sp
+            )
         )
+        Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.TopEnd // важное место!
+        ) {
+
+            IconButton(onClick = { expanded = true }) {
+                Icon(
+                    painter = painterResource(R.drawable.ellipsis_vertical),
+                    contentDescription = "Дополнительно",
+                    tint = Color(0xFF002A33)
+                )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .width(160.dp)
+                    .background(Color.White)
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Изменить") },
+                    onClick = {}
+                )
+                DropdownMenuItem(
+                    text = { Text("Отменить выписку") },
+                    onClick = {}
+                )
+            }
+        }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun LocalDateTime.formatRu(): String {
+    val formatter = DateTimeFormatter.ofPattern("EEE d MMMM HH:mm", Locale("ru"))
+    return this.format(formatter)
+        .replaceFirstChar { it.uppercase() } // Делаем "Пн" вместо "пн"
 }
 
 @Composable
@@ -499,9 +581,21 @@ private fun PatientItem(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopScreenBar(onClose: () -> Unit) {
+private fun TopScreenBar(
+    context: Context,
+    changeDischargeDateTime: (LocalDateTime) -> Unit,
+    onClose: () -> Unit
+) {
+    val expanded = remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = onClose) {
@@ -513,11 +607,93 @@ private fun TopScreenBar(onClose: () -> Unit) {
             }
         },
         actions = {
-            IconButton(onClick = { /* TODO сортировка */ }) {
+            IconButton(onClick = { expanded.value = !expanded.value }) {
                 Icon(
                     painter = painterResource(R.drawable.ellipsis_vertical),
                     contentDescription = "Дополнительно",
                     tint = Color(0xFF002A33)
+                )
+            }
+            DropdownMenu(
+                modifier = Modifier
+                    .width(160.dp)
+                    .background(Color.White),
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false }
+            ) {
+                DropdownMenuItem(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = {
+                        Text(
+                            text = "Назначить выписку",
+                        )
+                    },
+                    onClick = {
+                        showDatePicker = true
+                    },
+                )
+            }
+
+            if (showDatePicker) {
+                val datePickerState = rememberDatePickerState()
+
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            val millis = datePickerState.selectedDateMillis
+                            if (millis != null) {
+                                selectedDate = Instant.ofEpochMilli(millis)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+
+                                showDatePicker = false
+                                showTimePicker =
+                                    true      // ➜ после выбора даты запускаем TimePicker
+                            }
+                        }) { Text("Далее") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker = false }) { Text("Отмена") }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+
+            // ---------- TIME PICKER ----------
+            if (showTimePicker) {
+                val timePickerState = rememberTimePickerState()
+
+                AlertDialog(
+                    onDismissRequest = { showTimePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            selectedTime = LocalTime.of(
+                                timePickerState.hour,
+                                timePickerState.minute
+                            )
+
+                            showTimePicker = false
+
+                            // Когда выбраны и дата, и время -> возвращаем итог
+                            if (selectedDate != null && selectedTime != null) {
+                                changeDischargeDateTime(LocalDateTime.of(selectedDate, selectedTime))
+                            }
+
+                        }) {
+                            Text("OK")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showTimePicker = false }) {
+                            Text("Отмена")
+                        }
+                    },
+                    text = {
+                        TimePicker(state = timePickerState)
+                    }
                 )
             }
         },
