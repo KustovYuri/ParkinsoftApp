@@ -52,4 +52,12 @@ class PatientInfoViewModel @Inject constructor(
     fun calculateAge(date: String): Int {
         return calculateAgeUseCase(date)
     }
+
+    fun createFinalTests(){
+
+    }
+
+    fun dischargePatient(){
+
+    }
 }

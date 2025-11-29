@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -70,6 +71,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 private enum class TestsTabs {
@@ -120,6 +122,7 @@ fun PatientInfoScreen(
 
                 is ScreenState.Success -> {
                     Screen(
+                        viewModel,
                         (patientState as ScreenState.Success<LargePatientModel>).data,
                         paddingValues,
                         selectedTab,
@@ -140,6 +143,7 @@ fun PatientInfoScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Screen(
+    viewModel: PatientInfoViewModel,
     patientInfo: LargePatientModel,
     paddingValues: PaddingValues,
     selectedTab: MutableState<TestsTabs>,
@@ -149,87 +153,161 @@ private fun Screen(
     calculateAge: (String) -> Int,
     changeDischargeDateTime: (LocalDateTime?) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFFFFFFF))
-            .padding(paddingValues)
-            .verticalScroll(rememberScrollState())
+    Box(
+        contentAlignment = Alignment.BottomCenter,
     ) {
-        Spacer(Modifier.height(34.dp))
-        PatientItem(patientInfo, calculateAge)
-        Spacer(Modifier.height(24.dp))
-        TherapyDate()
-        Spacer(Modifier.height(12.dp))
-        if (dischargeDateTime != null) {
-            Discharge(dischargeDateTime, changeDischargeDateTime)
-        }
-        Spacer(Modifier.height(28.dp))
-        Text(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            text = "Опросы",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(Modifier.height(12.dp))
-        Tabs(
-            selectedTab = selectedTab.value,
-            clickTab = { tab: TestsTabs ->
-                selectedTestChip.value =
-                    if (tab == TestsTabs.DAILY) {
-                        AllTestsTypes.TEST_STIMULATION_DIARY
-                    } else {
-                        AllTestsTypes.HADS1
-                    }
-                selectedTab.value = tab
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFFFFFFF))
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Spacer(Modifier.height(34.dp))
+            PatientItem(patientInfo, calculateAge)
+            Spacer(Modifier.height(24.dp))
+            if (patientInfo.patientIsDischarge) {
+                TherapyDate()
             }
-        )
-        Spacer(Modifier.height(12.dp))
-        when (selectedTab.value) {
-            TestsTabs.DAILY -> {
-                selectedTestChip.value = AllTestsTypes.TEST_STIMULATION_DIARY
-                patientInfo.testsPreview
-                    .filter {
-                        it.testType == selectedTestChip.value.testType
-                    }.forEach {
-                        TestItem(
-                            secondNameWithInitials = patientInfo.secondNameWithInitials,
-                            testPreviewInfo = it,
-                            click = navigateToTestInfo
-                        )
-                    }
+            Spacer(Modifier.height(12.dp))
+            if (dischargeDateTime != null) {
+                if (!patientInfo.patientIsDischarge) {
+                    Discharge(dischargeDateTime, changeDischargeDateTime)
+                } else {
+                    DischargeTrue(patientInfo, dischargeDateTime)
+                }
             }
+            Spacer(Modifier.height(28.dp))
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                text = "Опросы",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(12.dp))
+            Tabs(
+                selectedTab = selectedTab.value,
+                clickTab = { tab: TestsTabs ->
+                    selectedTestChip.value =
+                        if (tab == TestsTabs.DAILY) {
+                            AllTestsTypes.TEST_STIMULATION_DIARY
+                        } else {
+                            AllTestsTypes.HADS1
+                        }
+                    selectedTab.value = tab
+                }
+            )
+            Spacer(Modifier.height(12.dp))
+            when (selectedTab.value) {
+                TestsTabs.DAILY -> {
+                    selectedTestChip.value = AllTestsTypes.TEST_STIMULATION_DIARY
+                    patientInfo.testsPreview
+                        .filter {
+                            it.testType == selectedTestChip.value.testType
+                        }.forEach {
+                            TestItem(
+                                secondNameWithInitials = patientInfo.secondNameWithInitials,
+                                testPreviewInfo = it,
+                                click = navigateToTestInfo
+                            )
+                        }
+                }
 
-            TestsTabs.CONTROL -> {
-                TestChips(
-                    tests = listOf(
-                        AllTestsTypes.HADS1,
-                        AllTestsTypes.HADS2,
-                        AllTestsTypes.DN4,
-                        AllTestsTypes.OSVESTRY,
-                        AllTestsTypes.SF36,
-                        AllTestsTypes.LANSS,
-                        AllTestsTypes.PAIN_DETECTED
-                    ),
-                    selectedTestChip = selectedTestChip.value,
-                    onChipSelected = { selectedChip ->
-                        selectedTestChip.value = selectedChip
-                    }
-                )
-                Spacer(Modifier.height(28.dp))
-                patientInfo.testsPreview
-                    .filter {
-                        it.testType == selectedTestChip.value.testType
-                    }.forEach {
-                        TestItem(
-                            secondNameWithInitials = patientInfo.secondNameWithInitials,
-                            testPreviewInfo = it,
-                            click = navigateToTestInfo,
-                        )
-                    }
+                TestsTabs.CONTROL -> {
+                    TestChips(
+                        tests = listOf(
+                            AllTestsTypes.HADS1,
+                            AllTestsTypes.HADS2,
+                            AllTestsTypes.DN4,
+                            AllTestsTypes.OSVESTRY,
+                            AllTestsTypes.SF36,
+                            AllTestsTypes.LANSS,
+                            AllTestsTypes.PAIN_DETECTED
+                        ),
+                        selectedTestChip = selectedTestChip.value,
+                        onChipSelected = { selectedChip ->
+                            selectedTestChip.value = selectedChip
+                        }
+                    )
+                    Spacer(Modifier.height(28.dp))
+                    patientInfo.testsPreview
+                        .filter {
+                            it.testType == selectedTestChip.value.testType
+                        }.forEach {
+                            TestItem(
+                                secondNameWithInitials = patientInfo.secondNameWithInitials,
+                                testPreviewInfo = it,
+                                click = navigateToTestInfo,
+                            )
+                        }
+                }
+            }
+            Spacer(Modifier.height(16.dp))
+        }
+
+        if ( dischargeDateTime != null) {
+            val targetDateTime: LocalDateTime = dischargeDateTime
+            val targetDate = targetDateTime.toLocalDate()
+
+            val today = LocalDate.now()
+
+            val daysLeft = ChronoUnit.DAYS.between(today, targetDate)
+
+            if (!patientInfo.patientIsDischarge) {
+                if (patientInfo.finalTestIsFinish) {
+                    NextButton(
+                        text = "Выписать пациента",
+                        isActive = true,
+                        isLoading = false,
+                        click = {viewModel.createFinalTests()}
+                    )
+                }
+                else if (daysLeft <= 1L) {
+                    NextButton(
+                        text = "Провести осмотр",
+                        isActive = true,
+                        isLoading = false,
+                        click = {viewModel.dischargePatient()}
+                    )
+                }
             }
         }
-        Spacer(Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun NextButton(
+    isActive: Boolean,
+    isLoading: Boolean,
+    click: () -> Unit,
+    text: String,
+) {
+    TextButton(
+        enabled = isActive,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 20.dp)
+            .height(56.dp),
+        onClick = click,
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF178399),
+            contentColor = Color(0xFFFFFFFF),
+            disabledContainerColor = Color(0xFFE1F2F5),
+            disabledContentColor = Color(0xFFB2BFC2)
+        )
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color(0xFFFFFFFF)
+            )
+        } else {
+            Text(
+                text = text,
+                fontSize = 17.sp,
+                fontWeight = FontWeight(400),
+            )
+        }
     }
 }
 
@@ -492,6 +570,39 @@ private fun Discharge(dischargeDateTime: LocalDateTime, changeDischargeDateTime:
             }
             ShowDateTimePicker(showDatePicker, {showDatePicker = !showDatePicker}) { changeDischargeDateTime(it)}
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun DischargeTrue(patient: LargePatientModel, dischargeDateTime: LocalDateTime) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .padding(horizontal = 20.dp)
+            .background(
+                color = Color(0xFFEDF1F2),
+                shape = RoundedCornerShape(8.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(modifier = Modifier.width(12.dp))
+        Icon(
+            painter = painterResource(R.drawable.calendar),
+            contentDescription = null,
+            tint = Color(0xFF62767A)
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = "Был(а) на лечении\nдо ${dischargeDateTime.formatRu()} ",
+            fontSize = 15.sp,
+            style = TextStyle(
+                lineHeight = 16.sp
+            ),
+            color = Color(0xFF62767A)
+        )
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

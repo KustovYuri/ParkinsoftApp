@@ -16,7 +16,9 @@ data class LargePatientModel(
     val dateReceipt: String,
     val stateHealth: String,
     val onTreatments: Boolean,
-    val testsPreview: List<TestPreviewModel>
+    val testsPreview: List<TestPreviewModel>,
+    val finalTestIsFinish: Boolean = false,
+    val patientIsDischarge: Boolean = false
 ){
     val secondNameWithInitials: String
         get() = "$secondName ${name.first()}. ${middleName.first()}."
