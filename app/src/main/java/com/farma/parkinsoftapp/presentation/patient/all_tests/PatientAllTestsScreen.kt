@@ -96,7 +96,7 @@ fun PatientAllTestsScreen(
                 Text(
                     text = state.error ?: "Неизвестная ошибка"
                 )
-            } else if (true) {
+            } else if (false) {
                 Image(
                     painter = painterResource(R.drawable.final_health),
                     contentDescription = null
