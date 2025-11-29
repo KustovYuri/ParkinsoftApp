@@ -128,7 +128,8 @@ fun PatientInfoScreen(
                         dischargeDateTime,
                         calculateAge = { date: String ->
                             viewModel.calculateAge(date)
-                        }
+                        },
+                        {viewModel.changeDischargeDateTime(it)}
                     )
                 }
             }
@@ -145,7 +146,8 @@ private fun Screen(
     selectedTestChip: MutableState<AllTestsTypes>,
     navigateToTestInfo: (String, String, TestType, Long, Boolean) -> Unit,
     dischargeDateTime: LocalDateTime?,
-    calculateAge: (String) -> Int
+    calculateAge: (String) -> Int,
+    changeDischargeDateTime: (LocalDateTime?) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -160,7 +162,7 @@ private fun Screen(
         TherapyDate()
         Spacer(Modifier.height(12.dp))
         if (dischargeDateTime != null) {
-            Discharge(dischargeDateTime)
+            Discharge(dischargeDateTime, changeDischargeDateTime)
         }
         Spacer(Modifier.height(28.dp))
         Text(
@@ -430,8 +432,9 @@ private fun TabButton(text: String, selected: Boolean, onClick: () -> Unit, modi
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun Discharge(dischargeDateTime: LocalDateTime) {
+private fun Discharge(dischargeDateTime: LocalDateTime, changeDischargeDateTime: (LocalDateTime?) -> Unit,) {
     var expanded by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -480,13 +483,14 @@ private fun Discharge(dischargeDateTime: LocalDateTime) {
             ) {
                 DropdownMenuItem(
                     text = { Text("Изменить") },
-                    onClick = {}
+                    onClick = {showDatePicker = true}
                 )
                 DropdownMenuItem(
                     text = { Text("Отменить выписку") },
-                    onClick = {}
+                    onClick = { changeDischargeDateTime(null) }
                 )
             }
+            ShowDateTimePicker(showDatePicker, {showDatePicker = !showDatePicker}) { changeDischargeDateTime(it)}
         }
     }
 }
@@ -591,10 +595,6 @@ private fun TopScreenBar(
 ) {
     val expanded = remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
-
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
 
     TopAppBar(
         navigationIcon = {
@@ -634,72 +634,88 @@ private fun TopScreenBar(
                     },
                 )
             }
+            ShowDateTimePicker(showDatePicker, {showDatePicker = !showDatePicker}) { changeDischargeDateTime(it)}
 
-            if (showDatePicker) {
-                val datePickerState = rememberDatePickerState()
-
-                DatePickerDialog(
-                    onDismissRequest = { showDatePicker = false },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            val millis = datePickerState.selectedDateMillis
-                            if (millis != null) {
-                                selectedDate = Instant.ofEpochMilli(millis)
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
-
-                                showDatePicker = false
-                                showTimePicker =
-                                    true      // ➜ после выбора даты запускаем TimePicker
-                            }
-                        }) { Text("Далее") }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDatePicker = false }) { Text("Отмена") }
-                    }
-                ) {
-                    DatePicker(state = datePickerState)
-                }
-            }
-
-            // ---------- TIME PICKER ----------
-            if (showTimePicker) {
-                val timePickerState = rememberTimePickerState()
-
-                AlertDialog(
-                    onDismissRequest = { showTimePicker = false },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            selectedTime = LocalTime.of(
-                                timePickerState.hour,
-                                timePickerState.minute
-                            )
-
-                            showTimePicker = false
-
-                            // Когда выбраны и дата, и время -> возвращаем итог
-                            if (selectedDate != null && selectedTime != null) {
-                                changeDischargeDateTime(LocalDateTime.of(selectedDate, selectedTime))
-                            }
-
-                        }) {
-                            Text("OK")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showTimePicker = false }) {
-                            Text("Отмена")
-                        }
-                    },
-                    text = {
-                        TimePicker(state = timePickerState)
-                    }
-                )
-            }
         },
         title = {},
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color(0xFFFFFFFF)
         )
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun ShowDateTimePicker(
+    showDatePicker: Boolean,
+    changeShowDatePicker: () -> Unit,
+    changeDischargeDateTime: (LocalDateTime) -> Unit,
+) {
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState()
+
+        DatePickerDialog(
+            onDismissRequest = { changeShowDatePicker() },
+            confirmButton = {
+                TextButton(onClick = {
+                    val millis = datePickerState.selectedDateMillis
+                    if (millis != null) {
+                        selectedDate = Instant.ofEpochMilli(millis)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate()
+
+                        changeShowDatePicker()
+                        showTimePicker =
+                            true      // ➜ после выбора даты запускаем TimePicker
+                    }
+                }) { Text("Далее") }
+            },
+            dismissButton = {
+                TextButton(onClick = { changeShowDatePicker() }) { Text("Отмена") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
+    // ---------- TIME PICKER ----------
+    if (showTimePicker) {
+        val timePickerState = rememberTimePickerState()
+
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    selectedTime = LocalTime.of(
+                        timePickerState.hour,
+                        timePickerState.minute
+                    )
+
+                    showTimePicker = false
+
+                    // Когда выбраны и дата, и время -> возвращаем итог
+                    if (selectedDate != null && selectedTime != null) {
+                        changeDischargeDateTime(LocalDateTime.of(selectedDate, selectedTime))
+                    }
+
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) {
+                    Text("Отмена")
+                }
+            },
+            text = {
+                TimePicker(state = timePickerState)
+            }
+        )
+    }
 }

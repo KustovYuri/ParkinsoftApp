@@ -44,7 +44,7 @@ class PatientInfoViewModel @Inject constructor(
         }
     }
 
-    fun changeDischargeDateTime(dateTime: LocalDateTime) {
+    fun changeDischargeDateTime(dateTime: LocalDateTime?) {
         _dischargeDateTime.value = dateTime
     }
 
