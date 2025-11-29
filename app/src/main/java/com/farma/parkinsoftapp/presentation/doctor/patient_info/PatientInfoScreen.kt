@@ -607,7 +607,7 @@ private fun DischargeTrue(patient: LargePatientModel, dischargeDateTime: LocalDa
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun LocalDateTime.formatRu(): String {
+fun LocalDateTime.formatRu(): String {
     val formatter = DateTimeFormatter.ofPattern("EEE d MMMM HH:mm", Locale("ru"))
     return this.format(formatter)
         .replaceFirstChar { it.uppercase() } // Делаем "Пн" вместо "пн"

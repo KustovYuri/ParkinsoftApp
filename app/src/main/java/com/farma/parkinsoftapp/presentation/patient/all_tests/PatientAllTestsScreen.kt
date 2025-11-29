@@ -2,9 +2,11 @@ package com.farma.parkinsoftapp.presentation.patient.all_tests
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,7 +19,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,8 +53,10 @@ import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.presentation.composable.ProfileButton
+import com.farma.parkinsoftapp.presentation.doctor.patient_info.formatRu
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,10 +96,47 @@ fun PatientAllTestsScreen(
                 Text(
                     text = state.error ?: "Неизвестная ошибка"
                 )
-            } else {
+            } else if (true) {
+                Image(
+                    painter = painterResource(R.drawable.final_health),
+                    contentDescription = null
+                )
+            }
+            else {
                 TestPreviewList(state, navigateToTest, previousDaysIsOver, viewModel)
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun Discharge(dischargeDateTime: LocalDateTime) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .padding(horizontal = 20.dp)
+            .background(
+                color = Color(0xFFEDF1F2),
+                shape = RoundedCornerShape(8.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(modifier = Modifier.width(12.dp))
+        Icon(
+            painter = painterResource(R.drawable.calendar),
+            contentDescription = null,
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = "Выписка назначена\nна ${dischargeDateTime.formatRu()}",
+            fontSize = 15.sp,
+            style = TextStyle(
+                lineHeight = 16.sp
+            )
+        )
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
@@ -104,6 +149,8 @@ private fun TestPreviewList(
     viewModel: PatientAllTestsScreenViewModel
 ) {
     var previousDaysIsOver1 = previousDaysIsOver
+    Spacer(modifier = Modifier.height(20.dp))
+    Discharge(LocalDateTime.now())
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
