@@ -44,7 +44,7 @@ fun PatientTestScreen(
                 previousQuestion = { viewModel.previousQuestion() },
                 nextQuestion = { viewModel.nextQuestion() },
                 enabled = if (state.data.isNotEmpty()) {
-                    selectedAnswers[state.data[currentQuestionIndex]] != null
+                    selectedAnswers[state.data[currentQuestionIndex]] != null || state.data[currentQuestionIndex].answers.isEmpty()
                 } else {
                     false
                 },

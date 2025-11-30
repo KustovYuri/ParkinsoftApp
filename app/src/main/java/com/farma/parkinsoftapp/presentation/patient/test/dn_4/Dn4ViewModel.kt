@@ -46,7 +46,7 @@ class Dn4ViewModel @Inject constructor(
         if (question is TestQuestion.YesNo) {
             question.answers.all { it.answer != null }
         } else {
-            false
+            true
         }
     }
 

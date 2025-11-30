@@ -55,6 +55,7 @@ fun getDN4TestData(): List<TestQuestion> {
             ),
             maxScore = 3
         ),
+        TestQuestion.PreQuestion("Следующая часть теста предназначена для врача, передайте пожалуйста ему телефон."),
         TestQuestion.YesNo(
             testId = 3,
             question = "Локализована ли боль в той же области, где осмотр выявляет один или оба следующих симптома:",

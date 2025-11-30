@@ -95,7 +95,7 @@ private fun TestScreen(
     currentQuestionIndex: Int,
     viewModel: Dn4ViewModel
 ) {
-    val question = data[currentQuestionIndex] as? TestQuestion.YesNo
+    val question = data[currentQuestionIndex]
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -108,8 +108,23 @@ private fun TestScreen(
             questionsCount = data.size
         )
         Spacer(modifier = Modifier.height(24.dp))
-        question?.let {
-            YesNoVariant(question, viewModel)
+//        question?.let {
+//            YesNoVariant(question, viewModel)
+//        }
+        when(question) {
+            is TestQuestion.YesNo -> {
+                   YesNoVariant(question, viewModel)
+            }
+            is TestQuestion.PreQuestion -> {
+                Text(
+                    text = question.question,
+                    fontSize = 18.sp,
+                    color = Color(0xFF1C1B1F)
+                )
+            }
+            else ->  {
+
+            }
         }
     }
 }
