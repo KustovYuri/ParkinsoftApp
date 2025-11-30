@@ -7,6 +7,7 @@ import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
 import com.farma.parkinsoftapp.data.network.httpExceptionHandler
 import com.farma.parkinsoftapp.data.network.retrofit.ApiService
 import com.farma.parkinsoftapp.data.network.ktor.KtorService
+import com.farma.parkinsoftapp.data.network.models.DischargeModel
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
 import com.farma.parkinsoftapp.data.network.models.ShortPatient
@@ -94,6 +95,30 @@ class MainRepositoryImpl @Inject constructor(
         emit(Result.Loading())
         val result = httpExceptionHandler {
             ktorService.getResultNativeTest(testPreviewId)
+        }
+        emit(result)
+    }
+
+    override suspend fun createFinishTests(patientId: Long): Flow<Result<Unit>> = flow {
+        emit(Result.Loading())
+        val result = httpExceptionHandler {
+            ktorService.createFinishTests(patientId)
+        }
+        emit(result)
+    }
+
+    override suspend fun dischargePatient(patientId: Long): Flow<Result<Unit>> = flow {
+        emit(Result.Loading())
+        val result = httpExceptionHandler {
+            ktorService.dischargePatient(patientId)
+        }
+        emit(result)
+    }
+
+    override suspend fun updateDateDischarge(dischargeModel: DischargeModel): Flow<Result<Unit>> = flow {
+        emit(Result.Loading())
+        val result = httpExceptionHandler {
+            ktorService.updateDateDischarge(dischargeModel)
         }
         emit(result)
     }

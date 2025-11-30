@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShortPatient(
     val id: Long,
+    val dischargeDate: String?,
+    val isDischarge: Boolean,
     val testPreview: List<TestPreview>
 )
 

@@ -14,6 +14,7 @@ import com.farma.parkinsoftapp.domain.repositories.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -36,6 +37,9 @@ class PatientAllTestsScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AllPreviewTestsState())
     val uiState: StateFlow<AllPreviewTestsState> = _uiState
 
+    private val _shortPatient: MutableStateFlow<ShortPatient?> = MutableStateFlow(null)
+    val shortPatient = _shortPatient.asStateFlow()
+
     init {
         viewModelScope.launch {
             mainRepository.getShortPatientData().collect {
@@ -52,6 +56,7 @@ class PatientAllTestsScreenViewModel @Inject constructor(
                         )
                     }
                     is Result.Success -> {
+                        _shortPatient.value = it.result
                         convertDataToState(it.result)
                     }
                 }

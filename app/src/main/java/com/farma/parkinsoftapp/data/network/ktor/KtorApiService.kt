@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.data.network.ktor
 
+import com.farma.parkinsoftapp.data.network.models.DischargeModel
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.LoginModel
@@ -29,4 +30,12 @@ interface KtorApiService {
     suspend fun login(phoneNumber: String): LoginModel
     suspend fun sendNativeTest(body: NativeTestRequest)
     suspend fun getResultNativeTest(testPreviewId: Long): NativeTestRequest
+
+    suspend fun createFinishTests(patientId: Long)
+
+    suspend fun dischargePatient(patientId: Long)
+
+    suspend fun updateDateDischarge(dischargeModel: DischargeModel)
+
+
 }

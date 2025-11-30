@@ -1,6 +1,7 @@
 package com.farma.parkinsoftapp.domain.repositories
 
 import com.farma.parkinsoftapp.data.local.data_store.UserRoleValues
+import com.farma.parkinsoftapp.data.network.models.DischargeModel
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
@@ -39,4 +40,10 @@ interface MainRepository {
     suspend fun getResultTests(testPreviewId: Long, testType: TestType): Flow<Result<List<TestResultModel>>>
     fun sendNativeTest(nativeTestRequest: NativeTestRequest): Flow<Result<Unit>>
     suspend fun getResultNativeTests(testPreviewId: Long): Flow<Result<NativeTestRequest>>
+
+    suspend fun createFinishTests(patientId: Long): Flow<Result<Unit>>
+
+    suspend fun dischargePatient(patientId: Long): Flow<Result<Unit>>
+
+    suspend fun updateDateDischarge(dischargeModel: DischargeModel): Flow<Result<Unit>>
 }

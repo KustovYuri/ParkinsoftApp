@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.data.network.ktor
 
+import com.farma.parkinsoftapp.data.network.models.DischargeModel
 import com.farma.parkinsoftapp.data.network.models.DoctorWithPatientsModel
 import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.LoginModel
@@ -58,6 +59,27 @@ class KtorService(
         return client.get(
             urlString = "$BASE_URL/test/getResultNativeTests/$testPreviewId"
         ).body<NativeTestRequest>()
+    }
+
+    override suspend fun createFinishTests(patientId: Long) {
+        client.post(
+            urlString = "$BASE_URL/doctor/createFinishTests/$patientId"
+        )
+    }
+
+    override suspend fun dischargePatient(patientId: Long) {
+        client.post(
+            urlString = "$BASE_URL/doctor/dischargePatient/$patientId"
+        )
+    }
+
+    override suspend fun updateDateDischarge(dischargeModel: DischargeModel) {
+        client.post(
+            urlString = "$BASE_URL/doctor/updateDateDischarge"
+        ){
+            contentType(ContentType.Application.Json)
+            setBody(dischargeModel)
+        }
     }
 
     override suspend fun saveSingleAnswersTestAnswers(body: List<TestAnswer>) {

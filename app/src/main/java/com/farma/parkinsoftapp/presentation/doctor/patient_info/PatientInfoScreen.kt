@@ -64,6 +64,7 @@ import com.farma.parkinsoftapp.data.network.models.LargePatientModel
 import com.farma.parkinsoftapp.data.network.models.TestPreviewModel
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.models.patient.AllTestsTypes
+import com.farma.parkinsoftapp.domain.utils.convertStringDateToLocalDateTime
 import com.farma.parkinsoftapp.presentation.common.ScreenState
 import java.time.Instant
 import java.time.LocalDate
@@ -89,7 +90,6 @@ fun PatientInfoScreen(
     val selectedTestChip = remember { mutableStateOf(AllTestsTypes.TEST_STIMULATION_DIARY) }
     val patientState by viewModel.patientState.collectAsState()
     val context = LocalContext.current
-    val dischargeDateTime by viewModel.dischargeDateTime.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getPatientInfo()
@@ -128,11 +128,10 @@ fun PatientInfoScreen(
                         selectedTab,
                         selectedTestChip,
                         navigateToTestInfo,
-                        dischargeDateTime,
                         calculateAge = { date: String ->
                             viewModel.calculateAge(date)
                         },
-                        {viewModel.changeDischargeDateTime(it)}
+                        { viewModel.changeDischargeDateTime(it) }
                     )
                 }
             }
@@ -149,7 +148,6 @@ private fun Screen(
     selectedTab: MutableState<TestsTabs>,
     selectedTestChip: MutableState<AllTestsTypes>,
     navigateToTestInfo: (String, String, TestType, Long, Boolean) -> Unit,
-    dischargeDateTime: LocalDateTime?,
     calculateAge: (String) -> Int,
     changeDischargeDateTime: (LocalDateTime?) -> Unit,
 ) {
@@ -166,15 +164,21 @@ private fun Screen(
             Spacer(Modifier.height(34.dp))
             PatientItem(patientInfo, calculateAge)
             Spacer(Modifier.height(24.dp))
-            if (patientInfo.patientIsDischarge) {
-                TherapyDate()
+            if (!patientInfo.isDischarge) {
+                TherapyDate(patientInfo)
             }
             Spacer(Modifier.height(12.dp))
-            if (dischargeDateTime != null) {
-                if (!patientInfo.patientIsDischarge) {
-                    Discharge(dischargeDateTime, changeDischargeDateTime)
+            if (patientInfo.dateDischarge != null) {
+                if (!patientInfo.isDischarge) {
+                    Discharge(
+                        convertStringDateToLocalDateTime(patientInfo.dateDischarge),
+                        changeDischargeDateTime
+                    )
                 } else {
-                    DischargeTrue(patientInfo, dischargeDateTime)
+                    DischargeTrue(
+                        patientInfo,
+                        convertStringDateToLocalDateTime(patientInfo.dateDischarge)
+                    )
                 }
             }
             Spacer(Modifier.height(28.dp))
@@ -245,29 +249,29 @@ private fun Screen(
             Spacer(Modifier.height(16.dp))
         }
 
-        if ( dischargeDateTime != null) {
-            val targetDateTime: LocalDateTime = dischargeDateTime
+        if (patientInfo.dateDischarge != null) {
+            val targetDateTime: LocalDateTime =
+                convertStringDateToLocalDateTime(patientInfo.dateDischarge)
             val targetDate = targetDateTime.toLocalDate()
 
             val today = LocalDate.now()
 
             val daysLeft = ChronoUnit.DAYS.between(today, targetDate)
 
-            if (!patientInfo.patientIsDischarge) {
-                if (patientInfo.finalTestIsFinish) {
+            if (!patientInfo.isDischarge) {
+                if (patientInfo.allControlTestsIsComplete && patientInfo.finalTestsIsSending) {
                     NextButton(
                         text = "Выписать пациента",
                         isActive = true,
                         isLoading = false,
-                        click = {viewModel.createFinalTests()}
+                        click = { viewModel.dischargePatient() }
                     )
-                }
-                else if (daysLeft <= 1L) {
+                } else if (daysLeft <= 1L && !patientInfo.finalTestsIsSending) {
                     NextButton(
                         text = "Провести осмотр",
                         isActive = true,
                         isLoading = false,
-                        click = {viewModel.dischargePatient()}
+                        click = { viewModel.createFinalTests() }
                     )
                 }
             }
@@ -510,7 +514,10 @@ private fun TabButton(text: String, selected: Boolean, onClick: () -> Unit, modi
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun Discharge(dischargeDateTime: LocalDateTime, changeDischargeDateTime: (LocalDateTime?) -> Unit,) {
+private fun Discharge(
+    dischargeDateTime: LocalDateTime,
+    changeDischargeDateTime: (LocalDateTime?) -> Unit,
+) {
     var expanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -561,14 +568,16 @@ private fun Discharge(dischargeDateTime: LocalDateTime, changeDischargeDateTime:
             ) {
                 DropdownMenuItem(
                     text = { Text("Изменить") },
-                    onClick = {showDatePicker = true}
+                    onClick = { showDatePicker = true }
                 )
                 DropdownMenuItem(
                     text = { Text("Отменить выписку") },
                     onClick = { changeDischargeDateTime(null) }
                 )
             }
-            ShowDateTimePicker(showDatePicker, {showDatePicker = !showDatePicker}) { changeDischargeDateTime(it)}
+            ShowDateTimePicker(
+                showDatePicker,
+                { showDatePicker = !showDatePicker }) { changeDischargeDateTime(it) }
         }
     }
 }
@@ -595,7 +604,10 @@ private fun DischargeTrue(patient: LargePatientModel, dischargeDateTime: LocalDa
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = "Был(а) на лечении\nдо ${dischargeDateTime.formatRu()} ",
+            text = "Был(а) на лечении\nc ${patient.dateReceipt} до ${
+                dischargeDateTime.toLocalDate()
+                    .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            } ",
             fontSize = 15.sp,
             style = TextStyle(
                 lineHeight = 16.sp
@@ -614,7 +626,7 @@ fun LocalDateTime.formatRu(): String {
 }
 
 @Composable
-private fun TherapyDate() {
+private fun TherapyDate(patientInfo: LargePatientModel) {
     Row(
         modifier = Modifier.padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -626,7 +638,7 @@ private fun TherapyDate() {
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = "На лечении с 23.12.2023",
+            text = "На лечении с ${patientInfo.dateReceipt}",
             color = Color(0xFF62767A),
             fontSize = 15.sp
         )
@@ -745,7 +757,9 @@ private fun TopScreenBar(
                     },
                 )
             }
-            ShowDateTimePicker(showDatePicker, {showDatePicker = !showDatePicker}) { changeDischargeDateTime(it)}
+            ShowDateTimePicker(
+                showDatePicker,
+                { showDatePicker = !showDatePicker }) { changeDischargeDateTime(it) }
 
         },
         title = {},

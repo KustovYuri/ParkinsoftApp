@@ -6,9 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,8 +46,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
+import com.farma.parkinsoftapp.data.network.models.ShortPatient
 import com.farma.parkinsoftapp.domain.models.patient.PatientTestPreview
 import com.farma.parkinsoftapp.domain.models.patient.TestType
+import com.farma.parkinsoftapp.domain.utils.convertStringDateToLocalDateTime
 import com.farma.parkinsoftapp.presentation.composable.ProfileButton
 import com.farma.parkinsoftapp.presentation.doctor.patient_info.formatRu
 import kotlinx.coroutines.launch
@@ -69,6 +67,7 @@ fun PatientAllTestsScreen(
     val state by viewModel.uiState.collectAsState()
     var previousDaysIsOver by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val shortPatient by viewModel.shortPatient.collectAsState()
 
     Scaffold(
         topBar = {
@@ -92,18 +91,17 @@ fun PatientAllTestsScreen(
                 CircularProgressIndicator(
                     color = Color(0xFF178399)
                 )
-            } else if (state.error != null){
+            } else if (state.error != null) {
                 Text(
                     text = state.error ?: "Неизвестная ошибка"
                 )
-            } else if (false) {
+            } else if (shortPatient?.isDischarge ?: false) {
                 Image(
                     painter = painterResource(R.drawable.final_health),
                     contentDescription = null
                 )
-            }
-            else {
-                TestPreviewList(state, navigateToTest, previousDaysIsOver, viewModel)
+            } else {
+                TestPreviewList(state, navigateToTest, previousDaysIsOver, viewModel, shortPatient)
             }
         }
     }
@@ -111,7 +109,7 @@ fun PatientAllTestsScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun Discharge(dischargeDateTime: LocalDateTime) {
+private fun Discharge(dischargeDateTime: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -130,7 +128,7 @@ private fun Discharge(dischargeDateTime: LocalDateTime) {
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = "Выписка назначена\nна ${dischargeDateTime.formatRu()}",
+            text = "Выписка назначена\nна ${convertStringDateToLocalDateTime(dischargeDateTime).formatRu()}",
             fontSize = 15.sp,
             style = TextStyle(
                 lineHeight = 16.sp
@@ -146,11 +144,14 @@ private fun TestPreviewList(
     state: AllPreviewTestsState,
     navigateToTest: (Long, TestType) -> Unit,
     previousDaysIsOver: Boolean,
-    viewModel: PatientAllTestsScreenViewModel
+    viewModel: PatientAllTestsScreenViewModel,
+    shortPatient: ShortPatient?
 ) {
     var previousDaysIsOver1 = previousDaysIsOver
     Spacer(modifier = Modifier.height(20.dp))
-    Discharge(LocalDateTime.now())
+    if (shortPatient != null && shortPatient.dischargeDate != null) {
+        Discharge(shortPatient.dischargeDate)
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
