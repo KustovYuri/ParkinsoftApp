@@ -34,22 +34,22 @@ fun getPainDetectedTestData(): List<TestQuestion> {
                 GraphicVariant(
                     image = R.drawable.thumbnail__1_,
                     question = "Непрерывная боль, немного меняющаяся по интенсивности",
-                    score = 1,
+                    score = 0,
                 ),
                 GraphicVariant(
                     image = R.drawable.thumbnail__2_,
                     question = "Непрерывная боль с переодическими приступами",
-                    score = 2,
+                    score = -1,
                 ),
                 GraphicVariant(
                     image = R.drawable.thumbnail__3_,
                     question = "Приступы боли без болевых ощущений в промежутках между ними",
-                    score = 3,
+                    score = 1,
                 ),
                 GraphicVariant(
                     image = R.drawable.thumbnail__4_,
                     question = "Приступы боли, сопровождающиеся болевыми ощущениями в промежутках между ними",
-                    score = 4,
+                    score = 1,
                 ),
             ),
             score = 0,
@@ -71,104 +71,104 @@ fun getPainDetectedTestData(): List<TestQuestion> {
             testId = 5,
             type = HumanImageType.FRONT,
             question = "Выберите те области, в которые отдает боль",
-            maxScore = 0
+            maxScore = 2
         ),
         TestQuestion.HumanPoint(
             testId = 6,
             type = HumanImageType.BACK,
             question = "Выберите те области, в которые отдает боль",
-            maxScore = 2
+            maxScore = 0
         ),
         TestQuestion.SingleAnswer(
             testId = 7,
             question = "Испытываете ли Вы ощущение жжения (например, как при ожоге крапивой) в области, которую отметили на рисунке?",
             answers = listOf(
-                "Совсем нет" to 1,
-                "Едва заметное" to 2,
-                "Незначительное" to 3,
-                "Умеренное" to 4,
-                "Сильное" to 5,
-                "Очень сильное" to 6,
+                "Совсем нет" to 0,
+                "Едва заметное" to 1,
+                "Незначительное" to 2,
+                "Умеренное" to 3,
+                "Сильное" to 4,
+                "Очень сильное" to 5,
             ),
-            maxScore = 6
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 8,
             question = "Ощущаете ли Вы покалывание или пощипывание в области боли (как покалывание от онемения или слабого электрического тока?)",
             answers = listOf(
-                "Совсем нет" to 1,
-                "Едва заметное" to 2,
-                "Незначительное" to 3,
-                "Умеренное" to 4,
-                "Сильное" to 5,
-                "Очень сильное" to 6,
+                "Совсем нет" to 0,
+                "Едва заметное" to 1,
+                "Незначительное" to 2,
+                "Умеренное" to 3,
+                "Сильное" to 4,
+                "Очень сильное" to 5,
             ),
-            maxScore = 6
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 9,
             question = "Возникает ли у Вас болезненные ощущения в указанной области при легком соприкосновении (с одеждой, одеялом)",
             answers = listOf(
-                "Совсем нет" to 1,
-                "Едва заметное" to 2,
-                "Незначительное" to 3,
-                "Умеренное" to 4,
-                "Сильное" to 5,
-                "Очень сильное" to 6,
+                "Совсем нет" to 0,
+                "Едва заметное" to 1,
+                "Незначительное" to 2,
+                "Умеренное" to 3,
+                "Сильное" to 4,
+                "Очень сильное" to 5,
             ),
-            maxScore = 6
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 10,
             question = "Возникают ли у Вас резкие приступы боли в указанной области, как удар током?",
             answers = listOf(
-                "Совсем нет" to 1,
-                "Едва заметное" to 2,
-                "Незначительное" to 3,
-                "Умеренное" to 4,
-                "Сильное" to 5,
-                "Очень сильное" to 6,
+                "Совсем нет" to 0,
+                "Едва заметное" to 1,
+                "Незначительное" to 2,
+                "Умеренное" to 3,
+                "Сильное" to 4,
+                "Очень сильное" to 5,
             ),
-            maxScore = 6
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 11,
             question = "Возникают ли у Вас иногда болезненные ощущения в указанной области при воздействии холодного или горячего (например, воды, когда Вы моетесь)?",
             answers = listOf(
-                "Совсем нет" to 1,
-                "Едва заметное" to 2,
-                "Незначительное" to 3,
-                "Умеренное" to 4,
-                "Сильное" to 5,
-                "Очень сильное" to 6,
+                "Совсем нет" to 0,
+                "Едва заметное" to 1,
+                "Незначительное" to 2,
+                "Умеренное" to 3,
+                "Сильное" to 4,
+                "Очень сильное" to 5,
             ),
-            maxScore = 6
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 12,
             question = "Ощущаете ли вы онемение в указанной области?",
             answers = listOf(
-                "Совсем нет" to 1,
-                "Едва заметное" to 2,
-                "Незначительное" to 3,
-                "Умеренное" to 4,
-                "Сильное" to 5,
-                "Очень сильное" to 6,
+                "Совсем нет" to 0,
+                "Едва заметное" to 1,
+                "Незначительное" to 2,
+                "Умеренное" to 3,
+                "Сильное" to 4,
+                "Очень сильное" to 5,
             ),
-            maxScore = 6
+            maxScore = 5
         ),
         TestQuestion.SingleAnswer(
             testId = 13,
             question = "Вызывает ли боль легкое нажатие на указанную область, например, нажатие пальцем?",
             answers = listOf(
-                "Совсем нет" to 1,
-                "Едва заметное" to 2,
-                "Незначительное" to 3,
-                "Умеренное" to 4,
-                "Сильное" to 5,
-                "Очень сильное" to 6,
+                "Совсем нет" to 0,
+                "Едва заметное" to 1,
+                "Незначительное" to 2,
+                "Умеренное" to 3,
+                "Сильное" to 4,
+                "Очень сильное" to 5,
             ),
-            maxScore = 6
+            maxScore = 5
         ),
     )
 }

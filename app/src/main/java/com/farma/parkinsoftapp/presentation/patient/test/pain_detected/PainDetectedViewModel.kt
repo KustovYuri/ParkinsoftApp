@@ -136,6 +136,20 @@ class PainDetectedViewModel @Inject constructor(
                                     } else {
                                         question.selectedPoints - value
                                     }
+                                },
+                                score = if (question.question == "Выберите те области, в которые отдает боль") {
+                                    val previousHumanPoint = _uiState.value.data[_currentQuestionIndex.intValue - 1] as? TestQuestion.HumanPoint
+                                    if (previousHumanPoint is TestQuestion.HumanPoint && previousHumanPoint.question == "Выберите те области, в которые отдает боль" && previousHumanPoint.score == 0 && value != 0) {
+                                        2
+                                    } else {
+                                        if (value != 0) {
+                                            2
+                                        } else {
+                                            0
+                                        }
+                                    }
+                                } else {
+                                    0
                                 }
                             )
                     } else {
