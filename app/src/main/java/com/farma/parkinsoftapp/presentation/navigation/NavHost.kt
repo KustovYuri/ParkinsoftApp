@@ -250,14 +250,16 @@ fun AppNavHost(
                         popUpTo(0)
                     }
                 },
-                navigateToTestInfo = { initials: String, testDate: String, testType: TestType, testPreviewId: Long, isNativeTest: Boolean ->
+                navigateToTestInfo = { initials: String, testDate: String, testType: TestType, testPreviewId: Long, isNativeTest: Boolean, maxPoints: Int, summaryPoints: Int ->
                     navController.navigate(
                         PatientCurrentTestRoute(
                             initials,
                             testDate,
                             testType,
                             testPreviewId,
-                            isNativeTest
+                            isNativeTest,
+                            maxPoints,
+                            summaryPoints
                         )
                     )
                 }
@@ -273,7 +275,9 @@ fun AppNavHost(
                     backNavigation = {
                         navController.popBackStack()
                     },
-                    testDate = args.testDate
+                    testDate = args.testDate,
+                    maxPoints = args.maxScore,
+                    summaryPoints = args.currentScore
                 )
             } else {
                 PatientCurrentTestScreen(
@@ -281,7 +285,9 @@ fun AppNavHost(
                     backNavigation = {
                         navController.popBackStack()
                     },
-                    testDate = args.testDate
+                    testDate = args.testDate,
+                    maxPoints = args.maxScore,
+                    summaryPoints = args.currentScore,
                 )
             }
         }

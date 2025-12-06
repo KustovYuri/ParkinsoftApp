@@ -84,7 +84,7 @@ private enum class TestsTabs {
 fun PatientInfoScreen(
     viewModel: PatientInfoViewModel = hiltViewModel<PatientInfoViewModel>(),
     backNavigation: () -> Unit,
-    navigateToTestInfo: (String, String, TestType, Long, Boolean) -> Unit
+    navigateToTestInfo: (String, String, TestType, Long, Boolean, Int, Int) -> Unit
 ) {
     val selectedTab = remember { mutableStateOf(TestsTabs.DAILY) }
     val selectedTestChip = remember { mutableStateOf(AllTestsTypes.TEST_STIMULATION_DIARY) }
@@ -147,7 +147,7 @@ private fun Screen(
     paddingValues: PaddingValues,
     selectedTab: MutableState<TestsTabs>,
     selectedTestChip: MutableState<AllTestsTypes>,
-    navigateToTestInfo: (String, String, TestType, Long, Boolean) -> Unit,
+    navigateToTestInfo: (String, String, TestType, Long, Boolean, Int, Int) -> Unit,
     calculateAge: (String) -> Int,
     changeDischargeDateTime: (LocalDateTime?) -> Unit,
 ) {
@@ -332,7 +332,7 @@ private fun isNativeTest(testType: TestType): Boolean {
 private fun TestItem(
     secondNameWithInitials: String,
     testPreviewInfo: TestPreviewModel,
-    click: (String, String, TestType, Long, Boolean) -> Unit,
+    click: (String, String, TestType, Long, Boolean, Int, Int) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -346,7 +346,9 @@ private fun TestItem(
                     testPreviewInfo.testDate,
                     testType,
                     testPreviewInfo.id ?: -1,
-                    isNativeTest(testType)
+                    isNativeTest(testType),
+                    testPreviewInfo.maxPoints,
+                    testPreviewInfo.summaryPoints
                 )
             },
         verticalAlignment = Alignment.CenterVertically

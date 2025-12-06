@@ -62,5 +62,7 @@ data class PatientCurrentTestRoute(
     val testDate: String,
     val testType: TestType,
     val testPreviewId: Long,
-    val isNativeTest: Boolean
+    val isNativeTest: Boolean,
+    val maxScore: Int,
+    val currentScore: Int
 )

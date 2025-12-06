@@ -36,7 +36,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.data.network.models.TestResultModel
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.presentation.common.ScreenState
+import com.farma.parkinsoftapp.presentation.doctor.patient_current_test.native_test.ExpandableInfoCard
+import com.farma.parkinsoftapp.presentation.doctor.patient_current_test.native_test.TextInterpretation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +47,9 @@ fun PatientCurrentTestScreen(
     viewModel: PatientCurrentTestScreenViewModel = hiltViewModel<PatientCurrentTestScreenViewModel>(),
     backNavigation: () -> Boolean,
     patientInitials: String,
-    testDate: String
+    testDate: String,
+    maxPoints: Int,
+    summaryPoints: Int
 ) {
     val uiState by viewModel.state.collectAsState()
 
@@ -57,7 +62,7 @@ fun PatientCurrentTestScreen(
                 .background(Color(0xFFFFFFFF)),
             contentAlignment = Alignment.Center
         ) {
-            when(uiState) {
+            when (uiState) {
                 is ScreenState.Error -> {
                     Text((uiState as ScreenState.Error).message)
                 }
@@ -67,8 +72,16 @@ fun PatientCurrentTestScreen(
                         color = Color(0xFF178399)
                     )
                 }
+
                 is ScreenState.Success -> {
-                    Screen(paddingValues, testDate, (uiState as ScreenState.Success).data)
+                    Screen(
+                        paddingValues,
+                        testDate,
+                        (uiState as ScreenState.Success).data,
+                        viewModel.testType,
+                        maxPoints,
+                        summaryPoints,
+                    )
                 }
             }
         }
@@ -79,7 +92,10 @@ fun PatientCurrentTestScreen(
 private fun Screen(
     paddingValues: PaddingValues,
     testDate: String,
-    testAnswers: List<TestResultModel>
+    testAnswers: List<TestResultModel>,
+    testType: TestType,
+    maxPoints: Int,
+    summaryPoints: Int
 ) {
     Column(
         modifier = Modifier
@@ -88,21 +104,46 @@ private fun Screen(
             .padding(paddingValues)
             .padding(horizontal = 20.dp)
     ) {
-        Spacer(Modifier.height(24.dp))
-        Text(
-            text = "Опросы",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(Modifier.height(16.dp))
-        TestDate(testDate)
-        Spacer(Modifier.height(8.dp))
         LazyColumn(
             modifier = Modifier.weight(1f),
         ) {
-            items(testAnswers) { testAnswer ->
+            item {
                 Spacer(Modifier.height(24.dp))
-                TestItem(testAnswer)
+                Text(
+                    text = when (testType) {
+                        TestType.TEST_STIMULATION_DIARY -> "Дневник тестовой стимуляции"
+                        TestType.HADS1 -> "HADS 1"
+                        TestType.HADS2 -> "HADS 2"
+                        TestType.OSVESTRY -> "Освестри"
+                        TestType.LANSS -> "LANSS"
+                        TestType.DN4 -> "DN4"
+                        TestType.SF36 -> "SF36"
+                        TestType.PAIN_DETECTED -> "Pain Detected"
+                    },
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(16.dp))
+                TestDate(testDate)
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = "Оценка: $summaryPoints / $maxPoints",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                if (testType != TestType.TEST_STIMULATION_DIARY) {
+                    Spacer(Modifier.height(16.dp))
+                    TextInterpretation(testType, maxPoints, summaryPoints)
+                    Spacer(Modifier.height(16.dp))
+                    ExpandableInfoCard(
+                        testType
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
+            }
+            items(testAnswers) { testAnswer ->
+                Spacer(Modifier.height(8.dp))
+                TestItem(testAnswer, testType)
             }
         }
         Spacer(Modifier.height(24.dp))
@@ -110,7 +151,7 @@ private fun Screen(
 }
 
 @Composable
-private fun TestItem(testAnswer: TestResultModel) {
+private fun TestItem(testAnswer: TestResultModel, testType: TestType) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -136,13 +177,15 @@ private fun TestItem(testAnswer: TestResultModel) {
         }
         Spacer(Modifier.weight(1f))
         Text(
-            text = "${testAnswer.testScore} / ${testAnswer.testMaxScope}",
+            text = "${testAnswer.testScore} / ${
+                when (testType) {
+                    TestType.HADS1 -> testAnswer.testMaxScope - 1
+                    TestType.HADS2 -> testAnswer.testMaxScope - 1
+                    TestType.OSVESTRY -> testAnswer.testMaxScope - 1
+                    else -> testAnswer.testMaxScope
+                }
+            }",
             fontSize = 17.sp,
-            color = if (testAnswer.testScore > testAnswer.testMaxScope / 2) {
-                Color(0xFF459C62)
-            } else {
-                Color(0xFFD21010)
-            }
         )
     }
 }

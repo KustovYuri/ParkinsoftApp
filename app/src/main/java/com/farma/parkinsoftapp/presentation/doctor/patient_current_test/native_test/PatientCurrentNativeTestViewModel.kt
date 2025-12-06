@@ -24,7 +24,7 @@ class PatientCurrentNativeTestViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val route: PatientCurrentTestRoute = savedStateHandle.toRoute()
-    private val testType = route.testType
+    val testType = route.testType
     private val testPreviewId = route.testPreviewId
     private val _state: MutableStateFlow<ScreenState<List<TestQuestion>>> =
         MutableStateFlow(ScreenState.Loading())
