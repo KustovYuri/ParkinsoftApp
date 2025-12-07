@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.doctor.patient_current_test.native_test
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -46,6 +47,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.farma.parkinsoftapp.R
 import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.presentation.common.ScreenState
+import com.farma.parkinsoftapp.presentation.mappers.convertToPsyAndPhiComponents
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.GraphicVariant
 import com.farma.parkinsoftapp.presentation.patient.test.test_stimulation.test_variants.HumanPointVariant
 import com.farma.parkinsoftapp.presentation.patient.test.pain_detected.test_variant.SingleAnswersVariant
@@ -63,7 +65,15 @@ fun PatientCurrentNativeTestScreen(
     patientInitials: String,
     testDate: String,
     maxPoints: Int,
-    summaryPoints: Int
+    summaryPoints: Int,
+    pf: Float?,
+    rp: Float?,
+    bp: Float?,
+    gh: Float?,
+    vt: Float?,
+    sf: Float?,
+    re: Float?,
+    mh: Float?,
 ) {
     val uiState by viewModel.state.collectAsState()
 
@@ -94,7 +104,15 @@ fun PatientCurrentNativeTestScreen(
                         (uiState as ScreenState.Success).data,
                         viewModel.testType,
                         maxPoints,
-                        summaryPoints
+                        summaryPoints,
+                        pf,
+                        rp,
+                        bp,
+                        gh,
+                        vt,
+                        sf,
+                        re,
+                        mh,
                     )
                 }
             }
@@ -102,6 +120,7 @@ fun PatientCurrentNativeTestScreen(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 private fun Screen(
     paddingValues: PaddingValues,
@@ -109,7 +128,15 @@ private fun Screen(
     testAnswers: List<TestQuestion>,
     testType: TestType,
     maxPoints: Int,
-    summaryPoints: Int
+    summaryPoints: Int,
+    pf: Float?,
+    rp: Float?,
+    bp: Float?,
+    gh: Float?,
+    vt: Float?,
+    sf: Float?,
+    re: Float?,
+    mh: Float?,
 ) {
     Column(
         modifier = Modifier
@@ -141,16 +168,49 @@ private fun Screen(
                 TestDate(testDate)
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "Оценка: $summaryPoints / $maxPoints",
+                    text = if (testType != TestType.SF36) {
+                        "Оценка: $summaryPoints / $maxPoints"
+                    } else {
+                        val ph_mh = convertToPsyAndPhiComponents(
+                            pf ?: 0F,
+                            rp ?: 0F,
+                            bp ?: 0F,
+                            gh ?: 0F,
+                            vt ?: 0F,
+                            sf ?: 0F,
+                            re ?: 0F,
+                            mh ?: 0F,
+                        )
+                        "Оценка: ${String.format("%.2f", ph_mh.first)} | ${String.format("%.2f", ph_mh.second)}"
+                    },
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium
                 )
                 if (testType != TestType.TEST_STIMULATION_DIARY) {
+                    val ph_mh = convertToPsyAndPhiComponents(
+                        pf ?: 0F,
+                        rp ?: 0F,
+                        bp ?: 0F,
+                        gh ?: 0F,
+                        vt ?: 0F,
+                        sf ?: 0F,
+                        re ?: 0F,
+                        mh ?: 0F,
+                    )
+
                     Spacer(Modifier.height(16.dp))
-                    TextInterpretation(testType, maxPoints, summaryPoints)
+                    TextInterpretation(testType, maxPoints, summaryPoints, ph_mh)
                     Spacer(Modifier.height(16.dp))
                     ExpandableInfoCard(
-                        testType
+                        testType,
+                        pf,
+                        rp,
+                        bp,
+                        gh,
+                        vt,
+                        sf,
+                        re,
+                        mh,
                     )
                     Spacer(Modifier.height(16.dp))
                 }
@@ -194,8 +254,14 @@ private fun Screen(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
-fun TextInterpretation(testType: TestType, maxPoints: Int, summaryPoints: Int) {
+fun TextInterpretation(
+    testType: TestType,
+    maxPoints: Int,
+    summaryPoints: Int,
+    ph_mh1: Pair<Float, Float>? = null
+) {
     val text: String = when (testType) {
         TestType.TEST_STIMULATION_DIARY -> {
             ""
@@ -252,7 +318,8 @@ fun TextInterpretation(testType: TestType, maxPoints: Int, summaryPoints: Int) {
         }
 
         TestType.SF36 -> {
-            ""
+            "${String.format("%.2f", ph_mh1?.first)} — оценка физического состояния.\n" +
+            "${String.format("%.2f", ph_mh1?.second)} — оценка психологического состояния."
         }
 
         TestType.PAIN_DETECTED -> {
@@ -273,9 +340,18 @@ fun TextInterpretation(testType: TestType, maxPoints: Int, summaryPoints: Int) {
     )
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun ExpandableInfoCard(
-    testType: TestType
+    testType: TestType,
+    pf: Float? = null,
+    rp: Float? = null,
+    bp: Float? = null,
+    gh: Float? = null,
+    vt: Float? = null,
+    sf: Float? = null,
+    re: Float? = null,
+    mh: Float? = null,
 ) {
     val title = "Как считается оценка?"
     var content: String
@@ -314,7 +390,27 @@ fun ExpandableInfoCard(
                     "Если сумма составляет 4 и более баллов, это указывает на то, что боль у пациента является нейропатической, или имеется нейропатический компонент боли (при смешанных ноцицептивно- нейропатических болевых синдромах."
         }
         TestType.SF36 -> {
-            content = ""
+            val ph_mh = convertToPsyAndPhiComponents(
+                pf ?: 0F,
+                rp ?: 0F,
+                bp ?: 0F,
+                gh ?: 0F,
+                vt ?: 0F,
+                sf ?: 0F,
+                re ?: 0F,
+                mh ?: 0F,
+            )
+
+            content = "Физический компонент здоровья: ${String.format("%.2f", ph_mh.first)}\n\n" +
+                    "Физическое функционирование (PF): ${String.format("%.2f", pf)}\n" +
+                    "Ролевое функционирование (RP): ${String.format("%.2f", rp)}\n" +
+                    "Интенсивность боли (ВР): ${String.format("%.2f", bp)}\n" +
+                    "Общее состояние здоровья (GH): ${String.format("%.2f", gh)}\n\n" +
+                    "Психологический компонент здоровья: ${String.format("%.2f", ph_mh.second)}\n\n" +
+                    "Жизненная активность (VT): ${String.format("%.2f", vt)}\n" +
+                    "Социальное функционирование (SF): ${String.format("%.2f", sf)}\n" +
+                    "Ролевое функционирование (RE): ${String.format("%.2f", re)}\n" +
+                    "Психическое здоровье (МН): ${String.format("%.2f", mh)}"
         }
         TestType.PAIN_DETECTED -> {
             content = """

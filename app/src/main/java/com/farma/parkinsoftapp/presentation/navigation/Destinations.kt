@@ -64,5 +64,13 @@ data class PatientCurrentTestRoute(
     val testPreviewId: Long,
     val isNativeTest: Boolean,
     val maxScore: Int,
-    val currentScore: Int
+    val currentScore: Int,
+    val pf: Float?,
+    val rp: Float?,
+    val bp: Float?,
+    val gh: Float?,
+    val vt: Float?,
+    val sf: Float?,
+    val re: Float?,
+    val mh: Float?,
 )

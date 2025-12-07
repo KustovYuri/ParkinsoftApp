@@ -15,6 +15,14 @@ data class NativeTestRequest(
     val yesNoAnswers: List<YesNoAnswerRequest>? = emptyList(),
     val displaySliderAnswers: List<DisplaySliderAnswerRequest>? = emptyList(),
     val commentAnswers: List<CommentAnswerRequest>? = emptyList(),
+    val pf: Float? = null,
+    val rp: Float? = null,
+    val bp: Float? = null,
+    val gh: Float? = null,
+    val vt: Float? = null,
+    val sf: Float? = null,
+    val re: Float? = null,
+    val mh: Float? = null,
 )
 
 @Serializable

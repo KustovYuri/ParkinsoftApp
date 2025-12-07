@@ -8,10 +8,29 @@ import com.farma.parkinsoftapp.data.network.models.NativeTestRequest
 import com.farma.parkinsoftapp.data.network.models.SingleAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.SliderAnswerRequest
 import com.farma.parkinsoftapp.data.network.models.YesNoAnswerRequest
+import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.presentation.patient.test.models_common.TestQuestion
 
-fun List<TestQuestion>.convertToNativeTestRequest(testPreviewId: Long): NativeTestRequest {
-    var nativeTestRequest = NativeTestRequest(testPreviewId, this.getSummaryPoints(),this.getMaxPoints())
+fun List<TestQuestion>.convertToNativeTestRequest(testPreviewId: Long, testType: TestType): NativeTestRequest {
+    var nativeTestRequest = NativeTestRequest(
+        testPreviewId,
+        this.getSummaryPoints(),
+        this.getMaxPoints()
+    )
+
+    if (testType == TestType.SF36) {
+        nativeTestRequest = nativeTestRequest.copy(
+            pf = this.convertToPf(),
+            rp = this.convertToRp(),
+            bp = this.convertToBp(),
+            gh = this.convertToGh(),
+            vt = this.convertToVt(),
+            sf = this.convertToSf(),
+            re = this.convertToRe(),
+            mh = this.convertToMh(),
+        )
+    }
+
     this.map {
         when (val test = it) {
             is TestQuestion.Comment -> {
@@ -145,6 +164,213 @@ fun List<TestQuestion>.convertToNativeTestRequest(testPreviewId: Long): NativeTe
     }
 
     return nativeTestRequest
+}
+
+private fun List<TestQuestion>.convertToMh(): Float {
+    val g9 = (this.find { it.id == 21L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val g9Score = when(g9) {
+        1.0F -> 6.0
+        2.0F -> 5.4
+        3.0F -> 4.4
+        4.0F -> 3.0
+        5.0F -> 2.0
+        6.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val z9 = (this.find { it.id == 25L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val z9Score = when(z9) {
+        1.0F -> 6.0
+        2.0F -> 5.4
+        3.0F -> 4.4
+        4.0F -> 3.0
+        5.0F -> 2.0
+        6.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val b9 = (this.find { it.id == 19L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val v9 = (this.find { it.id == 20L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val e9 = (this.find { it.id == 23L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+
+    val Mhsum = b9 + v9 + g9Score + e9 + z9Score
+
+    return ((Mhsum - 5) / 25) * 100
+}
+
+private fun List<TestQuestion>.convertToRe(): Float {
+    val reSum = (this.find { it.id == 14L } as TestQuestion.YesNo).answers.sumOf {
+        it.score
+    }.toFloat()
+
+    val rp = ((reSum - 3) / 3) * 100
+
+    return rp
+}
+
+private fun List<TestQuestion>.convertToSf(): Float {
+    val sf6 = (this.find { it.id == 15L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val sf6Score = when(sf6) {
+        1.0F -> 5.0
+        2.0F -> 4.0
+        3.0F -> 3.0
+        4.0F -> 2.0
+        5.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val sf10 = (this.find { it.id == 27L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+
+    val sfSum = sf6Score + sf10
+
+    return ((sfSum - 2) / 8) * 100
+}
+
+private fun List<TestQuestion>.convertToVt(): Float {
+    val a9 = (this.find { it.id == 18L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val a9Score = when(a9) {
+        1.0F -> 6.0
+        2.0F -> 5.4
+        3.0F -> 4.4
+        4.0F -> 3.0
+        5.0F -> 2.0
+        6.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val d9 = (this.find { it.id == 22L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val d9Score = when(d9) {
+        1.0F -> 6.0
+        2.0F -> 5.4
+        3.0F -> 4.4
+        4.0F -> 3.0
+        5.0F -> 2.0
+        6.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val j9 = (this.find { it.id == 24L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val i9 = (this.find { it.id == 26L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+
+    val VTsum = a9Score + d9Score + j9 + i9
+
+    return ((VTsum - 4) / 20) * 100
+}
+
+private fun List<TestQuestion>.convertToGh(): Float {
+    val gh1 = (this.find { it.id == 1L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val gh1Score = when(gh1) {
+        1.0F -> 5.0
+        2.0F -> 4.4
+        3.0F -> 3.4
+        4.0F -> 2.0
+        5.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val b11 = (this.find { it.id == 29L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val b11Score = when(b11) {
+        1.0F -> 5.0
+        2.0F -> 4.0
+        3.0F -> 3.0
+        4.0F -> 2.0
+        5.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val g11 = (this.find { it.id == 31L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val g11Score = when(g11) {
+        1.0F -> 5.0
+        2.0F -> 4.0
+        3.0F -> 3.0
+        4.0F -> 2.0
+        5.0F -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val a11 = (this.find { it.id == 28L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+    val v11 = (this.find { it.id == 30L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
+
+    val GHsum = gh1Score + a11 + b11Score + v11 + g11Score
+
+    return ((GHsum - 5) / 20) * 100
+}
+
+private fun List<TestQuestion>.convertToBp(): Float {
+    val bp7Raw = (this.find { it.id == 16L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0
+    val bp8Raw = (this.find { it.id == 17L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0
+
+    val scoreBp7 = when(bp7Raw) {
+        1.0 -> 6.0
+        2.0 -> 5.4
+        3.0 -> 4.2
+        4.0 -> 3.1
+        5.0 -> 2.2
+        6.0 -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val scoreBp8 = when {
+        bp8Raw == 1.0 && scoreBp7 == 1.0F -> 6.0
+        bp8Raw == 1.0 -> 5.0
+        bp8Raw == 2.0 -> 4.0
+        bp8Raw == 3.0 -> 3.0
+        bp8Raw == 4.0 -> 2.0
+        bp8Raw == 5.0 -> 1.0
+        else -> 0.0
+    }.toFloat()
+
+    val bp = (((scoreBp7 + scoreBp8) - 2) / 10) * 100
+    return bp
+}
+
+private fun List<TestQuestion>.convertToRp(): Float {
+    val rpSum = (this.find { it.id == 13L } as TestQuestion.YesNo).answers.sumOf {
+        it.score
+    }.toFloat()
+
+    val rp = ((rpSum - 4) / 4) * 100
+
+    return rp
+}
+
+private fun List<TestQuestion>.convertToPf(): Float {
+    val pfSum = (3L..12L).sumOf { idx ->
+        val testQuestion = this.find { it.id == idx } as TestQuestion.SingleAnswer
+        testQuestion.selectedAnswer?.second ?: 0
+    }.toFloat()
+
+    val pf = ((pfSum - 10) / 20) * 100
+
+    return pf
+}
+
+fun convertToPsyAndPhiComponents(
+    PF: Float,
+    RP: Float,
+    BP: Float,
+    GH: Float,
+    VT: Float,
+    SF: Float,
+    RE: Float,
+    MH: Float,
+): Pair<Float, Float> {
+    val PF_Z = (PF - 84.52404) / 22.89490
+    val RP_Z = (RP - 81.19907) / 33.797290
+    val BP_Z = (BP - 75.49196) / 23.558790
+    val GH_Z = (GH - 72.21316) / 20.16964
+    val VT_Z = (VT - 61.05453) / 20.86942
+    val SF_Z = (SF - 83.59753) / 22.37642
+    val RE_Z = (RE - 81.29467) / 33.02717
+    val MH_Z = (MH - 74.84212) / 18.01189
+
+    val PHsum = (PF_Z * 0.42402) + (RP_Z* 0.35119) + (BP_Z* 0.31754)+ (SF_Z * -0.00753) + (MH_Z * -0.22069) + (RE_Z * -0.19206) + (VT_Z * 0.02877) + (GH_Z * 0.24954)
+    val PH = (PHsum * 10) + 50
+
+    val MHsum = (PF_Z* -0.22999) + (RP_Z * -0.12329) + (BP_Z * -0.09731) + (SF * 0.26876) + (MH_Z* 0.48581) + (RE_Z * 0.43407) + (VT_Z * 0.23534) + (GH_Z * -0.01571)
+    val MH = (MHsum * 10) + 50
+
+    return Pair(PH.toFloat(), MH.toFloat())
 }
 
 private fun TestQuestion.Comment.convertToAnswerRequest(): CommentAnswerRequest {

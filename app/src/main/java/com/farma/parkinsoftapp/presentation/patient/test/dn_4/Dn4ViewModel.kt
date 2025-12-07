@@ -64,7 +64,7 @@ class Dn4ViewModel @Inject constructor(
 
     fun finishTest(navigation: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            mainRepository.sendNativeTest(_uiState.value.data.convertToNativeTestRequest(testPreviewId)).collect {
+            mainRepository.sendNativeTest(_uiState.value.data.convertToNativeTestRequest(testPreviewId, testType)).collect {
                 when(it) {
                     is Result.Error -> {
                         _uiState.value = _uiState.value.copy(

@@ -250,7 +250,23 @@ fun AppNavHost(
                         popUpTo(0)
                     }
                 },
-                navigateToTestInfo = { initials: String, testDate: String, testType: TestType, testPreviewId: Long, isNativeTest: Boolean, maxPoints: Int, summaryPoints: Int ->
+                navigateToTestInfo = {
+                    initials: String,
+                    testDate: String,
+                    testType: TestType,
+                    testPreviewId: Long,
+                    isNativeTest: Boolean,
+                    maxPoints: Int,
+                    summaryPoints: Int,
+                    pf: Float?,
+                    rp: Float?,
+                    bp: Float?,
+                    gh: Float?,
+                    vt: Float?,
+                    sf: Float?,
+                    re: Float?,
+                    mh: Float? ->
+
                     navController.navigate(
                         PatientCurrentTestRoute(
                             initials,
@@ -259,7 +275,15 @@ fun AppNavHost(
                             testPreviewId,
                             isNativeTest,
                             maxPoints,
-                            summaryPoints
+                            summaryPoints,
+                            pf,
+                            rp,
+                            bp,
+                            gh,
+                            vt,
+                            sf,
+                            re,
+                            mh,
                         )
                     )
                 }
@@ -277,7 +301,15 @@ fun AppNavHost(
                     },
                     testDate = args.testDate,
                     maxPoints = args.maxScore,
-                    summaryPoints = args.currentScore
+                    summaryPoints = args.currentScore,
+                    pf = args.pf,
+                    rp = args.rp,
+                    bp = args.bp,
+                    gh = args.gh,
+                    vt = args.vt,
+                    sf = args.sf,
+                    re = args.re,
+                    mh = args.mh,
                 )
             } else {
                 PatientCurrentTestScreen(

@@ -44,5 +44,13 @@ data class TestPreviewModel(
     val maxPoints: Int,
     val summaryPoints: Int,
     val progressStatus: Boolean,
-    val testCompletedDate: String
+    val testCompletedDate: String,
+    val pf: Float? = null,
+    val rp: Float? = null,
+    val bp: Float? = null,
+    val gh: Float? = null,
+    val vt: Float? = null,
+    val sf: Float? = null,
+    val re: Float? = null,
+    val mh: Float? = null,
 )

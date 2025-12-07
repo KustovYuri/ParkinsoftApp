@@ -1,5 +1,6 @@
 package com.farma.parkinsoftapp.presentation.doctor.patient_info
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -66,6 +67,7 @@ import com.farma.parkinsoftapp.domain.models.patient.TestType
 import com.farma.parkinsoftapp.domain.models.patient.AllTestsTypes
 import com.farma.parkinsoftapp.domain.utils.convertStringDateToLocalDateTime
 import com.farma.parkinsoftapp.presentation.common.ScreenState
+import com.farma.parkinsoftapp.presentation.mappers.convertToPsyAndPhiComponents
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -84,7 +86,23 @@ private enum class TestsTabs {
 fun PatientInfoScreen(
     viewModel: PatientInfoViewModel = hiltViewModel<PatientInfoViewModel>(),
     backNavigation: () -> Unit,
-    navigateToTestInfo: (String, String, TestType, Long, Boolean, Int, Int) -> Unit
+    navigateToTestInfo: (
+        String,
+        String,
+        TestType,
+        Long,
+        Boolean,
+        Int,
+        Int,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?
+    ) -> Unit
 ) {
     val selectedTab = remember { mutableStateOf(TestsTabs.DAILY) }
     val selectedTestChip = remember { mutableStateOf(AllTestsTypes.TEST_STIMULATION_DIARY) }
@@ -147,7 +165,23 @@ private fun Screen(
     paddingValues: PaddingValues,
     selectedTab: MutableState<TestsTabs>,
     selectedTestChip: MutableState<AllTestsTypes>,
-    navigateToTestInfo: (String, String, TestType, Long, Boolean, Int, Int) -> Unit,
+    navigateToTestInfo: (
+        String,
+        String,
+        TestType,
+        Long,
+        Boolean,
+        Int,
+        Int,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?
+    ) -> Unit,
     calculateAge: (String) -> Int,
     changeDischargeDateTime: (LocalDateTime?) -> Unit,
 ) {
@@ -328,11 +362,28 @@ private fun isNativeTest(testType: TestType): Boolean {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 private fun TestItem(
     secondNameWithInitials: String,
     testPreviewInfo: TestPreviewModel,
-    click: (String, String, TestType, Long, Boolean, Int, Int) -> Unit,
+    click: (
+        String,
+        String,
+        TestType,
+        Long,
+        Boolean,
+        Int,
+        Int,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?,
+        Float?
+    ) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -348,7 +399,15 @@ private fun TestItem(
                     testPreviewInfo.id ?: -1,
                     isNativeTest(testType),
                     testPreviewInfo.maxPoints,
-                    testPreviewInfo.summaryPoints
+                    testPreviewInfo.summaryPoints,
+                    testPreviewInfo.pf,
+                    testPreviewInfo.rp,
+                    testPreviewInfo.bp,
+                    testPreviewInfo.gh,
+                    testPreviewInfo.vt,
+                    testPreviewInfo.sf,
+                    testPreviewInfo.re,
+                    testPreviewInfo.mh,
                 )
             },
         verticalAlignment = Alignment.CenterVertically
@@ -368,31 +427,48 @@ private fun TestItem(
             )
         }
         Spacer(Modifier.weight(1f))
-        if (testPreviewInfo.progressStatus) {
-            Icon(
-                painter = painterResource(R.drawable.icon__4_),
-                contentDescription = null,
-                tint = Color(0xFF459C62)
-            )
-        } else {
-            Icon(
-                painter = painterResource(R.drawable.icon__5_),
-                contentDescription = null,
-                tint = Color(0xFFE27878)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (testPreviewInfo.progressStatus) {
+                Icon(
+                    painter = painterResource(R.drawable.icon__4_),
+                    contentDescription = null,
+                    tint = Color(0xFF459C62)
+                )
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.icon__5_),
+                    contentDescription = null,
+                    tint = Color(0xFFE27878)
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = if (testPreviewInfo.testType != "sf36") {
+                    "${testPreviewInfo.summaryPoints}/${testPreviewInfo.maxPoints}"
+                } else {
+                    val ph_mh = convertToPsyAndPhiComponents(
+                        testPreviewInfo.pf ?: 0F,
+                        testPreviewInfo.rp ?: 0F,
+                        testPreviewInfo.bp ?: 0F,
+                        testPreviewInfo.gh ?: 0F,
+                        testPreviewInfo.vt ?: 0F,
+                        testPreviewInfo.sf ?: 0F,
+                        testPreviewInfo.re ?: 0F,
+                        testPreviewInfo.mh ?: 0F,
+                    )
+                    "${String.format("%.2f", ph_mh.first)} | ${String.format("%.2f", ph_mh.second)}"
+                },
+                color = if (testPreviewInfo.progressStatus) {
+                    Color(0xFF459C62)
+                } else {
+                    Color(0xFFE27878)
+                },
+                fontSize = 17.sp,
+                textAlign = TextAlign.End
             )
         }
-        Spacer(Modifier.width(12.dp))
-        Text(
-            modifier = Modifier.width(60.dp),
-            text = "${testPreviewInfo.summaryPoints}/${testPreviewInfo.maxPoints}",
-            color = if (testPreviewInfo.progressStatus) {
-                Color(0xFF459C62)
-            } else {
-                Color(0xFFE27878)
-            },
-            fontSize = 17.sp,
-            textAlign = TextAlign.End
-        )
         Spacer(Modifier.width(12.dp))
         Box(
             contentAlignment = Alignment.TopEnd
