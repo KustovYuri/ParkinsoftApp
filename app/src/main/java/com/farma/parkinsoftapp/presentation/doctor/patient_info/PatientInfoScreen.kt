@@ -416,12 +416,12 @@ private fun TestItem(
             modifier = Modifier.padding(vertical = 6.dp)
         ) {
             Text(
-                text = testPreviewInfo.testCompletedDate,
+                "Опросник",
                 color = Color(0xFF62767A),
                 fontSize = 13.sp
             )
             Text(
-                "Опросник",
+                text = testPreviewInfo.testCompletedDate,
                 fontSize = 15.sp,
                 color = Color(0xFF002A33)
             )
