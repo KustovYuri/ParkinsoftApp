@@ -169,25 +169,25 @@ fun List<TestQuestion>.convertToNativeTestRequest(testPreviewId: Long, testType:
 private fun List<TestQuestion>.convertToMh(): Float {
     val g9 = (this.find { it.id == 21L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val g9Score = when(g9) {
-        1.0F -> 6.0
-        2.0F -> 5.4
-        3.0F -> 4.4
-        4.0F -> 3.0
-        5.0F -> 2.0
-        6.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1.0F -> 6.0f
+        2.0F -> 5.4f
+        3.0F -> 4.4f
+        4.0F -> 3.0f
+        5.0F -> 2.0f
+        6.0F -> 1.0f
+        else -> 0.0f
+    }
 
     val z9 = (this.find { it.id == 25L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val z9Score = when(z9) {
-        1.0F -> 6.0
-        2.0F -> 5.4
-        3.0F -> 4.4
-        4.0F -> 3.0
-        5.0F -> 2.0
-        6.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1.0F -> 6.0f
+        2.0F -> 5.4f
+        3.0F -> 4.4f
+        4.0F -> 3.0f
+        5.0F -> 2.0f
+        6.0F -> 1.0f
+        else -> 0.0f
+    }
 
     val b9 = (this.find { it.id == 19L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val v9 = (this.find { it.id == 20L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
@@ -211,13 +211,13 @@ private fun List<TestQuestion>.convertToRe(): Float {
 private fun List<TestQuestion>.convertToSf(): Float {
     val sf6 = (this.find { it.id == 15L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val sf6Score = when(sf6) {
-        1.0F -> 5.0
-        2.0F -> 4.0
-        3.0F -> 3.0
-        4.0F -> 2.0
-        5.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1.0F -> 5.0f
+        2.0F -> 4.0f
+        3.0F -> 3.0f
+        4.0F -> 2.0f
+        5.0F -> 1.0f
+        else -> 0.0f
+    }
 
     val sf10 = (this.find { it.id == 27L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
 
@@ -229,25 +229,25 @@ private fun List<TestQuestion>.convertToSf(): Float {
 private fun List<TestQuestion>.convertToVt(): Float {
     val a9 = (this.find { it.id == 18L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val a9Score = when(a9) {
-        1.0F -> 6.0
-        2.0F -> 5.4
-        3.0F -> 4.4
-        4.0F -> 3.0
-        5.0F -> 2.0
-        6.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1F -> 6f
+        2F -> 5f
+        3F -> 4f
+        4F -> 3f
+        5F -> 2f
+        6F -> 1f
+        else -> 0f
+    }
 
     val d9 = (this.find { it.id == 22L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val d9Score = when(d9) {
-        1.0F -> 6.0
-        2.0F -> 5.4
-        3.0F -> 4.4
-        4.0F -> 3.0
-        5.0F -> 2.0
-        6.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1F -> 6.0f
+        2F -> 5.4f
+        3F -> 4.4f
+        4F -> 3.0f
+        5F -> 2.0f
+        6F -> 1.0f
+        else -> 0.0f
+    }
 
     val j9 = (this.find { it.id == 24L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val i9 = (this.find { it.id == 26L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
@@ -260,33 +260,33 @@ private fun List<TestQuestion>.convertToVt(): Float {
 private fun List<TestQuestion>.convertToGh(): Float {
     val gh1 = (this.find { it.id == 1L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val gh1Score = when(gh1) {
-        1.0F -> 5.0
-        2.0F -> 4.4
-        3.0F -> 3.4
-        4.0F -> 2.0
-        5.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1F -> 5.0f
+        2F -> 4.4f
+        3F -> 3.4f
+        4F -> 2.0f
+        5F -> 1.0f
+        else -> 0.0f
+    }
 
     val b11 = (this.find { it.id == 29L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val b11Score = when(b11) {
-        1.0F -> 5.0
-        2.0F -> 4.0
-        3.0F -> 3.0
-        4.0F -> 2.0
-        5.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1F -> 5f
+        2F -> 4f
+        3F -> 3f
+        4F -> 2f
+        5F -> 1f
+        else -> 0f
+    }
 
     val g11 = (this.find { it.id == 31L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val g11Score = when(g11) {
-        1.0F -> 5.0
-        2.0F -> 4.0
-        3.0F -> 3.0
-        4.0F -> 2.0
-        5.0F -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1F -> 5f
+        2F -> 4f
+        3F -> 3f
+        4F -> 2f
+        5F -> 1f
+        else -> 0f
+    }
 
     val a11 = (this.find { it.id == 28L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
     val v11 = (this.find { it.id == 30L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0F
@@ -297,28 +297,28 @@ private fun List<TestQuestion>.convertToGh(): Float {
 }
 
 private fun List<TestQuestion>.convertToBp(): Float {
-    val bp7Raw = (this.find { it.id == 16L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0
-    val bp8Raw = (this.find { it.id == 17L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0.0
+    val bp7Raw = (this.find { it.id == 16L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0f
+    val bp8Raw = (this.find { it.id == 17L } as TestQuestion.SingleAnswer).selectedAnswer?.second?.toFloat() ?: 0f
 
     val scoreBp7 = when(bp7Raw) {
-        1.0 -> 6.0
-        2.0 -> 5.4
-        3.0 -> 4.2
-        4.0 -> 3.1
-        5.0 -> 2.2
-        6.0 -> 1.0
-        else -> 0.0
-    }.toFloat()
+        1f -> 6.0f
+        2f -> 5.4f
+        3f -> 4.2f
+        4f -> 3.1f
+        5f -> 2.2f
+        6f -> 1.0f
+        else -> 0.0f
+    }
 
     val scoreBp8 = when {
-        bp8Raw == 1.0 && scoreBp7 == 1.0F -> 6.0
-        bp8Raw == 1.0 -> 5.0
-        bp8Raw == 2.0 -> 4.0
-        bp8Raw == 3.0 -> 3.0
-        bp8Raw == 4.0 -> 2.0
-        bp8Raw == 5.0 -> 1.0
-        else -> 0.0
-    }.toFloat()
+        bp8Raw == 1f && scoreBp7 == 1f -> 6f
+        bp8Raw == 1f -> 5f
+        bp8Raw == 2f -> 4f
+        bp8Raw == 3f -> 3f
+        bp8Raw == 4f -> 2f
+        bp8Raw == 5f -> 1f
+        else -> 0f
+    }
 
     val bp = (((scoreBp7 + scoreBp8) - 2) / 10) * 100
     return bp
